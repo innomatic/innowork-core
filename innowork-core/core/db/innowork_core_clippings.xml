@@ -1,0 +1,16 @@
+<?xml version='1.0'?>
+<database>
+
+    <table name="innowork_core_clippings">
+        <field name="id" type="integer" notnull="1"/>
+        <field name="ownerid" type="integer" notnull="1"/>
+        <field name="name" type="string" notnull="1" length="50"/>
+        <field name="description" type="text"/>
+        <field name="trashed" type="boolean"/>
+
+        <key field="id"  type="unique"/>
+    </table>
+
+    <sequence name="innowork_core_clippings_id_seq"/>
+
+</database>

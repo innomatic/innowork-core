@@ -1,0 +1,11 @@
+<?xml version='1.0'?>
+<database>
+
+    <table name="innowork_core_itemslog">
+        <field  name="itemtype" type="text" notnull="1"/>
+        <field  name="itemid"   type="integer"  notnull="1"/>
+        <field  name="username" type="text"/>
+        <field  name="eventtime"   type="timestamp"/>
+	</table>
+
+</database>

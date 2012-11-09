@@ -1,0 +1,23 @@
+<?xml version='1.0'?>
+<database>
+
+    <table name="innowork_core_itemtypes">
+        <field  name="id"	type="integer"	notnull="1"/>
+        <field  name="itemtype"	type="text"	notnull="1"/>
+        <field  name="catalog"	type="text"	notnull="1"/>
+        <field  name="classfile"	type="text"/>
+        <field  name="classname"	type="text"/>
+        <field  name="icon"	type="text"/>
+        <field  name="domainpanel"	type="text"/>
+        <field  name="miniicon"	type="text"/>
+        <field  name="summaryname"	type="text"/>
+        <field  name="icontype"	type="text"/>
+        <field  name="showmode"	type="text"/>
+        <field  name="adminevent"	type="text"/>
+
+        <key    field="id"  type="unique"/>
+    </table>
+
+    <sequence   name="innowork_core_itemtypes_id_seq"/>
+
+</database>

@@ -1,0 +1,56 @@
+General information
+-------------------
+
+Innowork Core is the technology underlying the Innowork application series.
+
+
+
+License
+-------
+See the file named LICENSE.
+
+
+
+Requirements
+------------
+
+Serverside:
+	a working Innomatic platform installation.
+
+Clientside:
+	a web browser with HTML 4.0 and CSS support.
+
+
+
+Installation
+------------
+
+See the file named INSTALL.
+
+
+
+Additional Information
+----------------------
+
+Innomatica home page:
+	http://www.innomatica.it
+
+Innomatic official home page:
+	http://www.innomatic.org
+
+Innowork Core official home page:
+	http://www.innomatica.it
+
+To submit a bug report:
+	send an email to bugs@innomatica.it
+
+To submit a support request:
+	send an email to support@innomatica.it
+
+
+
+Disclaimer
+----------
+
+There is no warranty, expressed or implied, associated with this product.
+Use at your own risk.

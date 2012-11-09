@@ -1,0 +1,10 @@
+<?xml version='1.0'?>
+<database>
+
+    <table name="innowork_core_clippings_items">
+        <field name="clippingid" type="integer" notnull="1"/>
+        <field name="itemtype" type="text" notnull="1"/>
+        <field name="itemid" type="integer" notnull="1"/>
+    </table>
+
+</database>

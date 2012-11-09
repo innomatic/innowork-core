@@ -1,0 +1,14 @@
+<?xml version='1.0'?>
+<database>
+
+    <table name="innowork_core_acls_defaults">
+        <field name="id" type="integer" notnull="1"/>
+        <field name="ownerid" type="integer" notnull="1"/>
+        <field name="itemtype" type="text" notnull="1"/>
+
+        <key field="id"  type="unique"/>
+    </table>
+
+    <sequence name="innowork_core_acls_defaults_id_seq"/>
+
+</database>
