@@ -86,6 +86,7 @@ class WuiInnoworkSummary extends WuiXml {
             $this->mDefinition.= '<horizgroup><children><vertgroup><children>';
             $rows = floor((count($this->mListSummaries) + 1) / 2);
             $row = 0;
+            require_once('shared/wui/WuiSessionkey.php');
 
             while (list ($key, $val) = each($this->mListSummaries)) {
 				/*
