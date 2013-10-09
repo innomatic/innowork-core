@@ -19,17 +19,17 @@
 		</options>
 		<legal>
 			<author>
-				<name>Innomatica</name>
-				<email>info@innomatica.it</email>
-				<web>http://www.innomatica.it/</web>
+				<name>Innoteam S.r.l.</name>
+				<email>info@innoteam.it</email>
+				<web>http://www.innoteam.it/</web>
 			</author>
-			<copyright>Copyright (c) 2002-2009 Alex Pagnoni, Innoteam</copyright>
+			<copyright>Copyright (c) 2002-2013 Innoteam S.r.l.</copyright>
 			<license>MPL</license>
 			<licensefile>LICENSE</licensefile>
 		</legal>
 		<support>
-			<supportemail>support@innomatica.it</supportemail>
-			<bugsemail>bugs@innomatica.it</bugsemail>
+			<supportemail>helpdesk@innoteam.it</supportemail>
+			<bugsemail>helpdesk@innoteam.it</bugsemail>
 			<maintainer>
 				<name>Alex Pagnoni</name>
 				<email>alex.pagnoni@innoteam.it</email>
