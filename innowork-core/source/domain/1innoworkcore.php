@@ -630,7 +630,7 @@ $main_disp->Dispatch();
 $toolbars = $innowork_core->GetMainToolBar();
 $toolbars['help'] = array('help' => array('label' => $gLocale->getStr('help.button'), 'themeimage' => 'help', 'horiz' => 'true', 'action' => WuiEventsCall::buildEventsCallString('', array(array('view', 'help', '')))));
 
-$innomatictoolbars = array(new WuiInnomaticToolBar('view', array('toolbars' => $toolbars)));
+$innomatictoolbars = array(new WuiInnomaticToolBar('view', array('toolbars' => $toolbars, 'toolbar' => 'true')));
 
 // search
 // acl
