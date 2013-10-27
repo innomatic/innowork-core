@@ -188,7 +188,7 @@ class InnoworkCore extends Singleton {
         if (strlen($itemType) and strlen($itemId)) {
             $result['itemtools'] = array('relateditems' => array('label' => $this->mLocale->getStr('relateditems.button'), 'themeimage' => 'chart2', 'horiz' => 'true', 'action' => WuiEventsCall::buildEventsCallString('1innoworkcore', array(array('view', 'relateditems', array('itemtype' => $itemType, 'itemid' => $itemId))))));
         }
-        $result['settings'] = array('innowork' => array('label' => $this->mLocale->getStr('innoworksettings.button'), 'themeimage' => 'settings1', 'horiz' => 'true', 'action' => WuiEventsCall::buildEventsCallString('innoworkcoreprefs', array(array('view', 'default', '')))));
+        //$result['settings'] = array('innowork' => array('label' => $this->mLocale->getStr('innoworksettings.button'), 'themeimage' => 'settings1', 'horiz' => 'true', 'action' => WuiEventsCall::buildEventsCallString('innoworkcoreprefs', array(array('view', 'default', '')))));
         return $result;
     }
 
