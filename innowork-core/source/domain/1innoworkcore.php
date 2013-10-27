@@ -134,7 +134,7 @@ function main_search($eventData) {
             </combobox>
             <button><name>submit</name>
               <args>
-                <themeimage>find</themeimage>
+                <themeimage>zoom</themeimage>
                 <horiz>true</horiz>
                 <label type="encoded">'.urlencode($gLocale->getStr('search.submit')).'</label>
                 <formsubmit>search</formsubmit>
@@ -288,7 +288,7 @@ function main_trashcan($eventData) {
             <button><name>emptytrashcan</name>
               <args>
                 <label type="encoded">'.urlencode($gLocale->getStr('empty_trashcan.button')).'</label>
-                <themeimage>button_ok</themeimage>
+                <themeimage>buttonok</themeimage>
                 <horiz>true</horiz>
                 <frame>false</frame>
                 <needconfirm>true</needconfirm>
@@ -361,7 +361,7 @@ function main_today_activities($eventData) {
                   <args>
                     <horiz>true</horiz>
                     <frame>false</frame>
-                    <themeimage>filter</themeimage>
+                    <themeimage>down</themeimage>
                     <label type="encoded">'.urlencode($gLocale->getStr('filter_day_activities.button')).'</label>
                     <formsubmit>date</formsubmit>
             <action type="encoded">'.urlencode(WuiEventsCall::buildEventsCallString('', array(array('view', 'today_activities')))).'</action>
@@ -576,7 +576,7 @@ function main_stats($eventData) {
     
                 <button>
                   <args>
-                    <themeimage>button_ok</themeimage>
+                    <themeimage>buttonok</themeimage>
                     <horiz>true</horiz>
                     <label type="encoded">'.urlencode($gLocale->getStr('get_stats.button')).'</label>
                     <formsubmit>stats</formsubmit>

@@ -46,7 +46,7 @@ $gWui->LoadWidget('innomatictoolbar');
 $gXml_def = $gPage_status = '';
 $gPage_title = $gLocale->getStr('innoworkclippings.title');
 $gCore_toolbars = $gInnowork_core->GetMainToolBar();
-$gToolbars['mail'] = array('clippings' => array('label' => $gLocale->getStr('clippings.toolbar'), 'themeimage' => 'view_icon', 'horiz' => 'true', 'action' => WuiEventsCall::buildEventsCallString('', array(array('view', 'default', array('done' => 'false'))))), 'newclipping' => array('label' => $gLocale->getStr('newclipping.toolbar'), 'themeimage' => 'filenew', 'horiz' => 'true', 'action' => WuiEventsCall::buildEventsCallString('', array(array('view', 'newclipping', '')))));
+$gToolbars['mail'] = array('clippings' => array('label' => $gLocale->getStr('clippings.toolbar'), 'themeimage' => 'listicons', 'horiz' => 'true', 'action' => WuiEventsCall::buildEventsCallString('', array(array('view', 'default', array('done' => 'false'))))), 'newclipping' => array('label' => $gLocale->getStr('newclipping.toolbar'), 'themeimage' => 'filenew', 'horiz' => 'true', 'action' => WuiEventsCall::buildEventsCallString('', array(array('view', 'newclipping', '')))));
 
 // ----- Action dispatcher -----
 //
@@ -168,7 +168,7 @@ function main_default($eventData) {
         <innomatictoolbar row="'.$row.'" col="3"><name>tools</name>
           <args>
             <frame>false</frame>
-            <toolbars type="array">'.WuiXml::encode(array('show' => array('show' => array('label' => $gLocale->getStr('showclipping.button'), 'themeimage' => 'viewmag', 'horiz' => 'true', 'action' => WuiEventsCall::buildEventsCallString('', array(array('view', 'showclipping', array('id' => $clipping['id']))))), 'edit' => array('label' => $gLocale->getStr('editclipping.button'), 'themeimage' => 'edit', 'horiz' => 'true', 'action' => WuiEventsCall::buildEventsCallString('', array(array('view', 'editclipping', array('id' => $clipping['id']))))), 'trash' => array('label' => $gLocale->getStr('trashclipping.button'), 'themeimage' => 'edittrash', 'horiz' => 'true', 'action' => WuiEventsCall::buildEventsCallString('', array(array('view', 'default', ''), array('action', 'trashclipping', array('id' => $clipping['id'])))))))).'</toolbars>
+            <toolbars type="array">'.WuiXml::encode(array('show' => array('show' => array('label' => $gLocale->getStr('showclipping.button'), 'themeimage' => 'zoom', 'horiz' => 'true', 'action' => WuiEventsCall::buildEventsCallString('', array(array('view', 'showclipping', array('id' => $clipping['id']))))), 'edit' => array('label' => $gLocale->getStr('editclipping.button'), 'themeimage' => 'pencil', 'horiz' => 'true', 'action' => WuiEventsCall::buildEventsCallString('', array(array('view', 'editclipping', array('id' => $clipping['id']))))), 'trash' => array('label' => $gLocale->getStr('trashclipping.button'), 'themeimage' => 'trash', 'horiz' => 'true', 'action' => WuiEventsCall::buildEventsCallString('', array(array('view', 'default', ''), array('action', 'trashclipping', array('id' => $clipping['id'])))))))).'</toolbars>
           </args>
         </innomatictoolbar>';
 
@@ -244,7 +244,7 @@ function main_newclipping($eventData) {
     
                 <button>
                   <args>
-                    <themeimage>button_ok</themeimage>
+                    <themeimage>buttonok</themeimage>
                     <label type="encoded">'.urlencode($gLocale->getStr('new_clipping.button')).'</label>
                     <formsubmit>newclipping</formsubmit>
                     <frame>false</frame>
@@ -329,7 +329,7 @@ function main_editclipping($eventData) {
     
                 <button>
                   <args>
-                    <themeimage>button_ok</themeimage>
+                    <themeimage>buttonok</themeimage>
                     <label type="encoded">'.urlencode($gLocale->getStr('edit_clipping.button')).'</label>
                     <formsubmit>editclipping</formsubmit>
                     <frame>false</frame>

@@ -341,7 +341,7 @@ class WuiInnoworkItemAcl extends WuiXml {
                                                     <formsubmit>itemacl'.md5($this->mItemType.'-'.$this->mItemId).'</formsubmit>
                                                     <horiz>true</horiz>
                                                     <frame>false</frame>
-                                                    <themeimage>button_ok</themeimage>
+                                                    <themeimage>buttonok</themeimage>
                                                     <themeimagetype>mini</themeimagetype>
                                                     <compact>true</compact>
                                                     <label type="encoded">'.WuiXml::cdata(urlencode($locale->getStr('apply.submit'))).'</label>
@@ -451,7 +451,7 @@ class WuiInnoworkItemAcl extends WuiXml {
                                                             <formsubmit>limitedacl'.md5($this->mItemType.'-'.$this->mItemId).'</formsubmit>
                                                             <horiz>true</horiz>
                                                             <frame>false</frame>
-                                                            <themeimage>button_ok</themeimage>
+                                                            <themeimage>buttonok</themeimage>
                                                             <themeimagetype>mini</themeimagetype>
                                                             <compact>true</compact>
                                                             <label type="encoded">'.WuiXml::cdata(urlencode($locale->getStr('add_acl.submit'))).'</label>

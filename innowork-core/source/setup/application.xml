@@ -113,7 +113,7 @@
 			catalog="innowork-core::misc"
 			classfile="innowork/core/clipping/InnoworkClipping.php" classname="InnoworkClipping"
 			icon="fileopen" icontype="apps"
-			domainpanel="innoworkclippings" miniicon="view_detailed"
+			domainpanel="innoworkclippings" miniicon="misc3"
 			summaryname="clipping-name" showmode="app" />
 
 		<class name="innowork/core/clipping/InnoworkClipping.php" />
