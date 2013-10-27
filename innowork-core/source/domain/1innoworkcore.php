@@ -638,7 +638,7 @@ $innomatictoolbars = array(new WuiInnomaticToolBar('view', array('toolbars' => $
 // settings
 // relations
 
-$gWui->addChild(new WuiInnomaticPage('page', array('pagetitle' => $gPage_title, 'icon' => 'desktop', 'menu' => $innowork_core->GetMainMenu(), 'toolbars' => $innomatictoolbars, 'maincontent' => $gPage_content, 'status' => $gPage_status)));
+$gWui->addChild(new WuiInnomaticPage('page', array('pagetitle' => $gPage_title, 'icon' => 'desktop', 'toolbars' => $innomatictoolbars, 'maincontent' => $gPage_content, 'status' => $gPage_status)));
 
 $gWui->render();
 
