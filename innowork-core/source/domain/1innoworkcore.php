@@ -143,6 +143,7 @@ function main_search($eventData) {
             </button>
           </children></horizgroup>
     
+<!--
               <label row="1" col="0" halign="" valign="top"><args><label type="encoded">'.urlencode($gLocale->getStr('restrict_to.label')).'</label></args></label>
     
               <vertgroup row="1" col="1">
@@ -186,7 +187,7 @@ function main_search($eventData) {
     
                 </children>
               </vertgroup>
-    
+-->
             </children>
           </grid>
         </children>
