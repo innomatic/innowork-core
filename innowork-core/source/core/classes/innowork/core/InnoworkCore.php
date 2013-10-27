@@ -170,8 +170,14 @@ class InnoworkCore extends Singleton {
 		require_once('innomatic/wui/dispatch/WuiEventsCall.php');
     	
         $summaries = $this->getSummaries();
-        $result['main'] = array('home' => array('label' => $this->mLocale->getStr('summary.button'), 'themeimage' => 'gohome', 'horiz' => 'true', 'action' => WuiEventsCall::buildEventsCallString('1innoworkcore', array(array('view', 'default', '')))), 'search' => array('label' => $this->mLocale->getStr('search.button'), 'themeimage' => 'find', 'horiz' => 'true', 'action' => WuiEventsCall::buildEventsCallString('1innoworkcore', array(array('view', 'search', '')))));
-        $result['tools'] = array('todayactivities' => array('label' => $this->mLocale->getStr('today_activities.button'), 'themeimage' => 'today', 'horiz' => 'true', 'action' => WuiEventsCall::buildEventsCallString('1innoworkcore', array(array('view', 'today_activities', '')))), 'trashcan' => array('label' => $this->mLocale->getStr('trashcan.button'), 'themeimage' => 'edittrash', 'horiz' => 'true', 'action' => WuiEventsCall::buildEventsCallString('1innoworkcore', array(array('view', 'trashcan', '')))));
+        $result['main'] = array(
+        		'home' => array('label' => $this->mLocale->getStr('summary.button'), 'themeimage' => 'home', 'horiz' => 'true', 'action' => WuiEventsCall::buildEventsCallString('1innoworkcore', array(array('view', 'default', '')))),
+        		'search' => array('label' => $this->mLocale->getStr('search.button'), 'themeimage' => 'zoom', 'horiz' => 'true', 'action' => WuiEventsCall::buildEventsCallString('1innoworkcore', array(array('view', 'search', ''))))
+        		);
+        $result['tools'] = array(
+        		'todayactivities' => array('label' => $this->mLocale->getStr('today_activities.button'), 'themeimage' => 'calendarempty', 'horiz' => 'true', 'action' => WuiEventsCall::buildEventsCallString('1innoworkcore', array(array('view', 'today_activities', '')))),
+        		'trashcan' => array('label' => $this->mLocale->getStr('trashcan.button'), 'themeimage' => 'trash', 'horiz' => 'true', 'action' => WuiEventsCall::buildEventsCallString('1innoworkcore', array(array('view', 'trashcan', ''))))
+        		);
         if (is_array($summaries)) {
             while (list ($type, $summary) = each($summaries)) {
                 if ($summary['showmode'] == $type)
@@ -180,9 +186,9 @@ class InnoworkCore extends Singleton {
             reset($summaries);
         }
         if (strlen($itemType) and strlen($itemId)) {
-            $result['itemtools'] = array('relateditems' => array('label' => $this->mLocale->getStr('relateditems.button'), 'themeimage' => 'view_sidetree', 'horiz' => 'true', 'action' => WuiEventsCall::buildEventsCallString('1innoworkcore', array(array('view', 'relateditems', array('itemtype' => $itemType, 'itemid' => $itemId))))));
+            $result['itemtools'] = array('relateditems' => array('label' => $this->mLocale->getStr('relateditems.button'), 'themeimage' => 'chart2', 'horiz' => 'true', 'action' => WuiEventsCall::buildEventsCallString('1innoworkcore', array(array('view', 'relateditems', array('itemtype' => $itemType, 'itemid' => $itemId))))));
         }
-        $result['settings'] = array('innowork' => array('label' => $this->mLocale->getStr('innoworksettings.button'), 'themeimage' => 'configure', 'horiz' => 'true', 'action' => WuiEventsCall::buildEventsCallString('innoworkcoreprefs', array(array('view', 'default', '')))));
+        $result['settings'] = array('innowork' => array('label' => $this->mLocale->getStr('innoworksettings.button'), 'themeimage' => 'settings1', 'horiz' => 'true', 'action' => WuiEventsCall::buildEventsCallString('innoworkcoreprefs', array(array('view', 'default', '')))));
         return $result;
     }
 

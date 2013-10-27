@@ -629,7 +629,7 @@ function main_stats($eventData) {
 $main_disp->Dispatch();
 
 $toolbars = $innowork_core->GetMainToolBar();
-$toolbars['help'] = array('help' => array('label' => $gLocale->getStr('help.button'), 'themeimage' => 'help', 'horiz' => 'true', 'action' => WuiEventsCall::buildEventsCallString('', array(array('view', 'help', '')))));
+$toolbars['help'] = array('help' => array('label' => $gLocale->getStr('help.button'), 'themeimage' => 'info', 'horiz' => 'true', 'action' => WuiEventsCall::buildEventsCallString('', array(array('view', 'help', '')))));
 
 $innomatictoolbars = array(new WuiInnomaticToolBar('view', array('toolbars' => $toolbars, 'toolbar' => 'true')));
 

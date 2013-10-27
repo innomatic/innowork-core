@@ -11,7 +11,7 @@
 		<category>intranet</category>
 		<iconfile></iconfile>
 		<dependencies>
-			<dependency>innomatic[6.1]</dependency>
+			<dependency>innomatic[6.0]</dependency>
 			<dependency>phplotlib[5.0-3]</dependency>
 		</dependencies>
 		<options>
