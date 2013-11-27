@@ -254,7 +254,7 @@ class WuiInnoworkItemAcl extends WuiXml {
                                         <children>
                                           <button>
                                             <args>
-                                              <themeimage>encrypted</themeimage>
+                                              <themeimage>lock</themeimage>
                                               <themeimagetype>mini</themeimagetype>
                                               <compact>true</compact>
                                             </args>
@@ -739,7 +739,7 @@ class WuiInnoworkItemAcl extends WuiXml {
                                         <children>
                                           <button>
                                             <args>
-                                              <themeimage>encrypted</themeimage>
+                                              <themeimage>lock</themeimage>
                                               <themeimagetype>mini</themeimagetype>
                                               <compact>true</compact>
                                             </args>
