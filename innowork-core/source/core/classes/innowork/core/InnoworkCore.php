@@ -170,8 +170,14 @@ class InnoworkCore extends Singleton {
 		require_once('innomatic/wui/dispatch/WuiEventsCall.php');
     	
         $summaries = $this->getSummaries();
-        $result['main'] = array('home' => array('label' => $this->mLocale->getStr('summary.button'), 'themeimage' => 'gohome', 'horiz' => 'true', 'action' => WuiEventsCall::buildEventsCallString('1innoworkcore', array(array('view', 'default', '')))), 'search' => array('label' => $this->mLocale->getStr('search.button'), 'themeimage' => 'find', 'horiz' => 'true', 'action' => WuiEventsCall::buildEventsCallString('1innoworkcore', array(array('view', 'search', '')))));
-        $result['tools'] = array('clippings' => array('label' => $this->mLocale->getStr('clippings.button'), 'themeimage' => 'fileopen', 'horiz' => 'true', 'action' => WuiEventsCall::buildEventsCallString('innoworkclippings', array(array('view', 'default', '')))), 'todayactivities' => array('label' => $this->mLocale->getStr('today_activities.button'), 'themeimage' => 'today', 'horiz' => 'true', 'action' => WuiEventsCall::buildEventsCallString('1innoworkcore', array(array('view', 'today_activities', '')))), 'trashcan' => array('label' => $this->mLocale->getStr('trashcan.button'), 'themeimage' => 'edittrash', 'horiz' => 'true', 'action' => WuiEventsCall::buildEventsCallString('1innoworkcore', array(array('view', 'trashcan', '')))));
+        $result['main'] = array(
+        		'home' => array('label' => $this->mLocale->getStr('summary.button'), 'themeimage' => 'home', 'horiz' => 'true', 'action' => WuiEventsCall::buildEventsCallString('1innoworkcore', array(array('view', 'default', '')))),
+        		'search' => array('label' => $this->mLocale->getStr('search.button'), 'themeimage' => 'zoom', 'horiz' => 'true', 'action' => WuiEventsCall::buildEventsCallString('1innoworkcore', array(array('view', 'search', ''))))
+        		);
+        $result['tools'] = array(
+        		'todayactivities' => array('label' => $this->mLocale->getStr('today_activities.button'), 'themeimage' => 'calendarempty', 'horiz' => 'true', 'action' => WuiEventsCall::buildEventsCallString('1innoworkcore', array(array('view', 'today_activities', '')))),
+        		'trashcan' => array('label' => $this->mLocale->getStr('trashcan.button'), 'themeimage' => 'trash', 'horiz' => 'true', 'action' => WuiEventsCall::buildEventsCallString('1innoworkcore', array(array('view', 'trashcan', ''))))
+        		);
         if (is_array($summaries)) {
             while (list ($type, $summary) = each($summaries)) {
                 if ($summary['showmode'] == $type)
@@ -180,59 +186,10 @@ class InnoworkCore extends Singleton {
             reset($summaries);
         }
         if (strlen($itemType) and strlen($itemId)) {
-            $result['itemtools'] = array('relateditems' => array('label' => $this->mLocale->getStr('relateditems.button'), 'themeimage' => 'view_sidetree', 'horiz' => 'true', 'action' => WuiEventsCall::buildEventsCallString('1innoworkcore', array(array('view', 'relateditems', array('itemtype' => $itemType, 'itemid' => $itemId))))));
+            $result['itemtools'] = array('relateditems' => array('label' => $this->mLocale->getStr('relateditems.button'), 'themeimage' => 'chart2', 'horiz' => 'true', 'action' => WuiEventsCall::buildEventsCallString('1innoworkcore', array(array('view', 'relateditems', array('itemtype' => $itemType, 'itemid' => $itemId))))));
         }
-        $result['settings'] = array('innowork' => array('label' => $this->mLocale->getStr('innoworksettings.button'), 'themeimage' => 'configure', 'horiz' => 'true', 'action' => WuiEventsCall::buildEventsCallString('innoworkcoreprefs', array(array('view', 'default', '')))));
+        //$result['settings'] = array('innowork' => array('label' => $this->mLocale->getStr('innoworksettings.button'), 'themeimage' => 'settings1', 'horiz' => 'true', 'action' => WuiEventsCall::buildEventsCallString('innoworkcoreprefs', array(array('view', 'default', '')))));
         return $result;
-    }
-
-    /*!
-     @function getMainMenu
-    
-     @abstract Gets the Wui main menu definition.
-     */
-    public function getMainMenu($type = 'app') {
-		require_once('innomatic/wui/dispatch/WuiEventsCall.php');
-    	    	
-        $summaries = $this->getSummaries();
-
-        $menu = '.|'.$this->mLocale->getStr('innowork.menu')."\n";
-        $menu.= '..|'.$this->mLocale->getStr('summary.menu').'|'.WuiEventsCall::buildEventsCallString('1innoworkcore', array(array('view', 'default', '')))."\n";
-        $menu.= '..|'.$this->mLocale->getStr('search.menu').'|'.WuiEventsCall::buildEventsCallString('1innoworkcore', array(array('view', 'search', '')))."\n";
-        $menu.= '..|'.$this->mLocale->getStr('today_activities.menu').'|'.WuiEventsCall::buildEventsCallString('1innoworkcore', array(array('view', 'today_activities', '')))."\n";
-        $menu.= '..|'.$this->mLocale->getStr('clippings.menu').'|'.WuiEventsCall::buildEventsCallString('innoworkclippings', array(array('view', 'default', '')))."\n";
-        $menu.= '..|'.$this->mLocale->getStr('trashcan.menu').'|'.WuiEventsCall::buildEventsCallString('1innoworkcore', array(array('view', 'trashcan', '')))."\n";
-        $menu.= '..|'.$this->mLocale->getStr('stats.menu').'|'.WuiEventsCall::buildEventsCallString('1innoworkcore', array(array('view', 'stats', '')))."\n";
-        $menu.= '..|'.$this->mLocale->getStr('new.menu')."\n";
-
-        $tools_menu = '';
-
-        if (is_array($summaries)) {
-            require_once('innomatic/locale/LocaleCatalog.php');
-            $tools_menu.= '.|'.$this->mLocale->getStr('innoworktools.menu')."\n";
-
-            while (list ($type, $summary) = each($summaries)) {
-                $tmp_locale = new LocaleCatalog($summary['catalog'], InnomaticContainer::instance('innomaticcontainer')->getCurrentUser()->getLanguage());
-                if (strlen($summary['newdispatcher'])) {
-                    $menu.= '...|'.$tmp_locale->getStr($summary['type']).'|'.WuiEventsCall::buildEventsCallString($summary['domainpanel'], array(array($summary['newdispatcher'], $summary['newevent'], '')))."\n";
-                }
-                //if ( $summary['showmode'] == $type ) $tools_menu .= '..|'.$summary['label'].'|'.WuiEventsCall::buildEventsCallString($summary['domainpanel'], array( array( 'view', $summary['adminevent'], '' ) ) )."\n";
-                if (strlen($summary['showmode'])) {
-                    $tools_menu.= '..|'.$summary['label'].'|'.WuiEventsCall::buildEventsCallString($summary['domainpanel'], array(array('view', $summary['adminevent'], '')))."\n";
-                }
-            }
-            reset($summaries);
-        }
-
-        $menu.= $tools_menu;
-
-        $menu.= '.|'.$this->mLocale->getStr('settings.menu')."\n";
-        $menu.= '..|'.$this->mLocale->getStr('innoworksettings.menu').'|'.WuiEventsCall::buildEventsCallString('innoworkcoreprefs', array(array('view', 'default', '')))."\n";
-
-        $menu.= '.|'.$this->mLocale->getStr('help.menu')."\n";
-        $menu.= '..|'.$this->mLocale->getStr('aboutinnowork.menu').'|'.WuiEventsCall::buildEventsCallString('1innoworkcore', array(array('view', 'aboutinnowork', '')))."\n";
-
-        return $menu;
     }
 
     /**

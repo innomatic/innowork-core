@@ -134,7 +134,7 @@ function main_search($eventData) {
             </combobox>
             <button><name>submit</name>
               <args>
-                <themeimage>find</themeimage>
+                <themeimage>zoom</themeimage>
                 <horiz>true</horiz>
                 <label type="encoded">'.urlencode($gLocale->getStr('search.submit')).'</label>
                 <formsubmit>search</formsubmit>
@@ -143,6 +143,7 @@ function main_search($eventData) {
             </button>
           </children></horizgroup>
     
+<!--
               <label row="1" col="0" halign="" valign="top"><args><label type="encoded">'.urlencode($gLocale->getStr('restrict_to.label')).'</label></args></label>
     
               <vertgroup row="1" col="1">
@@ -186,7 +187,7 @@ function main_search($eventData) {
     
                 </children>
               </vertgroup>
-    
+-->
             </children>
           </grid>
         </children>
@@ -287,7 +288,7 @@ function main_trashcan($eventData) {
             <button><name>emptytrashcan</name>
               <args>
                 <label type="encoded">'.urlencode($gLocale->getStr('empty_trashcan.button')).'</label>
-                <themeimage>button_ok</themeimage>
+                <themeimage>buttonok</themeimage>
                 <horiz>true</horiz>
                 <frame>false</frame>
                 <needconfirm>true</needconfirm>
@@ -360,7 +361,7 @@ function main_today_activities($eventData) {
                   <args>
                     <horiz>true</horiz>
                     <frame>false</frame>
-                    <themeimage>filter</themeimage>
+                    <themeimage>down</themeimage>
                     <label type="encoded">'.urlencode($gLocale->getStr('filter_day_activities.button')).'</label>
                     <formsubmit>date</formsubmit>
             <action type="encoded">'.urlencode(WuiEventsCall::buildEventsCallString('', array(array('view', 'today_activities')))).'</action>
@@ -575,7 +576,7 @@ function main_stats($eventData) {
     
                 <button>
                   <args>
-                    <themeimage>button_ok</themeimage>
+                    <themeimage>buttonok</themeimage>
                     <horiz>true</horiz>
                     <label type="encoded">'.urlencode($gLocale->getStr('get_stats.button')).'</label>
                     <formsubmit>stats</formsubmit>
@@ -628,16 +629,16 @@ function main_stats($eventData) {
 $main_disp->Dispatch();
 
 $toolbars = $innowork_core->GetMainToolBar();
-$toolbars['help'] = array('help' => array('label' => $gLocale->getStr('help.button'), 'themeimage' => 'help', 'horiz' => 'true', 'action' => WuiEventsCall::buildEventsCallString('', array(array('view', 'help', '')))));
+$toolbars['help'] = array('help' => array('label' => $gLocale->getStr('help.button'), 'themeimage' => 'info', 'horiz' => 'true', 'action' => WuiEventsCall::buildEventsCallString('', array(array('view', 'help', '')))));
 
-$innomatictoolbars = array(new WuiInnomaticToolBar('view', array('toolbars' => $toolbars)));
+$innomatictoolbars = array(new WuiInnomaticToolBar('view', array('toolbars' => $toolbars, 'toolbar' => 'true')));
 
 // search
 // acl
 // settings
 // relations
 
-$gWui->addChild(new WuiInnomaticPage('page', array('pagetitle' => $gPage_title, 'icon' => 'desktop', 'menu' => $innowork_core->GetMainMenu(), 'toolbars' => $innomatictoolbars, 'maincontent' => $gPage_content, 'status' => $gPage_status)));
+$gWui->addChild(new WuiInnomaticPage('page', array('pagetitle' => $gPage_title, 'icon' => 'desktop', 'toolbars' => $innomatictoolbars, 'maincontent' => $gPage_content, 'status' => $gPage_status)));
 
 $gWui->render();
 
