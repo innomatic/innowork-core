@@ -54,7 +54,7 @@ class WuiInnoworkSummary extends WuiXml {
     function _FillDefinition() {
         $result = false;
         require_once('innomatic/locale/LocaleCountry.php');
-        $country = new LocaleCountry(InnomaticContainer::instance('innomaticcontainer')->getCurrentUser()->getCountry());
+        $country = new LocaleCountry(\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentUser()->getCountry());
 
         $date_array['hours'] = date('H');
         $date_array['minutes'] = date('i');

@@ -15,7 +15,7 @@
  * The Original Code is Innowork.
  *
  * The Initial Developer of the Original Code is Innoteam.
- * Portions created by the Initial Developer are Copyright (C) 2002-2009
+ * Portions created by the Initial Developer are Copyright (C) 2002-2013
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
@@ -23,10 +23,11 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-require_once('innomatic/logging/Logger.php');
-require_once('innomatic/locale/LocaleCatalog.php');
-require_once('innomatic/dataaccess/DataAccess.php');
-require_once('innomatic/util/Singleton.php');
+namespace Innowork\Core;
+
+use \Innomatic\Util\Singleton;
+use \Innomatic\Locale\LocaleCatalog;
+use \Innomatic\Dataaccess\DataAccess;
 
 /*!
  @class InnoworkCore
@@ -46,9 +47,9 @@ class InnoworkCore extends Singleton {
     
      @abstract Class constructor.
      */
-    public function ___construct(DataAccess $rrootDb, DataAccess $rdomainDA) {
-        $this->mLog = InnomaticContainer::instance('innomaticcontainer')->getLogger();
-        $this->mLocale = new LocaleCatalog('innowork-core::misc', InnomaticContainer::instance('innomaticcontainer')->getCurrentUser()->getLanguage());
+    public function ___construct(\Innomatic\Dataaccess\DataAccess $rrootDb, \Innomatic\Dataaccess\DataAccess $rdomainDA) {
+        $this->mLog = \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getLogger();
+        $this->mLocale = new LocaleCatalog('innowork-core::misc', \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentUser()->getLanguage());
         $this->mrRootDb = $rrootDb;
         $this->mrDomainDA = $rdomainDA;
     }
@@ -59,8 +60,8 @@ class InnoworkCore extends Singleton {
     public function getSummaries($showMode = '', $complete = false) {
         $result = false;
 
-        if (InnomaticContainer::instance('innomaticcontainer')->getState() == InnomaticContainer::STATE_DEBUG) {
-            InnomaticContainer::instance('innomaticcontainer')->getLoadTimer()->Mark('start - InnoworkCore::GetSummaries()');
+        if (\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getState() == InnomaticContainer::STATE_DEBUG) {
+            \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getLoadTimer()->Mark('start - InnoworkCore::GetSummaries()');
         }
 
         if ($complete) {
@@ -79,7 +80,7 @@ class InnoworkCore extends Singleton {
                 $result = array();
                 require_once('innomatic/domain/user/Permissions.php');
                 
-                $tmp_perm = new Permissions($this->mrDomainDA, InnomaticContainer::instance('innomaticcontainer')->getCurrentUser()->getGroup());
+                $tmp_perm = new Permissions($this->mrDomainDA, \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentUser()->getGroup());
                 while (!$enabledtypes_query->eof) {
                     switch ($showMode) {
                         case 'app' :
@@ -103,7 +104,7 @@ class InnoworkCore extends Singleton {
                                 $class_name = $itemtype_query->getFields('classname');
 								if (class_exists($class_name)) {
 									$tmp_class = new $class_name($this->mrRootDb, $this->mrDomainDA);
-									$tmp_locale = new LocaleCatalog($itemtype_query->getFields('catalog'), InnomaticContainer::instance('innomaticcontainer')->getCurrentUser()->getLanguage());
+									$tmp_locale = new LocaleCatalog($itemtype_query->getFields('catalog'), \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentUser()->getLanguage());
 
 									$item_type = $enabledtypes_query->getFields('itemtype');
 
@@ -154,8 +155,8 @@ class InnoworkCore extends Singleton {
             $enabledtypes_query->free();
         }
 
-        if (InnomaticContainer::instance('innomaticcontainer')->getState() == InnomaticContainer::STATE_DEBUG) {
-            InnomaticContainer::instance('innomaticcontainer')->getLoadTimer()->Mark('end - InnoworkCore::GetSummaries()');
+        if (\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getState() == InnomaticContainer::STATE_DEBUG) {
+            \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getLoadTimer()->Mark('end - InnoworkCore::GetSummaries()');
         }
 
         return $result;
@@ -198,8 +199,8 @@ class InnoworkCore extends Singleton {
     public function emptyTrashcan() {
         require_once('innowork/core/InnoworkKnowledgeBase.php');
         $innowork_kb = new InnoworkKnowledgeBase(
-        	InnomaticContainer::instance('innomaticcontainer')->getDataAccess(),
-        	InnomaticContainer::instance('innomaticcontainer')->getCurrentDomain()->getDataAccess());
+        	\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getDataAccess(),
+        	\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->getDataAccess());
 
         $global_search = $innowork_kb->GlobalSearch('', '', true);
 
@@ -215,8 +216,8 @@ class InnoworkCore extends Singleton {
                 		continue;
                 	}
                     $tmp_class = new $class_name(
-                    	InnomaticContainer::instance('innomaticcontainer')->getDataAccess(),
-                    	InnomaticContainer::instance('innomaticcontainer')->getCurrentDomain()->getDataAccess(),
+                    	\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getDataAccess(),
+                    	\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->getDataAccess(),
                     	$item['id']);
                     if (is_object($tmp_class)) {
                     	// Removes the trashed item.
@@ -246,20 +247,20 @@ class InnoworkCore extends Singleton {
             $date['mday'] = date('d');
         }
 
-        $act_query = InnomaticContainer::instance('innomaticcontainer')->getCurrentDomain()->getDataAccess()->Execute(
+        $act_query = \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->getDataAccess()->Execute(
         	'SELECT
         		*
         	FROM
         		innowork_core_itemslog
         	WHERE
-        		eventtime LIKE '.InnomaticContainer::instance('innomaticcontainer')->getCurrentDomain()->getDataAccess()->formatText($date['year'].'-'.$date['mon'].'-'.$date['mday'].' %'));
+        		eventtime LIKE '.\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->getDataAccess()->formatText($date['year'].'-'.$date['mon'].'-'.$date['mday'].' %'));
 
         if ($act_query->getNumberRows()) {
             $summaries = $this->getSummaries();
             $found = 0;
 
             if (!strlen($userId)) {
-                $userId = InnomaticContainer::instance('innomaticcontainer')->getCurrentUser()->getUserId();
+                $userId = \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentUser()->getUserId();
             }
 
             while (!$act_query->eof) {
@@ -270,7 +271,7 @@ class InnoworkCore extends Singleton {
                 	continue;
                 }
                 
-                $tmp_class = new $class_name(InnomaticContainer::instance('innomaticcontainer')->getDataAccess(), InnomaticContainer::instance('innomaticcontainer')->getCurrentDomain()->getDataAccess(), $act_query->getFields('itemid'));
+                $tmp_class = new $class_name(\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getDataAccess(), \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->getDataAccess(), $act_query->getFields('itemid'));
 
                 if (is_object($tmp_class)) {
                     if ($tmp_class->mOwnerId == $userId or $tmp_class->mAcl->checkPermission('', $userId)) {

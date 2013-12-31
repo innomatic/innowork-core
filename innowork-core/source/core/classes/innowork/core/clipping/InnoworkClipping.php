@@ -130,17 +130,17 @@ class InnoworkClipping extends InnoworkItem {
         $result = false;
         $itemId = (int) $itemId;
         if ($this->mItemId and $itemId) {
-            $check = InnomaticContainer::instance('innomaticcontainer')->getCurrentDomain()->getDataAccess()->execute('SELECT itemid FROM innowork_core_clippings_items WHERE itemtype='.InnomaticContainer::instance('innomaticcontainer')->getCurrentDomain()->getDataAccess()->formatText($itemType).' AND itemid='.$itemId);
+            $check = \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->getDataAccess()->execute('SELECT itemid FROM innowork_core_clippings_items WHERE itemtype='.\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->getDataAccess()->formatText($itemType).' AND itemid='.$itemId);
 
             if (!$check->getNumberRows()) {
-                $result = InnomaticContainer::instance('innomaticcontainer')->getCurrentDomain()->getDataAccess()->execute('INSERT INTO innowork_core_clippings_items VALUES('.$this->mItemId.','.InnomaticContainer::instance('innomaticcontainer')->getCurrentDomain()->getDataAccess()->formatText($itemType).','.$itemId.')');
+                $result = \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->getDataAccess()->execute('INSERT INTO innowork_core_clippings_items VALUES('.$this->mItemId.','.\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->getDataAccess()->formatText($itemType).','.$itemId.')');
             } else
                 $result = true;
 
             if ($result) {
                 require_once('innowork/core/InnoworkItemLog.php');
                 $log = new InnoworkItemLog($this->mItemType, $this->mItemId);
-                $log->LogChange(InnomaticContainer::instance('innomaticcontainer')->getCurrentUser()->getUserName());
+                $log->LogChange(\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentUser()->getUserName());
             }
             $check->Free();
         }
@@ -151,7 +151,7 @@ class InnoworkClipping extends InnoworkItem {
         $result = false;
         $itemId = (int) $itemId;
         if ($itemId)
-            $result = $this->mrDomainDA->execute('DELETE FROM innowork_core_clippings_items WHERE itemtype='.InnomaticContainer::instance('innomaticcontainer')->getCurrentDomain()->getDataAccess()->formatText($itemType).' AND itemid='.$itemId);
+            $result = $this->mrDomainDA->execute('DELETE FROM innowork_core_clippings_items WHERE itemtype='.\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->getDataAccess()->formatText($itemType).' AND itemid='.$itemId);
 
         return $result;
     }
@@ -159,10 +159,10 @@ class InnoworkClipping extends InnoworkItem {
     public function getItems() {
         $result = array('result' => array(), 'founditems' => 0);
         if ($this->mItemId) {
-            $items_query = InnomaticContainer::instance('innomaticcontainer')->getCurrentDomain()->getDataAccess()->execute('SELECT itemtype,itemid FROM innowork_core_clippings_items WHERE clippingid='.$this->mItemId.' ORDER BY itemtype,itemid');
+            $items_query = \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->getDataAccess()->execute('SELECT itemtype,itemid FROM innowork_core_clippings_items WHERE clippingid='.$this->mItemId.' ORDER BY itemtype,itemid');
             $result['founditems'] = 0;
             require_once('innowork/core/InnoworkCore.php');
-            $innowork_core = InnoworkCore::instance('innoworkcore', InnomaticContainer::instance('innomaticcontainer')->getDataAccess(), InnomaticContainer::instance('innomaticcontainer')->getCurrentDomain()->getDataAccess());
+            $innowork_core = InnoworkCore::instance('innoworkcore', \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getDataAccess(), \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->getDataAccess());
             $summaries = $innowork_core->GetSummaries();
 
             while (!$items_query->eof) {
@@ -172,14 +172,14 @@ class InnoworkClipping extends InnoworkItem {
 					continue;
 				}
 
-				$tmp_class = new $class_name(InnomaticContainer::instance('innomaticcontainer')->getDataAccess(), InnomaticContainer::instance('innomaticcontainer')->getCurrentDomain()->getDataAccess(), $items_query->getFields('itemid'));
+				$tmp_class = new $class_name(\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getDataAccess(), \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->getDataAccess(), $items_query->getFields('itemid'));
 
                 if (!is_object($tmp_class)) {
 					$items_query->MoveNext();
 					continue;
 				}
 
-				if ($tmp_class->mOwnerId == InnomaticContainer::instance('innomaticcontainer')->getCurrentUser()->getUserId() or $tmp_class->mAcl->checkPermission('', InnomaticContainer::instance('innomaticcontainer')->getCurrentUser()->getUserId())) {
+				if ($tmp_class->mOwnerId == \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentUser()->getUserId() or $tmp_class->mAcl->checkPermission('', \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentUser()->getUserId())) {
 					$item = $tmp_class->GetItem();
 
 					$size = count($item);

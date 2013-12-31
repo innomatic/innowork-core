@@ -34,11 +34,11 @@ global $gXml_def, $innowork_core, $gWui, $gPage_status, $gPage_title;
 	
 $gLocale = new LocaleCatalog(
 	'innowork-core::coreprefs',
-	InnomaticContainer::instance('innomaticcontainer')->getCurrentUser()->getLanguage());
+	\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentUser()->getLanguage());
 $innowork_core = InnoworkCore::instance(
 	'innoworkcore',
-	InnomaticContainer::instance('innomaticcontainer')->getDataAccess(),
-	InnomaticContainer::instance('innomaticcontainer')->getCurrentDomain()->getDataAccess());
+	\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getDataAccess(),
+	\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->getDataAccess());
 
 $gWui = Wui::instance('wui');
 $gWui->loadWidget( 'xml' );
@@ -122,7 +122,7 @@ function main_default($eventData) {
 		if (!class_exists($class_name)) {
 			continue;
 		}
-        $tmp_class = new $class_name(InnomaticContainer::instance('innomaticcontainer')->getDataAccess(), InnomaticContainer::instance('innomaticcontainer')->getCurrentDomain()->getDataAccess(), 0);
+        $tmp_class = new $class_name(\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getDataAccess(), \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->getDataAccess(), 0);
 
         if ($type != 'defaultaclitem' and $tmp_class->mNoAcl != true and !isset($tmp_class->_mSkipAclSet) and !isset($tmp_class->_mCreationAcl) ) {
             $gXml_def .= '
@@ -158,14 +158,14 @@ function main_default($eventData) {
 
     if (isset($eventData['setdefacl'])) {
         
-        $check_query = InnomaticContainer::instance('innomaticcontainer')->getCurrentDomain()->getDataAccess()->Execute('SELECT * FROM innowork_core_acls_defaults WHERE ownerid='.InnomaticContainer::instance('innomaticcontainer')->getCurrentUser()->getUserId().' AND itemtype='.InnomaticContainer::instance('innomaticcontainer')->getCurrentDomain()->getDataAccess()->formatText($eventData['setdefacl']));
+        $check_query = \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->getDataAccess()->Execute('SELECT * FROM innowork_core_acls_defaults WHERE ownerid='.\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentUser()->getUserId().' AND itemtype='.\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->getDataAccess()->formatText($eventData['setdefacl']));
         
         if ( $check_query->getNumberRows() ) {
             $id = $check_query->getFields('id');
         }
         else
         {
-            $item = new InnoworkDefaultAclItem(InnomaticContainer::instance('innomaticcontainer')->getDataAccess(), InnomaticContainer::instance('innomaticcontainer')->getCurrentDomain()->getDataAccess());
+            $item = new InnoworkDefaultAclItem(\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getDataAccess(), \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->getDataAccess());
             $params['itemtype'] = $eventData['setdefacl'];
             $item->Create($params);
             $id = $item->mItemId;
@@ -189,7 +189,7 @@ function main_default($eventData) {
         <args>
           <itemtype>defaultaclitem</itemtype>
           <itemid>'.$id.'</itemid>
-          <itemownerid>'.InnomaticContainer::instance('innomaticcontainer')->getCurrentUser()->getUserId().'</itemownerid>
+          <itemownerid>'.\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentUser()->getUserId().'</itemownerid>
           <defaultaction type="encoded">'.urlencode(WuiEventsCall::buildEventsCallString('', array(array('view', 'default', array('setdefacl' => $eventData['setdefacl']))))).'</defaultaction>
         </args>
       </innoworkitemacl>

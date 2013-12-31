@@ -37,8 +37,8 @@ class InnoworkKnowledgeBase {
     /*!
      @function InnoworkKnowledgeBase
      */
-    public function __construct(DataAccess $rrootDb, DataAccess $rdomainDA, $summaries = '') {
-        $this->mLog = InnomaticContainer::instance('innomaticcontainer')->getLogger();
+    public function __construct(\Innomatic\Dataaccess\DataAccess $rrootDb, \Innomatic\Dataaccess\DataAccess $rdomainDA, $summaries = '') {
+        $this->mLog = \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getLogger();
         $this->mrRootDb = $rrootDb;
         $this->mrDomainDA = $rdomainDA;
         if (is_array($summaries))
@@ -55,8 +55,8 @@ class InnoworkKnowledgeBase {
     public function &globalSearch($searchKeys, $type = '', $trashcan = false, $limit = 0, $restrictToPermission = InnoworkItem::SEARCH_RESTRICT_NONE) {
         $result = array();
         
-        if (InnomaticContainer::instance('innomaticcontainer')->getState() == InnomaticContainer::STATE_DEBUG) {
-            InnomaticContainer::instance('innomaticcontainer')->getLoadTimer()->Mark('InnoworkCore: start global search');
+        if (\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getState() == InnomaticContainer::STATE_DEBUG) {
+            \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getLoadTimer()->Mark('InnoworkCore: start global search');
         }
         $result['result'] = array();
         $result['founditems'] = 0;
@@ -72,13 +72,13 @@ class InnoworkKnowledgeBase {
                 if (!$trashcan or ($trashcan and $tmp_class->mNoTrash == false)) {
                     $result['result'][$key] = $tmp_class->Search($searchKeys, '', false, $trashcan, (int) $limit, 0, $restrictToPermission);
                     $result['founditems'] += count($result['result'][$key]);
-                    //$tmp_locale = new LocaleCatalog( $itemtype_query->getFields( 'catalog' ), InnomaticContainer::instance('innomaticcontainer')->getCurrentUser()->getLanguage() );
+                    //$tmp_locale = new LocaleCatalog( $itemtype_query->getFields( 'catalog' ), \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentUser()->getLanguage() );
                 }
             }
         }
         reset($this->mSummaries);
-        if (InnomaticContainer::instance('innomaticcontainer')->getState() == InnomaticContainer::STATE_DEBUG) {
-            InnomaticContainer::instance('innomaticcontainer')->getLoadTimer()->Mark('InnoworkCore: end global search');
+        if (\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getState() == InnomaticContainer::STATE_DEBUG) {
+            \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getLoadTimer()->Mark('InnoworkCore: end global search');
         }
         return $result;
     }

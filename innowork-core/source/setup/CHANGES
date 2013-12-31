@@ -6,11 +6,18 @@
 
 
 
+3.2 - 2013/11/30
+----------------
+CHANGES:
+- Migration to Innomatic 6.1. (Alex Pagnoni)
+
+
+
 3.1 - 2009/03/10
 ----------------
 CHANGES:
-- Migration to Innomatic 5000 (Alex Pagnoni).
-- Complete name in item ACL widget in place of the username (Alex Pagnoni).
+- Migration to Innomatic 5000. (Alex Pagnoni)
+- Complete name in item ACL widget in place of the username. (Alex Pagnoni)
 - Deep code reorganization. (Alex Pagnoni)
 - Many bugfixes. (Alex Pagnoni)
 

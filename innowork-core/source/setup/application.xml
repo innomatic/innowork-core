@@ -3,15 +3,15 @@
 	<definition>
 		<idname>innowork-core</idname>
 		<release>
-			<version>3.1</version>
-			<date>2009/03/10</date>
+			<version>3.2</version>
+			<date>2013/11/30</date>
 			<changesfile>CHANGES</changesfile>
 		</release>
 		<description>Innowork Engine</description>
 		<category>intranet</category>
 		<iconfile></iconfile>
 		<dependencies>
-			<dependency>innomatic[6.0]</dependency>
+			<dependency>innomatic[6.2]</dependency>
 			<dependency>phplotlib[5.0-3]</dependency>
 		</dependencies>
 		<options>

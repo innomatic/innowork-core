@@ -27,8 +27,8 @@ require_once('innomatic/wui/Wui.php');
 if ( (isset(Wui::instance('wui')->parameters['wui']['wui']['evd']['aclitemtype']) or isset(Wui::instance('wui')->parameters['wui']['wui']['evd']['aclmode']) or (isset(Wui::instance('wui')->parameters['wui']['wui']['evn']) and (Wui::instance('wui')->parameters['wui']['wui']['evn'] == 'innoworkacladd' or Wui::instance('wui')->parameters['wui']['wui']['evn'] == 'innoworkaclremove')))) {
     require_once('innowork/core/InnoworkAcl.php');
     $acl = new InnoworkAcl(
-    	InnomaticContainer::instance('innomaticcontainer')->getDataAccess(),
-    	InnomaticContainer::instance('innomaticcontainer')->getCurrentDomain()->getDataAccess(),
+    	\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getDataAccess(),
+    	\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->getDataAccess(),
     	Wui::instance('wui')->parameters['wui']['wui']['evd']['aclitemtype'],
     	Wui::instance('wui')->parameters['wui']['wui']['evd']['aclitemid']);
 
@@ -84,16 +84,16 @@ if ( (isset(Wui::instance('wui')->parameters['wui']['wui']['evd']['aclitemtype']
                 break;
 
             case 'innoworkconvert' :
-                $tmp_innoworkcore = InnoworkCore::instance('innoworkcore', InnomaticContainer::instance('innomaticcontainer')->getDataAccess(), InnomaticContainer::instance('innomaticcontainer')->getCurrentDomain()->getDataAccess());
+                $tmp_innoworkcore = InnoworkCore::instance('innoworkcore', \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getDataAccess(), \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->getDataAccess());
                 $summaries = $tmp_innoworkcore->getSummaries();
                 $class_name = $summaries[Wui::instance('wui')->parameters['wui']['wui']['evd']['aclitemtype']]['classname'];
 				if (!class_exists($class_name)) {
 					break;
 				}
-				$tmp_class = new $class_name (InnomaticContainer::instance('innomaticcontainer')->getDataAccess(), InnomaticContainer::instance('innomaticcontainer')->getCurrentDomain()->getDataAccess(), Wui::instance('wui')->parameters['wui']['wui']['evd']['aclitemid']);
+				$tmp_class = new $class_name (\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getDataAccess(), \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->getDataAccess(), Wui::instance('wui')->parameters['wui']['wui']['evd']['aclitemid']);
 
                 if ($tmp_class->mConvertible) {
-                    $tmp_data = $tmp_class->getItem(InnomaticContainer::instance('innomaticcontainer')->getCurrentUser()->getUserId());
+                    $tmp_data = $tmp_class->getItem(\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentUser()->getUserId());
                     $tmp_class->convertTo(Wui::instance('wui')->parameters['wui']['wui']['evd']['type']);
                     unset($tmp_data);
                     unset($tmp_class);
@@ -104,7 +104,7 @@ if ( (isset(Wui::instance('wui')->parameters['wui']['wui']['evd']['aclitemtype']
 
             case 'innoworkaddtoclipping' :
                 require_once('innowork/core/clipping/InnoworkClipping.php');
-                $tmp_innoworkclipping = new InnoworkClipping(InnomaticContainer::instance('innomaticcontainer')->getDataAccess(), InnomaticContainer::instance('innomaticcontainer')->getCurrentDomain()->getDataAccess(), Wui::instance('wui')->parameters['wui']['wui']['evd']['clippingid']);
+                $tmp_innoworkclipping = new InnoworkClipping(\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getDataAccess(), \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->getDataAccess(), Wui::instance('wui')->parameters['wui']['wui']['evd']['clippingid']);
                 $tmp_innoworkclipping->addItem(Wui::instance('wui')->parameters['wui']['wui']['evd']['aclitemtype'], Wui::instance('wui')->parameters['wui']['wui']['evd']['aclitemid']);
 
                 unset($tmp_innoworkclipping);
