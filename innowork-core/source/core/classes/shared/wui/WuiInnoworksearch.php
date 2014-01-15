@@ -108,12 +108,12 @@ class WuiInnoworkSearch extends WuiXml {
 
                     switch ($result['_acl']['type']) {
                         case InnoworkAcl::TYPE_PRIVATE :
-                            $image = 'personal';
+                            $image = 'user';
                             break;
 
                         case InnoworkAcl::TYPE_PUBLIC :
                         case InnoworkAcl::TYPE_ACL :
-                            $image = 'kuser';
+                            $image = 'useradd';
                             break;
                     }
 

@@ -138,12 +138,12 @@ function main_default($eventData) {
     foreach ($search_results as $id => $clipping) {
         switch ($clipping['_acl']['type']) {
             case InnoworkAcl::TYPE_PRIVATE :
-                $image = 'personal';
+                $image = 'user';
                 break;
 
             case InnoworkAcl::TYPE_PUBLIC :
             case InnoworkAcl::TYPE_ACL :
-                $image = 'kuser';
+                $image = 'useradd';
                 break;
         }
 
