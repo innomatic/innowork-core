@@ -16,7 +16,7 @@
  * The Original Code is Innowork.
  *
  * The Initial Developer of the Original Code is Innoteam.
- * Portions created by the Initial Developer are Copyright (C) 2002-2009
+ * Portions created by the Initial Developer are Copyright (C) 2002-2014
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
@@ -250,6 +250,7 @@ class WuiInnoworkItemAcl extends WuiXml {
                                       <horizgroup>
                                         <args>
                                           <align>middle</align>
+                                          <width>0%</width>
                                         </args>
                                         <children>
                                           <button>
@@ -332,7 +333,7 @@ class WuiInnoworkItemAcl extends WuiXml {
                 $this->mDefinition.= '        </children></vertgroup>
                                                   </children>
                                         </form>
-                                    <horizgroup>
+                                    <horizgroup><args><width>0%</width></args>
                                       <children>';
                 if ($this->mItemOwnerId == \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentUser()->getUserId() or \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->getDomainId() == \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentUser()->getUserName()) {
                     $this->mDefinition.= '    <button><name>setactl</name>
@@ -355,7 +356,7 @@ class WuiInnoworkItemAcl extends WuiXml {
                                             <formsubmit>opts'.md5($this->mItemType.'-'.$this->mItemId).'</formsubmit>
                                             <horiz>true</horiz>
                                             <frame>false</frame>
-                                            <themeimage>'. ($acl_mode == 'advanced' ? 'forward' : 'down').'</themeimage>
+                                            <themeimage>'. ($acl_mode == 'advanced' ? 'info' : 'info').'</themeimage>
                                             <themeimagetype>mini</themeimagetype>
                                             <compact>true</compact>
                                             <label type="encoded">'.WuiXml::cdata(urlencode($locale->getStr($acl_mode == 'advanced' ? 'acl_simple.submit' : 'acl_advanced.submit'))).'</label>
@@ -378,7 +379,7 @@ class WuiInnoworkItemAcl extends WuiXml {
 
                                                       <horizgroup>
                                                         <args>
-                                                          <align>top</align>
+                                                          <align>top</align><width>0%</width>
                                                         </args>
                                                         <children>
                                                         <listbox><name>limitedacl</name>
@@ -444,6 +445,7 @@ class WuiInnoworkItemAcl extends WuiXml {
                                                     </form>
 
                                                     <horizgroup>
+                                                      <args><width>0%</width></args>
                                                       <children>
                                                         <button><name>add</name>
                                                           <args>
@@ -451,7 +453,7 @@ class WuiInnoworkItemAcl extends WuiXml {
                                                             <formsubmit>limitedacl'.md5($this->mItemType.'-'.$this->mItemId).'</formsubmit>
                                                             <horiz>true</horiz>
                                                             <frame>false</frame>
-                                                            <themeimage>buttonok</themeimage>
+                                                            <themeimage>elementadd</themeimage>
                                                             <themeimagetype>mini</themeimagetype>
                                                             <compact>true</compact>
                                                             <label type="encoded">'.WuiXml::cdata(urlencode($locale->getStr('add_acl.submit'))).'</label>
@@ -463,7 +465,7 @@ class WuiInnoworkItemAcl extends WuiXml {
                                                             <formsubmit>limitedacl'.md5($this->mItemType.'-'.$this->mItemId).'</formsubmit>
                                                             <horiz>true</horiz>
                                                             <frame>false</frame>
-                                                            <themeimage>button_cancel</themeimage>
+                                                            <themeimage>elementremove</themeimage>
                                                             <themeimagetype>mini</themeimagetype>
                                                             <compact>true</compact>
                                                             <label type="encoded">'.WuiXml::cdata(urlencode($locale->getStr('remove_acl.submit'))).'</label>
@@ -512,12 +514,12 @@ class WuiInnoworkItemAcl extends WuiXml {
                                                       <children>
                                                       <horizgroup>
                                                         <args>
-                                                          <align>middle</align>
+                                                          <align>middle</align><width>0%</width>
                                                         </args>
                                                         <children>
                                                           <button>
                                                             <args>
-                                                              <themeimage>history</themeimage>
+                                                              <themeimage>alignright</themeimage>
                                                               <themeimagetype>mini</themeimagetype>
                                                               <compact>true</compact>
                                                             </args>
@@ -558,12 +560,12 @@ class WuiInnoworkItemAcl extends WuiXml {
                                                               <children>
                                                               <horizgroup>
                                                                 <args>
-                                                                  <align>middle</align>
+                                                                  <align>middle</align><width>0%</width>
                                                                 </args>
                                                                 <children>
                                                                   <button>
                                                                     <args>
-                                                                      <themeimage>fileshare</themeimage>
+                                                                      <themeimage>elementadd</themeimage>
                                                                       <themeimagetype>mini</themeimagetype>
                                                                       <compact>true</compact>
                                                                     </args>
@@ -586,7 +588,7 @@ class WuiInnoworkItemAcl extends WuiXml {
 
                                                                 <horizgroup>
                                                                   <args>
-                                                                    <align>middle</align>
+                                                                    <align>middle</align><width>0%</width>
                                                                   </args>
                                                                   <children>
 
@@ -601,7 +603,7 @@ class WuiInnoworkItemAcl extends WuiXml {
                                                                       <args>
                                                                         <horiz>true</horiz>
                                                                         <frame>false</frame>
-                                                                        <themeimage>filenew</themeimage>
+                                                                        <themeimage>arrowright</themeimage>
                                                                         <themeimagetype>mini</themeimagetype>
                                                                         <compact>true</compact>
                                                                         <formsubmit>convert'.md5($this->mItemType.'-'.$this->mItemId).'</formsubmit>
@@ -628,12 +630,12 @@ class WuiInnoworkItemAcl extends WuiXml {
                                                       <children>
                                                       <horizgroup>
                                                         <args>
-                                                          <align>middle</align>
+                                                          <align>middle</align><width>0%</width>
                                                         </args>
                                                         <children>
                                                           <button>
                                                             <args>
-                                                              <themeimage>doc</themeimage>
+                                                              <themeimage>clip</themeimage>
                                                               <themeimagetype>mini</themeimagetype>
                                                               <compact>true</compact>
                                                             </args>
@@ -656,7 +658,7 @@ class WuiInnoworkItemAcl extends WuiXml {
 
                                                         <horizgroup>
                                                           <args>
-                                                            <align>middle</align>
+                                                            <align>middle</align><width>0%</width>
                                                           </args>
                                                           <children>
 
@@ -671,7 +673,7 @@ class WuiInnoworkItemAcl extends WuiXml {
                                                               <args>
                                                                 <horiz>true</horiz>
                                                                 <frame>false</frame>
-                                                                <themeimage>forward</themeimage>
+                                                                <themeimage>arrowright</themeimage>
                                                                 <themeimagetype>mini</themeimagetype>
                                                                 <compact>true</compact>
                                                                 <formsubmit>clipping'.md5($this->mItemType.'-'.$this->mItemId).'</formsubmit>
@@ -734,7 +736,7 @@ class WuiInnoworkItemAcl extends WuiXml {
                                             <vertgroup row="'.$row ++.'" col="0" halign="" valign="" nowrap="true"><name>vg</name><children>
                                             <horizgroup>
                                         <args>
-                                          <align>middle</align>
+                                          <align>middle</align><width>0%</width>
                                         </args>
                                         <children>
                                           <button>
@@ -781,7 +783,7 @@ class WuiInnoworkItemAcl extends WuiXml {
                                                 </args>
                                               </label>
 
-                                    <horizgroup>
+                                    <horizgroup><args><width>0%</width></args>
                                       <children>
                                         <button><name>setopts</name>
                                           <args>
@@ -789,7 +791,7 @@ class WuiInnoworkItemAcl extends WuiXml {
                                             <formsubmit>opts'.md5($this->mItemType.'-'.$this->mItemId).'</formsubmit>
                                             <horiz>true</horiz>
                                             <frame>false</frame>
-                                            <themeimage>'. ($acl_mode == 'advanced' ? 'forward' : 'down').'</themeimage>
+                                            <themeimage>'. ($acl_mode == 'advanced' ? 'info' : 'info').'</themeimage>
                                             <themeimagetype>mini</themeimagetype>
                                             <compact>true</compact>
                                             <label type="encoded">'.WuiXml::cdata(urlencode($locale->getStr($acl_mode == 'advanced' ? 'acl_simple.submit' : 'acl_advanced.submit'))).'</label>
@@ -828,12 +830,12 @@ class WuiInnoworkItemAcl extends WuiXml {
                                                       <children>
                                                             <horizgroup>
                                                         <args>
-                                                          <align>middle</align>
+                                                          <align>middle</align><width>0%</width>
                                                         </args>
                                                         <children>
                                                           <button>
                                                             <args>
-                                                              <themeimage>history</themeimage>
+                                                              <themeimage>alignright</themeimage>
                                                               <themeimagetype>mini</themeimagetype>
                                                               <compact>true</compact>
                                                             </args>
@@ -873,12 +875,12 @@ class WuiInnoworkItemAcl extends WuiXml {
                                                               <children>
                                                               <horizgroup>
                                                                 <args>
-                                                                  <align>middle</align>
+                                                                  <align>middle</align><width>0%</width>
                                                                 </args>
                                                                 <children>
                                                                   <button>
                                                                     <args>
-                                                                      <themeimage>fileshare</themeimage>
+                                                                      <themeimage>elementadd</themeimage>
                                                                       <themeimagetype>mini</themeimagetype>
                                                                       <compact>true</compact>
                                                                     </args>
@@ -901,7 +903,7 @@ class WuiInnoworkItemAcl extends WuiXml {
 
                                                                 <horizgroup>
                                                                   <args>
-                                                                    <align>middle</align>
+                                                                    <align>middle</align><width>0%</width>
                                                                   </args>
                                                                   <children>
 
@@ -916,7 +918,7 @@ class WuiInnoworkItemAcl extends WuiXml {
                                                                       <args>
                                                                         <horiz>true</horiz>
                                                                         <frame>false</frame>
-                                                                        <themeimage>filenew2</themeimage>
+                                                                        <themeimage>arrowright</themeimage>
                                                                         <themeimagetype>mini</themeimagetype>
                                                                         <compact>true</compact>
                                                                         <formsubmit>convert'.md5($this->mItemType.'-'.$this->mItemId).'</formsubmit>
@@ -943,12 +945,12 @@ class WuiInnoworkItemAcl extends WuiXml {
                                                       <children>
                                                       <horizgroup>
                                                         <args>
-                                                          <align>middle</align>
+                                                          <align>middle</align><width>0%</width>
                                                         </args>
                                                         <children>
                                                           <button>
                                                             <args>
-                                                              <themeimage>doc</themeimage>
+                                                              <themeimage>clip</themeimage>
                                                               <themeimagetype>mini</themeimagetype>
                                                               <compact>true</compact>
                                                             </args>
@@ -971,7 +973,7 @@ class WuiInnoworkItemAcl extends WuiXml {
 
                                                         <horizgroup>
                                                           <args>
-                                                            <align>middle</align>
+                                                            <align>middle</align><width>0%</width>
                                                           </args>
                                                           <children>
 
@@ -986,7 +988,7 @@ class WuiInnoworkItemAcl extends WuiXml {
                                                               <args>
                                                                 <horiz>true</horiz>
                                                                 <frame>false</frame>
-                                                                <themeimage>forward</themeimage>
+                                                                <themeimage>arrowright</themeimage>
                                                                 <themeimagetype>mini</themeimagetype>
                                                                 <compact>true</compact>
                                                                 <formsubmit>clipping'.md5($this->mItemType.'-'.$this->mItemId).'</formsubmit>
