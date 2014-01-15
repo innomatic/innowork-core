@@ -6,6 +6,16 @@
 
 
 
+3.3
+----------------
+CHANGES:
+- Updated icons to new style. (Alex Pagnoni)
+- Improved labels. (Alex Pagnoni)
+- Removed summary. (Alex Pagnoni)
+- Added word wrapping in search results widget. (Alex Pagnoni)
+
+
+
 3.2 - 2013/11/30
 ----------------
 CHANGES:

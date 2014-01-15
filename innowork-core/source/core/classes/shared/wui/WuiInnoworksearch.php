@@ -180,6 +180,7 @@ class WuiInnoworkSearch extends WuiXml {
                             $this->mDefinition.= '<label row="'.$row.'" col="'.$col.'"><name>key</name>
                                                               <args>
                                                                 <compact>true</compact>
+                            									<nowrap>false</nowrap>
                                                                 <label type="encoded">'.WuiXml::cdata(urlencode($value)).'</label>
                                                               </args>
                                                             </label>';
