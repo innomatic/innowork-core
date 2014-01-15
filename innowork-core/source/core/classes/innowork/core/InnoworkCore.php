@@ -172,7 +172,6 @@ class InnoworkCore extends Singleton {
     	
         $summaries = $this->getSummaries();
         $result['main'] = array(
-        		'home' => array('label' => $this->mLocale->getStr('summary.button'), 'themeimage' => 'home', 'horiz' => 'true', 'action' => WuiEventsCall::buildEventsCallString('1innoworkcore', array(array('view', 'default', '')))),
         		'search' => array('label' => $this->mLocale->getStr('search.button'), 'themeimage' => 'zoom', 'horiz' => 'true', 'action' => WuiEventsCall::buildEventsCallString('1innoworkcore', array(array('view', 'search', ''))))
         		);
         $result['tools'] = array(
