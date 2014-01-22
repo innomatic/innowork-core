@@ -23,7 +23,6 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-
 /*!
  @class InnoworkItem
  @abstract Base item class.
@@ -93,6 +92,12 @@ abstract class InnoworkItem
     public $mGenericFields = array();
     /*! @var mConvertible boolean - True if the item accepts to be converted from or to another item. */
     public $mConvertible = false;
+    
+    /**
+     * Array of tags supported by this item, eg. task, invoice, project, etc.
+     * @var array
+     */
+    public $mTags = array();
 
     /*!
      @function InnoworkItem
@@ -862,12 +867,25 @@ abstract class InnoworkItem
             }
             reset($this->mRelatedItemsFields);
             require_once('innowork/core/InnoworkKnowledgeBase.php');
-            $innowork_kb = new InnoworkKnowledgeBase(\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getDataAccess(), \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->getDataAccess());
-            $result = $innowork_kb->GlobalSearch($search_keys, '');
+            $innowork_kb = new InnoworkKnowledgeBase(
+            	\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getDataAccess(),
+            	\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->getDataAccess()
+            );
+            $result = $innowork_kb->globalSearch($search_keys, '');
         }
         return $result;
     }
 
+    public function hasTag($tag)
+    {
+    	return in_array($tag, $this->mTags);
+    }
+    
+    public function getExternalItemWidgetXmlData($item)
+    {
+    	return '';
+    }
+    
     /**
      * Creates a new item of another type from the current item.
      *
