@@ -140,7 +140,6 @@ abstract class InnoworkItem {
                 //
                 $this->mOwnerId = $check_query->getFields('ownerid');
             } else {
-                require_once('innomatic/logging/Logger.php');
                 $log = \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getLogger();
                 $log->logEvent('innoworkcore.innoworkcore.innoworkitem.innoworkitem', 'Invalid item id '.$this->mItemId.' from '.$this->mItemType.' item type handler', Logger::WARNING);
                 $this->mItemId = 0;
@@ -480,8 +479,7 @@ abstract class InnoworkItem {
         $to_be_cached = false;
 
         if (!is_array($searchKeys) and !strlen($searchKeys) and !$trashcan and !$limit and !$offset and $restrictToPermission == InnoworkItem::SEARCH_RESTRICT_NONE) {
-            require_once('innomatic/datatransfer/cache/CachedItem.php');
-            $cached_item = new CachedItem(\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getDataAccess(), 'innowork-core', 'itemtypesearch-'.$this->mItemType.strtolower(str_replace(' ', '', $this->mSearchOrderBy)), \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->domaindata['id'], \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentUser()->getUserId());
+            $cached_item = new \Innomatic\Datatransfer\Cache\CachedItem(\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getDataAccess(), 'innowork-core', 'itemtypesearch-'.$this->mItemType.strtolower(str_replace(' ', '', $this->mSearchOrderBy)), \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->domaindata['id'], \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentUser()->getUserId());
             $cache_content = $cached_item->Retrieve();
             if ($cache_content != false) {
                 $goon = false;
@@ -894,7 +892,6 @@ abstract class InnoworkItem {
      * @return boolean
      */
     public function cleanCache() {
-        require_once('innomatic/datatransfer/cache/CachedItem.php');
         $cache_query = \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getDataAccess()->execute(
         	'SELECT itemid
         	FROM
@@ -904,11 +901,11 @@ abstract class InnoworkItem {
         		itemid LIKE '.\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getDataAccess()->formatText('itemtypesearch-'.$this->mItemType.'%'));
 
         while (!$cache_query->eof) {
-            $cached_item = new CachedItem(\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getDataAccess(), 'innowork-core', $cache_query->getFields('itemid'));
+            $cached_item = new \Innomatic\Datatransfer\Cache\CachedItem(\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getDataAccess(), 'innowork-core', $cache_query->getFields('itemid'));
             $cached_item->destroy();
             $cache_query->moveNext();
         }
-        $cache_query->Free();
+        $cache_query->free();
         return true;
     }
 
@@ -917,8 +914,7 @@ abstract class InnoworkItem {
      *
      */
     public function lock() {
-        require_once('innomatic/process/Semaphore.php');
-        $sem = new Semaphore('innoworkitem_'.$this->mItemType, $this->mItemId);
+        $sem = new \Innomatic\Process\Semaphore('innoworkitem_'.$this->mItemType, $this->mItemId);
         $sem->setRed();
     }
 
@@ -927,8 +923,7 @@ abstract class InnoworkItem {
      *
      */
     public function unlock() {
-        require_once('innomatic/process/Semaphore.php');
-        $sem = new Semaphore('innoworkitem_'.$this->mItemType, $this->mItemId);
+        $sem = new \Innomatic\Process\Semaphore('innoworkitem_'.$this->mItemType, $this->mItemId);
         $sem->setGreen();
     }
 
@@ -938,8 +933,7 @@ abstract class InnoworkItem {
      * @return bool
      */
     public function isLocked() {
-        require_once('innomatic/process/Semaphore.php');
-        $sem = new Semaphore('innoworkitem_'.$this->mItemType, $this->mItemId);
+        $sem = new \Innomatic\Process\Semaphore('innoworkitem_'.$this->mItemType, $this->mItemId);
         return $sem->checkStatus() == Semaphore::STATUS_RED ? true : false;
     }
 
@@ -948,10 +942,7 @@ abstract class InnoworkItem {
      *
      */
     public function waitLock() {
-        require_once('innomatic/process/Semaphore.php');
-        $sem = new Semaphore('innoworkitem_'.$this->mItemType, $this->mItemId);
+        $sem = new \Innomatic\Process\Semaphore('innoworkitem_'.$this->mItemType, $this->mItemId);
         $sem->waitGreen();
     }
 }
-
-?>

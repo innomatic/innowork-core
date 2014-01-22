@@ -641,5 +641,3 @@ $innomatictoolbars = array(new WuiInnomaticToolBar('view', array('toolbars' => $
 $gWui->addChild(new WuiInnomaticPage('page', array('pagetitle' => $gPage_title, 'icon' => 'desktop', 'toolbars' => $innomatictoolbars, 'maincontent' => $gPage_content, 'status' => $gPage_status)));
 
 $gWui->render();
-
-?>

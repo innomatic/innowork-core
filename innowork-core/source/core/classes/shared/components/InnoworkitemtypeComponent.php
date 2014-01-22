@@ -27,46 +27,54 @@
  @class InnoworkItemTypeComponent
  @abstract InnoworkItemType element handler.
  */
-class InnoworkItemTypeComponent extends ApplicationComponent {
+class InnoworkItemTypeComponent extends ApplicationComponent
+{
 	var $type = 'innoworkitemtype';
 	var $domain = true;
 
 	/*!
 	 @function InnoworkItemTypeComponent
 	 */
-	function InnoworkItemTypeComponent($rootda, $domainda, $appname, $name, $basedir) {
+	public function __construct($rootda, $domainda, $appname, $name, $basedir)
+	{
 		parent::__construct($rootda, $domainda, $appname, $name, $basedir);
 	}
 
-	public static function getType() {
+	public static function getType()
+	{
 		return 'innoworkitemtype';
 	}
 
-	public static function getPriority() {
+	public static function getPriority()
+	{
 		return 0;
 	}
 
-	public static function getIsDomain() {
+	public static function getIsDomain()
+	{
 		return true;
 	}
 
-	public static function getIsOverridable() {
+	public static function getIsOverridable()
+	{
 		return false;
 	}
 
 	/*!
 	 @function DoInstallAction
 	 */
-	function DoInstallAction($params) {
-		$result = FALSE;
+	function DoInstallAction($params)
+	{
+		$result = false;
 		if (strlen($this->name)) {
 			if (!isset($params['adminevent']) or !strlen($params['adminevent'])) {
 				$params['adminevent'] = 'default';
 			}
 
 			$result = $this->rootda->Execute('INSERT INTO innowork_core_itemtypes VALUES ('.$this->rootda->getNextSequenceValue('innowork_core_itemtypes_id_seq').','.$this->rootda->formatText($this->name).','.$this->rootda->formatText($params['catalog']).','.$this->rootda->formatText($params['classfile']).','.$this->rootda->formatText($params['classname']).','.$this->rootda->formatText($params['icon']).','.$this->rootda->formatText($params['domainpanel']).','.$this->rootda->formatText($params['miniicon']).','.$this->rootda->formatText($params['summaryname']).','.$this->rootda->formatText($params['icontype']).','.$this->rootda->formatText($params['showmode']).','.$this->rootda->formatText($params['adminevent']).')');
-		} else
-		$this->mLog->logEvent('innoworkcore.innoworkitemtypeelement.innoworkitemtypeelement.doinstallaction', 'In application '.$this->appname.', element '.$this->name.': Empty innowork type name', Logger::ERROR);
+		} else {
+			$this->mLog->logEvent('innoworkcore.innoworkitemtypeelement.innoworkitemtypeelement.doinstallaction', 'In application '.$this->appname.', element '.$this->name.': Empty innowork type name', Logger::ERROR);
+		}
 
 		return $result;
 	}
@@ -74,7 +82,8 @@ class InnoworkItemTypeComponent extends ApplicationComponent {
 	/*!
 	 @function DoUnInstallAction
 	 */
-	function DoUnInstallAction($params) {
+	public function DoUnInstallAction($params)
+	{
 		$result = FALSE;
 
 		if (strlen($this->name)) {
@@ -88,7 +97,8 @@ class InnoworkItemTypeComponent extends ApplicationComponent {
 	/*!
 	 @function DoUpdateAction
 	 */
-	function DoUpdateAction($params) {
+	public function DoUpdateAction($params)
+	{
 		$result = FALSE;
 
 		if (strlen($this->name)) {
@@ -115,7 +125,8 @@ class InnoworkItemTypeComponent extends ApplicationComponent {
 	/*!
 	 @function DoEnableDomainAction
 	 */
-	function doEnableDomainAction($params) {
+	public function doEnableDomainAction($params)
+	{
 		if (!strlen($this->name)) {
 			$this->mLog->logEvent('innoworkcore.innoworkitemtypeelement.innoworkitemtypeelement.enable', 'In application '.$this->appname.', element '.$this->name.': Empty innowork type name', Logger::ERROR);
 			return false;
@@ -126,7 +137,8 @@ class InnoworkItemTypeComponent extends ApplicationComponent {
 	/*!
 	 @function DoDisableDomainAction
 	 */
-	function doDisableDomainAction($params) {
+	public function doDisableDomainAction($params)
+	{
 		if (!strlen($this->name)) {
 			$this->mLog->logEvent('innoworkcore.innoworkitemtypeelement.innoworkitemtypeelement.disable', 'In application '.$this->appname.', element '.$this->name.': Empty innowork type name', Logger::ERROR);
 			return false;
@@ -142,8 +154,8 @@ class InnoworkItemTypeComponent extends ApplicationComponent {
 	/*!
 	 @function DoUpdateDomainAction
 	 */
-	function doUpdateDomainAction($params) {
+	public function doUpdateDomainAction($params)
+	{
 		return TRUE;
 	}
 }
-?>

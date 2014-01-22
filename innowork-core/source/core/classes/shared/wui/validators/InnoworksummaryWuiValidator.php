@@ -23,19 +23,14 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-require_once('innomatic/wui/Wui.php');
-if ((isset(Wui::instance('wui')->parameters['wui']['wui']['evn']) and (Wui::instance('wui')->parameters['wui']['wui']['evn'] == 'innoworkitemopen' or Wui::instance('wui')->parameters['wui']['wui']['evn'] == 'innoworkitemclose'))) {
-    switch (Wui::instance('wui')->parameters['wui']['wui']['evn']) {
-        case 'innoworkitemopen' :
-            require_once('shared/wui/WuiSessionkey.php');
-            $innowork_item_sk = new WuiSessionKey('innowork_itemtypesummary_'.Wui::instance('wui')->parameters['wui']['wui']['evd']['innoworkitemtype'].'_closed', array('value' => '0'));
+if ((isset(\Innomatic\Wui\Wui::instance('wui')->parameters['wui']['wui']['evn']) and (\Innomatic\Wui\Wui::instance('wui')->parameters['wui']['wui']['evn'] == 'innoworkitemopen' or \Innomatic\Wui\Wui::instance('wui')->parameters['wui']['wui']['evn'] == 'innoworkitemclose'))) {
+    switch (\Innomatic\Wui\Wui::instance('wui')->parameters['wui']['wui']['evn']) {
+        case 'innoworkitemopen':
+            $innowork_item_sk = new \Shared\Wui\WuiSessionKey('innowork_itemtypesummary_'.\Innomatic\Wui\Wui::instance('wui')->parameters['wui']['wui']['evd']['innoworkitemtype'].'_closed', array('value' => '0'));
             break;
 
-        case 'innoworkitemclose' :
-            require_once('shared/wui/WuiSessionkey.php');
-            $innowork_item_sk = new WuiSessionKey('innowork_itemtypesummary_'.Wui::instance('wui')->parameters['wui']['wui']['evd']['innoworkitemtype'].'_closed', array('value' => '1'));
+        case 'innoworkitemclose':
+            $innowork_item_sk = new \Shared\Wui\WuiSessionKey('innowork_itemtypesummary_'.\Innomatic\Wui\Wui::instance('wui')->parameters['wui']['wui']['evd']['innoworkitemtype'].'_closed', array('value' => '1'));
             break;
     }
 }
-
-?>

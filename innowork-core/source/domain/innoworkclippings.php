@@ -386,5 +386,3 @@ $gMain_disp->Dispatch();
 $gWui->addChild(new WuiInnomaticPage('page', array('pagetitle' => $gPage_title, 'icon' => 'folder_txt', 'toolbars' => array(new WuiInnomaticToolBar('core', array('toolbars' => $gToolbars, 'toolbar' => 'true')), new WuiInnomaticToolbar('view', array('toolbars' => $gCore_toolbars, 'toolbar' => 'true'))), 'maincontent' => new WuiXml('page', array('definition' => $gXml_def)), 'status' => $gPage_status)));
 
 $gWui->render();
-
-?>

@@ -23,11 +23,8 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-require_once('innomatic/process/HookHandler.php');
-
 class InnoworkCoreHookHandler extends \Innomatic\Process\HookHandler {
 	public static function domain_user_remove_userremoved($obj, $args) {
-		require_once('innomatic/domain/Domain.php');
 		$domain_query = \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getDataAccess()->execute('SELECT domainid FROM domains WHERE id='.\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getDataAccess()->formatText($args['domainserial']));
 		\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->startDomain($domain_query->getFields('domainid'));
 		$tmp_domain = \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain();
@@ -38,7 +35,6 @@ class InnoworkCoreHookHandler extends \Innomatic\Process\HookHandler {
 	}
 
 	public static function domain_group_remove_groupremoved($obj, $args) {
-		require_once('innomatic/domain/Domain.php');
 		$domain_query = \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getDataAccess()->execute('SELECT domainid FROM domains WHERE id='.\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getDataAccess()->formatText($args['domainserial']));
 		\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->startDomain($domain_query->getFields('domainid'));
 		$tmp_domain = \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain();
@@ -47,4 +43,3 @@ class InnoworkCoreHookHandler extends \Innomatic\Process\HookHandler {
 		return Hook::RESULT_OK;
 	}
 }
-?>

@@ -113,5 +113,3 @@ if ( (isset(Wui::instance('wui')->parameters['wui']['wui']['evd']['aclitemtype']
         }
     }
 }
-
-?>

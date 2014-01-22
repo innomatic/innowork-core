@@ -214,4 +214,3 @@ class WuiInnoworkSummary extends WuiXml {
         return $result;
     }
 }
-?>

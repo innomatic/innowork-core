@@ -45,9 +45,9 @@ class InnoworkItemLog {
     public function getLog() {
         $result = array();
         $log_query = \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->getDataAccess()->execute('SELECT username,eventtime '.'FROM innowork_core_itemslog '.'WHERE itemtype='.\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->getDataAccess()->formatText($this->mItemType).' '.'AND itemid='.$this->mItemId);
-        require_once('innomatic/locale/LocaleCountry.php');
+
         while (!$log_query->eof) {
-            $country = new LocaleCountry(\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentUser()->getCountry());
+            $country = new \Innomatic\Locale\LocaleCountry(\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentUser()->getCountry());
             $date_array = $country->getDateArrayFromSafeTimestamp($log_query->getFields('eventtime'));
             $result[] = $country->FormatShortArrayDate($date_array).' '.$country->FormatArrayTime($date_array).' '.$log_query->getFields('username');
             $log_query->MoveNext();
@@ -69,5 +69,3 @@ class InnoworkItemLog {
         return $this->mItemId;
     }
 }
-
-?>

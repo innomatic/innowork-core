@@ -215,5 +215,3 @@ $toolbars = $innowork_core->GetMainToolBar();
 $innomatictoolbars = array(new WuiInnomaticToolBar('view', array('toolbars' => $toolbars, 'toolbar' => 'true')));
 $gWui->addChild(new WuiInnomaticPage('page', array('pagetitle' => $gPage_title, 'icon' => 'settings1', 'toolbars' => $innomatictoolbars, 'maincontent' => new WuiXml('page', array('definition' => $gXml_def)), 'status' => $gPage_status)));
 $gWui->render();
-
-?>

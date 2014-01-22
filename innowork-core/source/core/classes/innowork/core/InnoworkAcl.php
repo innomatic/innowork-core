@@ -24,7 +24,6 @@
  * ***** END LICENSE BLOCK ***** */
 
 require_once('innowork/core/InnoworkCore.php');
-require_once('innomatic/domain/user/User.php');
 
 /*!
  @class InnoworkAcl
@@ -194,7 +193,7 @@ class InnoworkAcl {
 					if ($userId) {
 						
 						if (!isset($GLOBALS['innowork-core']['acl-checkperm'][$userId]['groupid'])) {
-							$tmp_user = new User(\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->domaindata['id'], $userId);
+							$tmp_user = new \Innomatic\Domain\User\User(\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->domaindata['id'], $userId);
 							$groupId = $GLOBALS['innowork-core']['acl-checkperm'][$userId]['groupid'] = $tmp_user->GetGroup();
 						}
 						else $groupId = $GLOBALS['innowork-core']['acl-checkperm'][$userId]['groupid'];
@@ -376,11 +375,10 @@ class InnoworkAcl {
 
 	public function cleanCache() {
 		$result = true;
-		require_once('innomatic/datatransfer/cache/CachedItem.php');
 		$cache_query = \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getDataAccess()->execute('SELECT itemid '.'FROM cache_items '.'WHERE application='.\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getDataAccess()->formatText('innowork-core').' '.'AND itemid LIKE '.\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getDataAccess()->formatText('itemtypesearch-'.$this->mItemType.'%'));
 
 		while (!$cache_query->eof) {
-			$cached_item = new CachedItem(\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getDataAccess(), 'innowork-core', $cache_query->getFields('itemid'));
+			$cached_item = new \Innomatic\Datatransfer\Cache\CachedItem(\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getDataAccess(), 'innowork-core', $cache_query->getFields('itemid'));
 			$cached_item->destroy();
 			$cache_query->moveNext();
 		}
@@ -388,5 +386,3 @@ class InnoworkAcl {
 		return $result;
 	}
 }
-
-?>

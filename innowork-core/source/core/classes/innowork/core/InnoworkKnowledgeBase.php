@@ -23,8 +23,6 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-require_once('innomatic/logging/Logger.php');
-require_once('innomatic/dataaccess/DataAccess.php');
 require_once('innowork/core/InnoworkCore.php');
 require_once('innowork/core/InnoworkItem.php');
 
@@ -83,5 +81,3 @@ class InnoworkKnowledgeBase {
         return $result;
     }
 }
-
-?>

@@ -230,4 +230,3 @@ class WuiInnoworkSearch extends WuiXml {
         return $result;
     }
 }
-?>
