@@ -97,7 +97,7 @@ class InnoworkCore extends Singleton {
                         $node_id = $tmp_perm->getNodeIdFromFileName($itemtype_query->getFields('domainpanel'));
 
                         if ($node_id or !strlen($itemtype_query->getFields('domainpanel'))) {
-                            if (!strlen($itemtype_query->getFields('domainpanel')) or $tmp_perm->Check($node_id, Permissions::NODETYPE_PAGE) != Permissions::NODE_NOTENABLED) {
+                            if (!strlen($itemtype_query->getFields('domainpanel')) or $tmp_perm->check($node_id, Permissions::NODETYPE_PAGE) != Permissions::NODE_NOTENABLED) {
                                 require_once($itemtype_query->getFields('classfile'));
 
                                 $class_name = $itemtype_query->getFields('classname');
@@ -119,6 +119,7 @@ class InnoworkCore extends Singleton {
 									}
 
 									$result[$item_type]['domainpanel'] = $itemtype_query->getFields('domainpanel');
+									// @todo adminevent is old - change to panelevent
 									$result[$item_type]['adminevent'] = $itemtype_query->getFields('adminevent');
 									$result[$item_type]['miniicon'] = $itemtype_query->getFields('miniicon');
 									$result[$item_type]['showmode'] = $itemtype_query->getFields('showmode');
@@ -196,9 +197,10 @@ class InnoworkCore extends Singleton {
         require_once('innowork/core/InnoworkKnowledgeBase.php');
         $innowork_kb = new InnoworkKnowledgeBase(
         	\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getDataAccess(),
-        	\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->getDataAccess());
+        	\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->getDataAccess()
+        );
 
-        $global_search = $innowork_kb->GlobalSearch('', '', true);
+        $global_search = $innowork_kb->globalSearch('', '', true);
 
         if ($global_search['founditems']) {
             $summaries = $this->getSummaries();
@@ -214,7 +216,8 @@ class InnoworkCore extends Singleton {
                     $tmp_class = new $class_name(
                     	\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getDataAccess(),
                     	\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->getDataAccess(),
-                    	$item['id']);
+                    	$item['id']
+            		);
                     if (is_object($tmp_class)) {
                     	// Removes the trashed item.
                         $tmp_class->remove();
