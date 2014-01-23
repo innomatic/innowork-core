@@ -79,11 +79,15 @@ class WuiInnoworkItemAcl extends \Shared\Wui\WuiXml
 
         // Item object
         $class_name = $summaries[$this->mItemType]['classname'];
-        $item_object = new $class_name(
-        	\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getDataAccess(),
-        	\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->getDataAccess(),
-        	$this->mTimeId
-        );
+        if (class_exists($class_name)) {
+        	$item_object = new $class_name(
+        		\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getDataAccess(),
+	        	\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->getDataAccess(),
+    	    	$this->mItemId
+        	);
+        } else {
+        	$item_object = null;
+        }
         
         // Access list
 		require_once('innowork/core/InnoworkAcl.php');
@@ -240,21 +244,23 @@ class WuiInnoworkItemAcl extends \Shared\Wui\WuiXml
         $item_actions = array();
         
         // Other items widget actions
-        foreach ($summaries as $item_type => $item_desc) {
-        	if ($item_type == $this->mItemType) {
-        		continue;
-        	}
-        	
-        	$tmp_class = $item_desc['classname'];
-        	
-        	$tmp_obj = new $tmp_class(
-        		\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getDataAccess(),
-        		\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->getDataAccess()
-        	);
-        	$item_action = $tmp_obj->getExternalItemWidgetXmlData($item_object);
-        	if (strlen($item_action)) {
-        		$item_actions[] = $item_action;
-        	}
+        if (is_object($item_object)) {
+	        foreach ($summaries as $item_type => $item_desc) {
+	        	if ($item_type == $this->mItemType) {
+	        		continue;
+	        	}
+	        	
+	        	$tmp_class = $item_desc['classname'];
+	        	
+	        	$tmp_obj = new $tmp_class(
+	        		\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getDataAccess(),
+	        		\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->getDataAccess()
+	        	);
+	        	$item_action = $tmp_obj->getExternalItemWidgetXmlData($item_object);
+	        	if (strlen($item_action)) {
+	        		$item_actions[] = $item_action;
+	        	}
+	        }
         }
         
         if ($this->mItemOwnerId == \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentUser()->getUserId() or User::isAdminUser(\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentUser()->getUserName(), \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->getDomainId()) or $acl->checkPermission('', \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentUser()->getUserId()) >= InnoworkAcl::PERMS_RESPONSIBLE) {
