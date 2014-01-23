@@ -128,6 +128,7 @@ class InnoworkCore extends Singleton {
 									$result[$item_type]['searchresultkeys'] = $tmp_class->mSearchResultKeys;
 									$result[$item_type]['viewablesearchresultkeys'] = $tmp_class->mViewableSearchResultKeys;
 									$result[$item_type]['searchorderby'] = $tmp_class->mSearchOrderBy;
+									$result[$item_type]['tags'] = $tmp_class->mTags;
 									$result[$item_type]['showdispatcher'] = $tmp_class->mShowDispatcher;
 									$result[$item_type]['showevent'] = $tmp_class->mShowEvent;
 									$result[$item_type]['newdispatcher'] = $tmp_class->mNewDispatcher;
