@@ -284,8 +284,17 @@ class WuiInnoworkItemAcl extends \Shared\Wui\WuiXml
           <args>
         <headers type="array">'.WuiXml::encode(array('0' => array('label' => $locale->getStr('item_properties.label')))).'</headers>
           </args>
-          <children>
-    <vertgroup row="'.$row ++.'" col="0" halign="" valign="" nowrap="true">
+          <children>';
+
+            if (count($item_actions)) {
+            	foreach ($item_actions as $item_action) {
+            		$this->mDefinition .= '<vertgroup row="'.$row ++.'" col="0"><children>';
+            		$this->mDefinition .= $item_action;
+            		$this->mDefinition .= '</children></vertgroup>';
+            	}
+            }
+            
+            $this->mDefinition .= '<vertgroup row="'.$row ++.'" col="0" halign="" valign="" nowrap="true">
       <children>
     <form><name>itemacl'.md5($this->mItemType.'-'.$this->mItemId).'</name>
       <args>
@@ -739,14 +748,6 @@ $this->mDefinition .=
               </children>
             </vertgroup>';
                 }
-                
-                if (count($item_actions)) {
-                	foreach ($item_actions as $item_action) {
-                		$this->mDefinition .= '<vertgroup row="'.$row ++.'" col="0"><children>';
-                		$this->mDefinition .= $item_action;
-                		$this->mDefinition .= '</children></vertgroup>';
-                	}
-                }
             }
 
             if (isset($GLOBALS['innoworkcore']['itemacl'][$this->mItemType][$this->mItemId])) {
@@ -785,7 +786,17 @@ $this->mDefinition .=
           <args>
         <headers type="array">'.WuiXml::encode(array('0' => array('label' => $locale->getStr('item_properties.label')))).'</headers>
           </args>
-          <children>
+          <children>';
+            
+            if (count($item_actions)) {
+            	foreach ($item_actions as $item_action) {
+            		$this->mDefinition .= '<vertgroup row="'.$row ++.'" col="0"><children>';
+            		$this->mDefinition .= $item_action;
+            		$this->mDefinition .= '</children></vertgroup>';
+            	}
+            }
+            
+            $this->mDefinition .='
         <vertgroup row="'.$row ++.'" col="0" halign="" valign="" nowrap="true"><name>vg</name><children>
         <horizgroup>
     <args>
@@ -1059,15 +1070,7 @@ unset($tmp_locale);
                 </form>
               </children>
             </vertgroup>';
-                }
-                
-                if (count($item_actions)) {
-                	foreach ($item_actions as $item_action) {
-                		$this->mDefinition .= '<vertgroup row="'.$row ++.'" col="0"><children>';
-                		$this->mDefinition .= $item_action;
-                		$this->mDefinition .= '</children></vertgroup>';
-                	}
-                }
+                }                
             }
 
             $this->mDefinition.= '
