@@ -105,7 +105,7 @@ class InnoworkCore extends Singleton {
 									$tmp_class = new $class_name($this->mrRootDb, $this->mrDomainDA);
 
 									// Check if there is a filter by tags
-									if (count($tags) == 0 or count(array_intersect($tmp_class->mTags, $tags) > 0)) {
+									if (count($tags) == 0 or count(array_intersect($tmp_class->mTypeTags, $tags)) > 0) {
 										$tmp_locale = new LocaleCatalog($itemtype_query->getFields('catalog'), \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentUser()->getLanguage());
 	
 										$item_type = $enabledtypes_query->getFields('itemtype');
@@ -131,7 +131,7 @@ class InnoworkCore extends Singleton {
 										$result[$item_type]['searchresultkeys'] = $tmp_class->mSearchResultKeys;
 										$result[$item_type]['viewablesearchresultkeys'] = $tmp_class->mViewableSearchResultKeys;
 										$result[$item_type]['searchorderby'] = $tmp_class->mSearchOrderBy;
-										$result[$item_type]['tags'] = $tmp_class->mTags;
+										$result[$item_type]['tags'] = $tmp_class->mTypeTags;
 										$result[$item_type]['showdispatcher'] = $tmp_class->mShowDispatcher;
 										$result[$item_type]['showevent'] = $tmp_class->mShowEvent;
 										$result[$item_type]['newdispatcher'] = $tmp_class->mNewDispatcher;

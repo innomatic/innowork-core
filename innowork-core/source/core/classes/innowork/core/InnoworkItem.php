@@ -94,10 +94,10 @@ abstract class InnoworkItem
     public $mConvertible = false;
     
     /**
-     * Array of tags supported by this item, eg. task, invoice, project, etc.
+     * Array of tags supported by this item type, eg. task, invoice, project, etc.
      * @var array
      */
-    public $mTags = array();
+    public $mTypeTags = array();
 
     /*!
      @function InnoworkItem
@@ -876,9 +876,9 @@ abstract class InnoworkItem
         return $result;
     }
 
-    public function hasTag($tag)
+    public function hasTypeTag($tag)
     {
-    	return in_array($tag, $this->mTags);
+    	return in_array($tag, $this->mTypeTags);
     }
     
     public function getExternalItemWidgetXmlData($item)
