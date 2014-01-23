@@ -24,10 +24,7 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-/*!
- @class WuiInnoworkItemAcl
- */
-class WuiInnoworkItemAcl extends \Shared\Wui\WuiXml
+class WuiInnoworkitemacl extends \Shared\Wui\WuiXml
 {
     var $mItemId;
     var $mItemType;
@@ -53,7 +50,7 @@ class WuiInnoworkItemAcl extends \Shared\Wui\WuiXml
         $this->mItemOwnerId = $this->mArgs['itemownerid'];
         $this->fillDefinition();
     }
-
+    
     /*!
      @function fillDefinition
      */

@@ -28,7 +28,7 @@ require_once('shared/wui/WuiXml.php');
 /*!
  @class WuiInnoworkSummary
  */
-class WuiInnoworkSummary extends WuiXml {
+class WuiInnoworksummary extends WuiXml {
     /*! @var mAppSummaries array - Array of the summaries to be showed as "app". */
     var $mAppSummaries = array();
     /*! @var mListSummaries array - Array of the summaries to be showed as "list". */

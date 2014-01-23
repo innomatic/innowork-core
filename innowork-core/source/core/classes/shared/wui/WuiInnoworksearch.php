@@ -25,10 +25,7 @@
 
 require_once('shared/wui/WuiXml.php');
 
-/*!
- @class WuiInnoworkSearch
- */
-class WuiInnoworkSearch extends WuiXml {
+class WuiInnoworksearch extends WuiXml {
     var $mSummaries = array();
     var $mSearchResult = array();
     var $mTrashcan = 'false';
