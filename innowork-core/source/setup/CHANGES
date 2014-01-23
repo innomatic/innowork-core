@@ -13,6 +13,8 @@ NEW FEATURES:
   External code may fetch item types with a certain tag. (Alex Pagnoni)
 - Added support for extending Innowork item information widget with custom
   UI. (Alex Pagnoni)
+- Added optional filter by tag in \Innowork\Core\InnoworkCore::getSummaries().
+  (Alex Pagnoni)
 
 CHANGES:
 - Updated icons to new style. (Alex Pagnoni)

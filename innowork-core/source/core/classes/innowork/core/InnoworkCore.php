@@ -57,7 +57,7 @@ class InnoworkCore extends Singleton {
     /*!
      @function getSummaries
      */
-    public function getSummaries($showMode = '', $complete = false) {
+    public function getSummaries($showMode = '', $complete = false, $tags = array()) {
         $result = false;
 
         if (\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getState() == InnomaticContainer::STATE_DEBUG) {
@@ -103,42 +103,46 @@ class InnoworkCore extends Singleton {
                                 $class_name = $itemtype_query->getFields('classname');
 								if (class_exists($class_name)) {
 									$tmp_class = new $class_name($this->mrRootDb, $this->mrDomainDA);
-									$tmp_locale = new LocaleCatalog($itemtype_query->getFields('catalog'), \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentUser()->getLanguage());
 
-									$item_type = $enabledtypes_query->getFields('itemtype');
-
-									$result[$item_type]['type'] = $item_type;
-									$result[$item_type]['classname'] = $itemtype_query->getFields('classname');
-									$result[$item_type]['catalog'] = $itemtype_query->getFields('catalog');
-									$result[$item_type]['label'] = $tmp_locale->getStr($itemtype_query->getFields('summaryname'));
-									$result[$item_type]['icon'] = $itemtype_query->getFields('icon');
-									$result[$item_type]['icontype'] = $itemtype_query->getFields('icontype');
-
-									if ($complete) {
-										$result[$item_type]['widget'] = $tmp_class->getSummary();
-									}
-
-									$result[$item_type]['domainpanel'] = $itemtype_query->getFields('domainpanel');
-									// @todo adminevent is old - change to panelevent
-									$result[$item_type]['adminevent'] = $itemtype_query->getFields('adminevent');
-									$result[$item_type]['miniicon'] = $itemtype_query->getFields('miniicon');
-									$result[$item_type]['showmode'] = $itemtype_query->getFields('showmode');
-									$result[$item_type]['table'] = $tmp_class->mTable;
-									$result[$item_type]['keys'] = $tmp_class->mKeys;
-									$result[$item_type]['searchresultkeys'] = $tmp_class->mSearchResultKeys;
-									$result[$item_type]['viewablesearchresultkeys'] = $tmp_class->mViewableSearchResultKeys;
-									$result[$item_type]['searchorderby'] = $tmp_class->mSearchOrderBy;
-									$result[$item_type]['tags'] = $tmp_class->mTags;
-									$result[$item_type]['showdispatcher'] = $tmp_class->mShowDispatcher;
-									$result[$item_type]['showevent'] = $tmp_class->mShowEvent;
-									$result[$item_type]['newdispatcher'] = $tmp_class->mNewDispatcher;
-									$result[$item_type]['newevent'] = $tmp_class->mNewEvent;
-									$result[$item_type]['searchable'] = $tmp_class->mSearchable;
-									$result[$item_type]['convertible'] = $tmp_class->mConvertible;
-									$result[$item_type]['loggable'] = !$tmp_class->mNoLog;
-									$result[$item_type]['trashable'] = !$tmp_class->mNoTrash;
+									// Check if there is a filter by tags
+									if (count($tags) == 0 or count(array_intersect($tmp_class->mTags, $tags) > 0)) {
+										$tmp_locale = new LocaleCatalog($itemtype_query->getFields('catalog'), \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentUser()->getLanguage());
+	
+										$item_type = $enabledtypes_query->getFields('itemtype');
+	
+										$result[$item_type]['type'] = $item_type;
+										$result[$item_type]['classname'] = $itemtype_query->getFields('classname');
+										$result[$item_type]['catalog'] = $itemtype_query->getFields('catalog');
+										$result[$item_type]['label'] = $tmp_locale->getStr($itemtype_query->getFields('summaryname'));
+										$result[$item_type]['icon'] = $itemtype_query->getFields('icon');
+										$result[$item_type]['icontype'] = $itemtype_query->getFields('icontype');
+	
+										if ($complete) {
+											$result[$item_type]['widget'] = $tmp_class->getSummary();
+										}
+	
+										$result[$item_type]['domainpanel'] = $itemtype_query->getFields('domainpanel');
+										// @todo adminevent is old - change to panelevent
+										$result[$item_type]['adminevent'] = $itemtype_query->getFields('adminevent');
+										$result[$item_type]['miniicon'] = $itemtype_query->getFields('miniicon');
+										$result[$item_type]['showmode'] = $itemtype_query->getFields('showmode');
+										$result[$item_type]['table'] = $tmp_class->mTable;
+										$result[$item_type]['keys'] = $tmp_class->mKeys;
+										$result[$item_type]['searchresultkeys'] = $tmp_class->mSearchResultKeys;
+										$result[$item_type]['viewablesearchresultkeys'] = $tmp_class->mViewableSearchResultKeys;
+										$result[$item_type]['searchorderby'] = $tmp_class->mSearchOrderBy;
+										$result[$item_type]['tags'] = $tmp_class->mTags;
+										$result[$item_type]['showdispatcher'] = $tmp_class->mShowDispatcher;
+										$result[$item_type]['showevent'] = $tmp_class->mShowEvent;
+										$result[$item_type]['newdispatcher'] = $tmp_class->mNewDispatcher;
+										$result[$item_type]['newevent'] = $tmp_class->mNewEvent;
+										$result[$item_type]['searchable'] = $tmp_class->mSearchable;
+										$result[$item_type]['convertible'] = $tmp_class->mConvertible;
+										$result[$item_type]['loggable'] = !$tmp_class->mNoLog;
+										$result[$item_type]['trashable'] = !$tmp_class->mNoTrash;
 
                                 //if ( !is_object( $result[$item_type]['widget'] ) ) unset( $result[$item_type] );
+									}
 								}
                             }
                         }
