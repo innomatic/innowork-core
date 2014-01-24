@@ -70,7 +70,7 @@ class InnoworkCore extends Singleton {
             $env_section = 'short_summaries'.$showMode;
         }
 
-        if (isset($this->wholeSummaries[$env_section])) {
+        if (!count($tags) and isset($this->wholeSummaries[$env_section])) {
             $this->mSummaries = &$this->wholeSummaries[$env_section];
             $result = &$this->wholeSummaries[$env_section];
         } else {
@@ -154,7 +154,9 @@ class InnoworkCore extends Singleton {
                 }
 
                 $this->mSummaries = $result;
-                $this->wholeSummaries[$env_section] = $this->mSummaries;
+                if (!count($tags)) {
+                    $this->wholeSummaries[$env_section] = $this->mSummaries;
+                }
             }
 
             $enabledtypes_query->free();
