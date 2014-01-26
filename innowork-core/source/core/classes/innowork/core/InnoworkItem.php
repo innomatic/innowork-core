@@ -98,6 +98,9 @@ abstract class InnoworkItem
      * @var array
      */
     public $mTypeTags = array();
+    
+    public $mFsBasePath;
+    
 
     /*!
      @function InnoworkItem
@@ -182,6 +185,11 @@ abstract class InnoworkItem
         	'spenttime' => '',
         	'cost' => ''
         );
+        
+        // Item folder in filesystem
+        if ($itemId != 0) {
+            $this->mFsBasePath = \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->getHome().'files/'.$this->getItemTypePlural().'/'.$this->mItemId.'/';
+        }
     }
 
     /*!
@@ -205,6 +213,9 @@ abstract class InnoworkItem
                 $this->mOwnerId = $userId;
                 $this->mCreated = time();
 
+                // Item folder in filesystem
+                $this->mFsBasePath = \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->getHome().'files/'.$this->getItemTypePlural().'/'.$this->mItemId.'/';
+                
                 if (!strlen($this->mParentType)) {
                     $this->mAcl->mItemId = $item_id;
                     if (!isset($this->_mSkipAclSet)) {
@@ -238,7 +249,7 @@ abstract class InnoworkItem
                     $log->LogChange(\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentUser()->getUserName());
                 }
                 // Flush item type cache
-                $this->CleanCache();
+                $this->cleanCache();
                 $result = true;
             }
         }
@@ -292,11 +303,27 @@ abstract class InnoworkItem
         return $result;
     }
 
+    /**
+     * Returns item type identifier.
+     * 
+     * @return string
+     */
     public function getItemType()
     {
         return $this->mItemType;
     }
 
+    /**
+     * Returns item type identifier in plural version.
+     * Items with a non simple plural (eg. "companies") should overwrite this method.
+     * 
+     * @return string
+     */
+    public function getItemTypePlural()
+    {
+        return $this->mItemType.'s';
+    }
+    
     public function getItemId()
     {
         return $this->mItemId;
@@ -378,7 +405,6 @@ abstract class InnoworkItem
 
         if ($this->mItemId) {
             if (!strlen($userId)) {
-                
                 $userId = \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentUser()->getUserId();
             }
 
@@ -387,7 +413,7 @@ abstract class InnoworkItem
 
                 if ($result) {
                     // Remove ACL
-                    $this->mAcl->Erase();
+                    $this->mAcl->erase();
                     // Remove item from clippings
                     \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->getDataAccess()->execute('DELETE FROM innowork_core_clippings_items WHERE itemtype='.\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->getDataAccess()->formatText($this->mItemType).' AND itemid='.$this->mItemId);
                     // Remove item log
@@ -396,10 +422,12 @@ abstract class InnoworkItem
                     	$log = new InnoworkItemLog($this->mItemType, $this->mItemId);
                         $log->Erase();
                     }
+                    // Remove item files
+                    $this->removeFile($this->getBaseFolder());
                     // Remove lock
                     $this->unlock();
                     // Flush item type cache
-                    $this->CleanCache();
+                    $this->cleanCache();
                     // Clean object id
                     $this->mItemId = 0;
                 }
@@ -1008,5 +1036,154 @@ abstract class InnoworkItem
     {
         $sem = new \Innomatic\Process\Semaphore('innoworkitem_'.$this->mItemType, $this->mItemId);
         $sem->waitGreen();
+    }
+    
+    public function getBaseFolder() {
+        return InnoworkJurisDossier::$this->mFsBasePath;
+    }
+    
+    public function checkBaseFolder() {
+        if (!is_dir($this->getBaseFolder())) {
+            require_once('innomatic/io/filesystem/DirectoryUtils.php');
+            DirectoryUtils::mktree($this->getBaseFolder(), 0755);
+        }
+    }
+    
+    public function getFilesList($path) {
+        $this->checkBaseFolder();
+         
+        $files = array();
+         
+        $dir = $this->getBaseFolder().$path.'/';
+         
+        if (is_dir($dir)) {
+            if ($dh = opendir($dir)) {
+                while (($file = readdir($dh)) !== false) {
+                    if ($file != '.' and $file != '..') {
+                        $files[] = array('name' => $file, 'type' => filetype($dir . $file));
+                    }
+                }
+                closedir($dh);
+            }
+        }
+    
+        usort($files, 'InnoworkProject::filesListSort');
+         
+        return $files;
+    }
+    
+    public function mkdir($dirname) {
+        $dirname = $this->getBaseFolder().$dirname.'/';
+         
+        require_once('innomatic/io/filesystem/DirectoryUtils.php');
+        DirectoryUtils::mktree($dirname, 0755);
+    }
+    
+    public function addFile($path, $tmp_file, $name) {
+        $dest_name = $this->getBaseFolder().$path.'/'.$name;
+         
+        $result = copy(
+            $tmp_file,
+            $dest_name
+        );
+    }
+    
+    /*
+     public function checkDuplicateProtocol($path, $name)
+     {
+    $this->checkBaseFolder();
+    $check_parts = explode(' ', $name);
+     
+    $dir = $this->getBaseFolder().$path.'/';
+    
+    if (is_dir($dir)) {
+    if ($dh = opendir($dir)) {
+    while (($file = readdir($dh)) !== false) {
+    if ($file != '.' and $file != '..') {
+    $parts = explode(' ', $file);
+    if ($parts[0] == $check_parts[0]) {
+    closedir($dh);
+    return true;
+    }
+    }
+    }
+    closedir($dh);
+    }
+    }
+     
+    return false;
+    }
+    */
+    
+    public function renameFile($path, $oldName, $newName) {
+        return rename($this->getBaseFolder().$path.'/'.$oldName, $this->getBaseFolder().$path.'/'.$newName);
+    }
+    
+    public function removeFile($file) {
+        $filePath = $this->getBaseFolder().$file;
+         
+        if (is_dir($filePath)) {
+            require_once('innomatic/io/filesystem/DirectoryUtils.php');
+            DirectoryUtils::unlinkTree($filePath);
+            return true;
+        } else {
+            if (file_exists($filePath)) {
+                unlink($filePath);
+                return true;
+            }
+    
+            // File doesn't exist
+            return false;
+        }
+    }
+    
+    public function getFileSize($file)
+    {
+        $stat = stat($this->getBaseFolder().$file);
+        return $stat['size'];
+    }
+    
+    public function downloadFile($file) {
+        $file = $this->getBaseFolder().$file;
+         
+        if (file_exists($file)) {
+            header('Content-Description: File Transfer');
+            header('Content-Type: application/octet-stream');
+            header('Content-Disposition: attachment; filename="'.basename($file).'"');
+            header('Content-Transfer-Encoding: binary', true);
+            header('Expires: 0');
+            header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+            header('Pragma: public');
+            header('Content-Length: ' . filesize($file));
+            ob_clean();
+            flush();
+            readfile($file);
+            InnomaticContainer::instance('innomaticcontainer')->halt();
+        } else {
+            return false;
+        }
+    }
+    
+    public static function filesListSort($a, $b)
+    {
+        if ($a['type'] == $b['type']) {
+            // Natural sorting
+            return strnatcmp($a['name'], $b['name']);
+            /*
+             // Not natural sorting
+            if ($a['name'] == $b['name']) {
+            return 0;
+            }
+            return ($a['name'] < $b['name']) ? -1 : 1;
+            */
+        }
+         
+        if ($a['type'] == 'dir' and $b['type'] == 'file') {
+            return -1;
+        }
+    
+        if ($a['type'] == 'file' and $b['type'] == 'dir') {
+            return 1;
+        }
     }
 }

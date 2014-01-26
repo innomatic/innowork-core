@@ -15,6 +15,7 @@ NEW FEATURES:
   UI. (Alex Pagnoni)
 - Added optional filter by tag in \Innowork\Core\InnoworkCore::getSummaries().
   (Alex Pagnoni)
+- Added file storage for each item type. (Alex Pagnoni)
 
 CHANGES:
 - Updated icons to new style. (Alex Pagnoni)
