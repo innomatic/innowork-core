@@ -9,8 +9,8 @@
 3.3
 ----------------
 NEW FEATURES:
-- Added item tag feature. An Innowork Item can define multiple item type tags.
-  External code may fetch item types with a certain tag. (Alex Pagnoni)
+- Added item type tag feature. An Innowork Item can define multiple item type
+  tags. External code may fetch item types with a certain tag. (Alex Pagnoni)
 - Added support for extending Innowork item information widget with custom
   UI. (Alex Pagnoni)
 - Added optional filter by tag in \Innowork\Core\InnoworkCore::getSummaries().
