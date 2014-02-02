@@ -25,10 +25,7 @@
 
 require_once('shared/wui/WuiXml.php');
 
-/*!
- @class WuiInnoworkSearch
- */
-class WuiInnoworkSearch extends WuiXml {
+class WuiInnoworksearch extends WuiXml {
     var $mSummaries = array();
     var $mSearchResult = array();
     var $mTrashcan = 'false';
@@ -69,7 +66,7 @@ class WuiInnoworkSearch extends WuiXml {
 
         while (list ($type, $results) = each($this->mSearchResult)) {
             if (count($results)) {
-                $tmp_locale = new LocaleCatalog($this->mSummaries[$type]['catalog'], InnomaticContainer::instance('innomaticcontainer')->getCurrentUser()->getLanguage());
+                $tmp_locale = new LocaleCatalog($this->mSummaries[$type]['catalog'], \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentUser()->getLanguage());
 
                 /*
                                 $itemtype_call = new WuiEventsCall( $val['domainpanel'] );
@@ -92,7 +89,7 @@ class WuiInnoworkSearch extends WuiXml {
 
                 $headers = array();
                 $header_count = 1;
-                $locale_country = new LocaleCountry(InnomaticContainer::instance('innomaticcontainer')->getCurrentUser()->getCountry());
+                $locale_country = new LocaleCountry(\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentUser()->getCountry());
 
                 while (list (, $keyname) = each($this->mSummaries[$type]['viewablesearchresultkeys'])) {
                     $headers[$header_count ++]['label'] = $tmp_locale->getStr($keyname);
@@ -108,12 +105,12 @@ class WuiInnoworkSearch extends WuiXml {
 
                     switch ($result['_acl']['type']) {
                         case InnoworkAcl::TYPE_PRIVATE :
-                            $image = 'personal';
+                            $image = 'user';
                             break;
 
                         case InnoworkAcl::TYPE_PUBLIC :
                         case InnoworkAcl::TYPE_ACL :
-                            $image = 'kuser';
+                            $image = 'useradd';
                             break;
                     }
 
@@ -147,12 +144,12 @@ class WuiInnoworkSearch extends WuiXml {
                                     break;
 
                                 case 'timestamp' :
-                                    $value = $locale_country->FormatShortArrayDate(InnomaticContainer::instance('innomaticcontainer')->getCurrentDomain()->getDataAccess()->GetDateArrayFromTimestamp($value));
+                                    $value = $locale_country->FormatShortArrayDate(\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->getDataAccess()->GetDateArrayFromTimestamp($value));
 
                                     break;
 
                                 case 'boolean' :
-                                    if ($value == InnomaticContainer::instance('innomaticcontainer')->getCurrentDomain()->getDataAccess()->fmttrue)
+                                    if ($value == \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->getDataAccess()->fmttrue)
                                         $value = 'true';
                                     else
                                         $value = 'false';
@@ -160,7 +157,7 @@ class WuiInnoworkSearch extends WuiXml {
 
                                 case 'table' :
                                     if (strlen($value)) {
-                                        $tmp_query = InnomaticContainer::instance('innomaticcontainer')->getCurrentDomain()->getDataAccess()->execute('SELECT '.$key_type[2].' FROM '.$key_type[1].' WHERE id='.$value);
+                                        $tmp_query = \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->getDataAccess()->execute('SELECT '.$key_type[2].' FROM '.$key_type[1].' WHERE id='.$value);
                                         if ($tmp_query->getNumberRows()) {
                                             $value = $tmp_query->getFields($key_type[2]);
                                         }
@@ -180,6 +177,7 @@ class WuiInnoworkSearch extends WuiXml {
                             $this->mDefinition.= '<label row="'.$row.'" col="'.$col.'"><name>key</name>
                                                               <args>
                                                                 <compact>true</compact>
+                            									<nowrap>false</nowrap>
                                                                 <label type="encoded">'.WuiXml::cdata(urlencode($value)).'</label>
                                                               </args>
                                                             </label>';
@@ -188,7 +186,7 @@ class WuiInnoworkSearch extends WuiXml {
                     }
 
                     if ($this->mTrashcan == 'true') {
-                        $locale = new LocaleCatalog('innowork-core::misc', InnomaticContainer::instance('innomaticcontainer')->getCurrentUser()->getLanguage());
+                        $locale = new LocaleCatalog('innowork-core::misc', \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentUser()->getLanguage());
 
                         $this->mDefinition.= '<button row="'.$row.'" col="'.$col.'"><name>restore</name>
                                                       <args>
@@ -203,7 +201,7 @@ class WuiInnoworkSearch extends WuiXml {
                     }
 
                     if ($this->mClipping == 'true' and $this->mClippingId) {
-                        $locale = new LocaleCatalog('innowork-core::misc', InnomaticContainer::instance('innomaticcontainer')->getCurrentUser()->getLanguage());
+                        $locale = new LocaleCatalog('innowork-core::misc', \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentUser()->getLanguage());
 
                         $this->mDefinition.= '<button row="'.$row.'" col="'.$col.'"><name>remove</name>
                                                       <args>
@@ -229,4 +227,3 @@ class WuiInnoworkSearch extends WuiXml {
         return $result;
     }
 }
-?>

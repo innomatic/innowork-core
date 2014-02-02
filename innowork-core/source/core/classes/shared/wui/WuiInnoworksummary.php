@@ -28,7 +28,7 @@ require_once('shared/wui/WuiXml.php');
 /*!
  @class WuiInnoworkSummary
  */
-class WuiInnoworkSummary extends WuiXml {
+class WuiInnoworksummary extends WuiXml {
     /*! @var mAppSummaries array - Array of the summaries to be showed as "app". */
     var $mAppSummaries = array();
     /*! @var mListSummaries array - Array of the summaries to be showed as "list". */
@@ -54,7 +54,7 @@ class WuiInnoworkSummary extends WuiXml {
     function _FillDefinition() {
         $result = false;
         require_once('innomatic/locale/LocaleCountry.php');
-        $country = new LocaleCountry(InnomaticContainer::instance('innomaticcontainer')->getCurrentUser()->getCountry());
+        $country = new LocaleCountry(\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentUser()->getCountry());
 
         $date_array['hours'] = date('H');
         $date_array['minutes'] = date('i');
@@ -214,4 +214,3 @@ class WuiInnoworkSummary extends WuiXml {
         return $result;
     }
 }
-?>

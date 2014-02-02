@@ -23,28 +23,23 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-require_once('innomatic/process/HookHandler.php');
-
-class InnoworkCoreHookHandler extends HookHandler {
+class InnoworkCoreHookHandler extends \Innomatic\Process\HookHandler {
 	public static function domain_user_remove_userremoved($obj, $args) {
-		require_once('innomatic/domain/Domain.php');
-		$domain_query = InnomaticContainer::instance('innomaticcontainer')->getDataAccess()->execute('SELECT domainid FROM domains WHERE id='.InnomaticContainer::instance('innomaticcontainer')->getDataAccess()->formatText($args['domainserial']));
-		InnomaticContainer::instance('innomaticcontainer')->startDomain($domain_query->getFields('domainid'));
-		$tmp_domain = InnomaticContainer::instance('innomaticcontainer')->getCurrentDomain();
-		//$tmp_site = new Domain(InnomaticContainer::instance('innomaticcontainer')->getDataAccess(), $domain_query->getFields('domainid'), null);
+		$domain_query = \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getDataAccess()->execute('SELECT domainid FROM domains WHERE id='.\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getDataAccess()->formatText($args['domainserial']));
+		\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->startDomain($domain_query->getFields('domainid'));
+		$tmp_domain = \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain();
+		//$tmp_site = new Domain(\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getDataAccess(), $domain_query->getFields('domainid'), null);
 		$tmp_domain->getDataAccess()->execute('DELETE FROM innowork_core_acls WHERE userid='.$args['userid']);
-		InnomaticContainer::instance('innomaticcontainer')->stopDomain();
+		\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->stopDomain();
 		return Hook::RESULT_OK;
 	}
 
 	public static function domain_group_remove_groupremoved($obj, $args) {
-		require_once('innomatic/domain/Domain.php');
-		$domain_query = InnomaticContainer::instance('innomaticcontainer')->getDataAccess()->execute('SELECT domainid FROM domains WHERE id='.InnomaticContainer::instance('innomaticcontainer')->getDataAccess()->formatText($args['domainserial']));
-		InnomaticContainer::instance('innomaticcontainer')->startDomain($domain_query->getFields('domainid'));
-		$tmp_domain = InnomaticContainer::instance('innomaticcontainer')->getCurrentDomain();
+		$domain_query = \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getDataAccess()->execute('SELECT domainid FROM domains WHERE id='.\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getDataAccess()->formatText($args['domainserial']));
+		\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->startDomain($domain_query->getFields('domainid'));
+		$tmp_domain = \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain();
 		$tmp_domain->getDataAccess()->execute('DELETE FROM innowork_core_acls WHERE groupid='.$args['groupid']);
-		InnomaticContainer::instance('innomaticcontainer')->stopDomain();
+		\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->stopDomain();
 		return Hook::RESULT_OK;
 	}
 }
-?>

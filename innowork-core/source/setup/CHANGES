@@ -6,11 +6,37 @@
 
 
 
+3.3.0 - 2014/02/02
+------------------
+NEW FEATURES:
+- Added item type tag feature. An Innowork Item can define multiple item type
+  tags. External code may fetch item types with a certain tag. (Alex Pagnoni)
+- Added support for extending Innowork item information widget with custom
+  UI. (Alex Pagnoni)
+- Added optional filter by tag in \Innowork\Core\InnoworkCore::getSummaries().
+  (Alex Pagnoni)
+- Added file storage for each item type. (Alex Pagnoni)
+
+CHANGES:
+- Updated icons to new style. (Alex Pagnoni)
+- Improved labels. (Alex Pagnoni)
+- Removed summary. (Alex Pagnoni)
+- Added word wrapping in search results widget. (Alex Pagnoni)
+
+
+
+3.2 - 2013/11/30
+----------------
+CHANGES:
+- Migration to Innomatic 6.1. (Alex Pagnoni)
+
+
+
 3.1 - 2009/03/10
 ----------------
 CHANGES:
-- Migration to Innomatic 5000 (Alex Pagnoni).
-- Complete name in item ACL widget in place of the username (Alex Pagnoni).
+- Migration to Innomatic 5000. (Alex Pagnoni)
+- Complete name in item ACL widget in place of the username. (Alex Pagnoni)
 - Deep code reorganization. (Alex Pagnoni)
 - Many bugfixes. (Alex Pagnoni)
 

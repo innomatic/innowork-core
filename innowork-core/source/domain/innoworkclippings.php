@@ -35,8 +35,8 @@ require_once('innowork/core/clipping/InnoworkClipping.php');
     global $gPage_status, $gLocale;
     global $gLocale, $gPage_title, $gXml_def, $gPage_status, $gToolbars, $gInnowork_core, $customers;
     
-$gInnowork_core = InnoworkCore::instance('innoworkcore', InnomaticContainer::instance('innomaticcontainer')->getDataAccess(), InnomaticContainer::instance('innomaticcontainer')->getCurrentDomain()->getDataAccess());
-$gLocale = new LocaleCatalog('innowork-core::clippings', InnomaticContainer::instance('innomaticcontainer')->getCurrentUser()->getLanguage());
+$gInnowork_core = InnoworkCore::instance('innoworkcore', \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getDataAccess(), \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->getDataAccess());
+$gLocale = new LocaleCatalog('innowork-core::clippings', \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentUser()->getLanguage());
 
 $gWui = Wui::instance('wui');
 $gWui->LoadWidget('xml');
@@ -56,7 +56,7 @@ $gAction_disp->addEvent('newclipping', 'action_newclipping');
 function action_newclipping($eventData) {
     global $gPage_status, $gLocale;
 
-    $clipping = new InnoworkClipping(InnomaticContainer::instance('innomaticcontainer')->getDataAccess(), InnomaticContainer::instance('innomaticcontainer')->getCurrentDomain()->getDataAccess());
+    $clipping = new InnoworkClipping(\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getDataAccess(), \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->getDataAccess());
 
     if ($clipping->Create($eventData)) {
         $gPage_status = $gLocale->getStr('clipping_created.status');
@@ -69,7 +69,7 @@ $gAction_disp->addEvent('editclipping', 'action_editclipping');
 function action_editclipping($eventData) {
     global $gPage_status, $gLocale;
 
-    $clipping = new InnoworkClipping(InnomaticContainer::instance('innomaticcontainer')->getDataAccess(), InnomaticContainer::instance('innomaticcontainer')->getCurrentDomain()->getDataAccess(), $eventData['id']);
+    $clipping = new InnoworkClipping(\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getDataAccess(), \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->getDataAccess(), $eventData['id']);
 
     if ($clipping->Edit($eventData))
         $gPage_status = $gLocale->getStr('clipping_updated.status');
@@ -81,9 +81,9 @@ $gAction_disp->addEvent('trashclipping', 'action_trashclipping');
 function action_trashclipping($eventData) {
     global $gPage_status, $gLocale;
 
-    $clipping = new InnoworkClipping(InnomaticContainer::instance('innomaticcontainer')->getDataAccess(), InnomaticContainer::instance('innomaticcontainer')->getCurrentDomain()->getDataAccess(), $eventData['id']);
+    $clipping = new InnoworkClipping(\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getDataAccess(), \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->getDataAccess(), $eventData['id']);
 
-    if ($clipping->Trash(InnomaticContainer::instance('innomaticcontainer')->getCurrentUser()->getUserId()))
+    if ($clipping->Trash(\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentUser()->getUserId()))
         $gPage_status = $gLocale->getStr('clipping_trashed.status');
     else
         $gPage_status = $gLocale->getStr('clipping_not_trashed.status');
@@ -93,7 +93,7 @@ $gAction_disp->addEvent('remove_item', 'action_removeitem');
 function action_removeitem($eventData) {
     global $gPage_status, $gLocale;
 
-    $clipping = new InnoworkClipping(InnomaticContainer::instance('innomaticcontainer')->getDataAccess(), InnomaticContainer::instance('innomaticcontainer')->getCurrentDomain()->getDataAccess(), $eventData['id']);
+    $clipping = new InnoworkClipping(\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getDataAccess(), \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->getDataAccess(), $eventData['id']);
 
     $clipping->RemoveItem($eventData['itemtype'], $eventData['itemid']);
     //    if ( $clipping->Edit( $eventData ) ) $gPage_status = $gLocale->getStr( 'clipping_updated.status' );
@@ -114,8 +114,8 @@ $gMain_disp->addEvent('default', 'main_default');
 function main_default($eventData) {
     global $gLocale, $gPage_title, $gXml_def, $gPage_status, $gToolbars, $gInnowork_core, $customers;
 
-    $innowork_clippings = new InnoworkClipping(InnomaticContainer::instance('innomaticcontainer')->getDataAccess(), InnomaticContainer::instance('innomaticcontainer')->getCurrentDomain()->getDataAccess());
-    $search_results = $innowork_clippings->Search('', InnomaticContainer::instance('innomaticcontainer')->getCurrentUser()->getUserId());
+    $innowork_clippings = new InnoworkClipping(\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getDataAccess(), \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->getDataAccess());
+    $search_results = $innowork_clippings->Search('', \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentUser()->getUserId());
 
     $headers[1]['label'] = $gLocale->getStr('name.header');
     $headers[2]['label'] = $gLocale->getStr('description.header');
@@ -138,12 +138,12 @@ function main_default($eventData) {
     foreach ($search_results as $id => $clipping) {
         switch ($clipping['_acl']['type']) {
             case InnoworkAcl::TYPE_PRIVATE :
-                $image = 'personal';
+                $image = 'user';
                 break;
 
             case InnoworkAcl::TYPE_PUBLIC :
             case InnoworkAcl::TYPE_ACL :
-                $image = 'kuser';
+                $image = 'useradd';
                 break;
         }
 
@@ -267,7 +267,7 @@ $gMain_disp->addEvent('editclipping', 'main_editclipping');
 function main_editclipping($eventData) {
     global $gXml_def, $gLocale, $customers;
 
-    $innowork_clipping = new InnoworkClipping(InnomaticContainer::instance('innomaticcontainer')->getDataAccess(), InnomaticContainer::instance('innomaticcontainer')->getCurrentDomain()->getDataAccess(), $eventData['id']);
+    $innowork_clipping = new InnoworkClipping(\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getDataAccess(), \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->getDataAccess(), $eventData['id']);
     $clipping_data = $innowork_clipping->GetItem();
 
     $headers[0]['label'] = $gLocale->getStr('editclipping.header');
@@ -364,7 +364,7 @@ function main_showclipping($eventData) {
 
     $summaries = $gInnowork_core->GetSummaries();
 
-    $innowork_clipping = new InnoworkClipping(InnomaticContainer::instance('innomaticcontainer')->getDataAccess(), InnomaticContainer::instance('innomaticcontainer')->getCurrentDomain()->getDataAccess(), $eventData['id']);
+    $innowork_clipping = new InnoworkClipping(\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getDataAccess(), \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->getDataAccess(), $eventData['id']);
 
     $clippings = $innowork_clipping->GetItems();
 
@@ -386,5 +386,3 @@ $gMain_disp->Dispatch();
 $gWui->addChild(new WuiInnomaticPage('page', array('pagetitle' => $gPage_title, 'icon' => 'folder_txt', 'toolbars' => array(new WuiInnomaticToolBar('core', array('toolbars' => $gToolbars, 'toolbar' => 'true')), new WuiInnomaticToolbar('view', array('toolbars' => $gCore_toolbars, 'toolbar' => 'true'))), 'maincontent' => new WuiXml('page', array('definition' => $gXml_def)), 'status' => $gPage_status)));
 
 $gWui->render();
-
-?>

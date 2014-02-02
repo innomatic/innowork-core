@@ -4,14 +4,14 @@
 
    Innowork-Core build file
 
-   Copyright (c) 2008-2009 Innomatic. All rights reserved.
+   Copyright (c) 2008-2013 Innomatic. All rights reserved.
 
   =======================================================================
 -->
 <project name="Innowork Core" default="package">
 
 	<property name="name" value="innowork-core" />
-	<property name="version" value="3.1" />
+	<property name="version" value="3.3.0" />
 
 	<target name="sources">
 		<tar destfile="${basedir}/build/${name}-src-${version}.tgz" compression="gzip">

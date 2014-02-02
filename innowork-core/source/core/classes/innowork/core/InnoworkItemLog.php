@@ -39,15 +39,15 @@ class InnoworkItemLog {
         $date_array['hours'] = date('H');
         $date_array['minutes'] = date('i');
         $date_array['seconds'] = date('s');
-        return InnomaticContainer::instance('innomaticcontainer')->getCurrentDomain()->getDataAccess()->execute('INSERT INTO innowork_core_itemslog '.'VALUES ('.InnomaticContainer::instance('innomaticcontainer')->getCurrentDomain()->getDataAccess()->formatText($this->mItemType).','.$this->mItemId.','.InnomaticContainer::instance('innomaticcontainer')->getCurrentDomain()->getDataAccess()->formatText($user).','.InnomaticContainer::instance('innomaticcontainer')->getCurrentDomain()->getDataAccess()->formatText(InnomaticContainer::instance('innomaticcontainer')->getCurrentDomain()->getDataAccess()->GetTimestampFromDateArray($date_array)).')');
+        return \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->getDataAccess()->execute('INSERT INTO innowork_core_itemslog '.'VALUES ('.\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->getDataAccess()->formatText($this->mItemType).','.$this->mItemId.','.\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->getDataAccess()->formatText($user).','.\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->getDataAccess()->formatText(\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->getDataAccess()->GetTimestampFromDateArray($date_array)).')');
     }
 
     public function getLog() {
         $result = array();
-        $log_query = InnomaticContainer::instance('innomaticcontainer')->getCurrentDomain()->getDataAccess()->execute('SELECT username,eventtime '.'FROM innowork_core_itemslog '.'WHERE itemtype='.InnomaticContainer::instance('innomaticcontainer')->getCurrentDomain()->getDataAccess()->formatText($this->mItemType).' '.'AND itemid='.$this->mItemId);
-        require_once('innomatic/locale/LocaleCountry.php');
+        $log_query = \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->getDataAccess()->execute('SELECT username,eventtime '.'FROM innowork_core_itemslog '.'WHERE itemtype='.\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->getDataAccess()->formatText($this->mItemType).' '.'AND itemid='.$this->mItemId);
+
         while (!$log_query->eof) {
-            $country = new LocaleCountry(InnomaticContainer::instance('innomaticcontainer')->getCurrentUser()->getCountry());
+            $country = new \Innomatic\Locale\LocaleCountry(\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentUser()->getCountry());
             $date_array = $country->getDateArrayFromSafeTimestamp($log_query->getFields('eventtime'));
             $result[] = $country->FormatShortArrayDate($date_array).' '.$country->FormatArrayTime($date_array).' '.$log_query->getFields('username');
             $log_query->MoveNext();
@@ -57,7 +57,7 @@ class InnoworkItemLog {
     }
 
     public function erase() {
-        $result = InnomaticContainer::instance('innomaticcontainer')->getCurrentDomain()->getDataAccess()->execute('DELETE FROM innowork_core_itemslog '.'WHERE itemtype='.InnomaticContainer::instance('innomaticcontainer')->getCurrentDomain()->getDataAccess()->formatText($this->mItemType).' '.'AND itemid='.$this->mItemId);
+        $result = \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->getDataAccess()->execute('DELETE FROM innowork_core_itemslog '.'WHERE itemtype='.\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->getDataAccess()->formatText($this->mItemType).' '.'AND itemid='.$this->mItemId);
         return $result;
     }
     
@@ -69,5 +69,3 @@ class InnoworkItemLog {
         return $this->mItemId;
     }
 }
-
-?>

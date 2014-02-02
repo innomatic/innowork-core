@@ -24,7 +24,6 @@
  * ***** END LICENSE BLOCK ***** */
 
 require_once('innowork/core/InnoworkCore.php');
-require_once('innomatic/domain/user/User.php');
 
 /*!
  @class InnoworkAcl
@@ -56,7 +55,7 @@ class InnoworkAcl {
 	/*!
 	 @function InnoworkAcl
 	 */
-	public function __construct(DataAccess $rrootDb, DataAccess $rdomainDA, $itemType, $itemId,$ownerid=0) {
+	public function __construct(\Innomatic\Dataaccess\DataAccess $rrootDb, \Innomatic\Dataaccess\DataAccess $rdomainDA, $itemType, $itemId,$ownerid=0) {
 		$this->mItemType = $itemType;
 		$this->mItemId = $itemId;
 		$this->mrRootDb = $rrootDb;
@@ -73,7 +72,7 @@ class InnoworkAcl {
 
 		if (!$this->ownerid) {
 			if ($this->mItemType and $this->mItemId) {
-				$tmp_innoworkcore = InnoworkCore::instance('innoworkcore', InnomaticContainer::instance('innomaticcontainer')->getDataAccess(), InnomaticContainer::instance('innomaticcontainer')->getCurrentDomain()->getDataAccess());
+				$tmp_innoworkcore = InnoworkCore::instance('innoworkcore', \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getDataAccess(), \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->getDataAccess());
 				$summaries = $tmp_innoworkcore->getSummaries();
 
 				$class_name = $summaries[$this->mItemType]['classname'];
@@ -81,7 +80,7 @@ class InnoworkAcl {
 				if (!class_exists($class_name)) {
 					return false;
 				}
-				$tmp_class = new $class_name(InnomaticContainer::instance('innomaticcontainer')->getDataAccess(), InnomaticContainer::instance('innomaticcontainer')->getCurrentDomain()->getDataAccess(), $this->mItemId);
+				$tmp_class = new $class_name(\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getDataAccess(), \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->getDataAccess(), $this->mItemId);
 				$result = $this->ownerid = $tmp_class->mOwnerId;
 			}
 		}
@@ -100,7 +99,7 @@ class InnoworkAcl {
 		if ($this->mItemType and $this->mItemId) {
 			$owner = $this->getOwner();
 
-			if ($owner == InnomaticContainer::instance('innomaticcontainer')->getCurrentUser()->getUserId() or User::isAdminUser(InnomaticContainer::instance('innomaticcontainer')->getCurrentUser()->getUserName(), InnomaticContainer::instance('innomaticcontainer')->getCurrentDomain()->getDomainId())) {
+			if ($owner == \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentUser()->getUserId() or User::isAdminUser(\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentUser()->getUserName(), \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->getDomainId())) {
 				switch ($accessType) {
 					case InnoworkAcl::TYPE_PRIVATE :
 					case InnoworkAcl::TYPE_PUBLIC :
@@ -177,14 +176,14 @@ class InnoworkAcl {
 				break;
 
 			case InnoworkAcl::TYPE_PRIVATE :
-				if (InnomaticContainer::instance('innomaticcontainer')->getCurrentUser()->getUserName() == InnomaticContainer::instance('innomaticcontainer')->getCurrentDomain()->getDomainId())
+				if (\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentUser()->getUserName() == \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->getDomainId())
 				$result = InnoworkAcl::PERMS_ALL;
 				else
 				$result = InnoworkAcl::PERMS_NONE; // Always NONE because the file owner should not issue the checkPermission() method call.
 				break;
 
 			case InnoworkAcl::TYPE_ACL :
-				if (User::isAdminUser(InnomaticContainer::instance('innomaticcontainer')->getCurrentUser()->getUserName(), InnomaticContainer::instance('innomaticcontainer')->getCurrentDomain()->getDomainId()))
+				if (User::isAdminUser(\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentUser()->getUserName(), \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->getDomainId()))
 				$result = InnoworkAcl::PERMS_ALL;
 				else
 				if (strlen($groupId) xor strlen($userId)) {
@@ -194,7 +193,7 @@ class InnoworkAcl {
 					if ($userId) {
 						
 						if (!isset($GLOBALS['innowork-core']['acl-checkperm'][$userId]['groupid'])) {
-							$tmp_user = new User(InnomaticContainer::instance('innomaticcontainer')->getCurrentDomain()->domaindata['id'], $userId);
+							$tmp_user = new \Innomatic\Domain\User\User(\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->domaindata['id'], $userId);
 							$groupId = $GLOBALS['innowork-core']['acl-checkperm'][$userId]['groupid'] = $tmp_user->GetGroup();
 						}
 						else $groupId = $GLOBALS['innowork-core']['acl-checkperm'][$userId]['groupid'];
@@ -259,7 +258,7 @@ class InnoworkAcl {
 	public function setPermission($groupId = '', $userId = '', $permissions = '') {
 		$result = false;
 
-		//if ( $userId == InnomaticContainer::instance('innomaticcontainer')->getCurrentUser()->getUserId() ) return true; //$permissions = InnoworkAcl::PERMS_ALL;
+		//if ( $userId == \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentUser()->getUserId() ) return true; //$permissions = InnoworkAcl::PERMS_ALL;
 
 		if ($this->getType() == InnoworkAcl::TYPE_ACL) {
 			if (strlen($groupId) xor strlen($userId)) {
@@ -359,12 +358,12 @@ class InnoworkAcl {
 	}
 
 	public function copyAcl($aclItemType, $aclItemId) {
-		$acl_query = InnomaticContainer::instance('innomaticcontainer')->getCurrentDomain()->getDataAccess()->execute('SELECT groupid,userid,rights '.'FROM innowork_core_acls '.'WHERE itemtype='.InnomaticContainer::instance('innomaticcontainer')->getCurrentDomain()->getDataAccess()->formatText($aclItemType).' '.'AND itemid='.InnomaticContainer::instance('innomaticcontainer')->getCurrentDomain()->getDataAccess()->formatText($aclItemId));
+		$acl_query = \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->getDataAccess()->execute('SELECT groupid,userid,rights '.'FROM innowork_core_acls '.'WHERE itemtype='.\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->getDataAccess()->formatText($aclItemType).' '.'AND itemid='.\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->getDataAccess()->formatText($aclItemId));
 		if ($acl_query->getNumberRows()) {
-			InnomaticContainer::instance('innomaticcontainer')->getCurrentDomain()->getDataAccess()->execute('DELETE FROM innowork_core_acls '.'WHERE itemtype='.InnomaticContainer::instance('innomaticcontainer')->getCurrentDomain()->getDataAccess()->formatText($this->mItemType).' '.'AND itemid='.$this->mItemId);
+			\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->getDataAccess()->execute('DELETE FROM innowork_core_acls '.'WHERE itemtype='.\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->getDataAccess()->formatText($this->mItemType).' '.'AND itemid='.$this->mItemId);
 
 			while (!$acl_query->eof) {
-				InnomaticContainer::instance('innomaticcontainer')->getCurrentDomain()->getDataAccess()->execute('INSERT INTO innowork_core_acls VALUES ('.$this->mItemId.','.InnomaticContainer::instance('innomaticcontainer')->getCurrentDomain()->getDataAccess()->formatText($this->mItemType).','.$acl_query->getFields('groupid').','.$acl_query->getFields('userid').','.$acl_query->getFields('rights').')');
+				\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->getDataAccess()->execute('INSERT INTO innowork_core_acls VALUES ('.$this->mItemId.','.\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->getDataAccess()->formatText($this->mItemType).','.$acl_query->getFields('groupid').','.$acl_query->getFields('userid').','.$acl_query->getFields('rights').')');
 				$acl_query->MoveNext();
 			}
 		}
@@ -376,11 +375,10 @@ class InnoworkAcl {
 
 	public function cleanCache() {
 		$result = true;
-		require_once('innomatic/datatransfer/cache/CachedItem.php');
-		$cache_query = InnomaticContainer::instance('innomaticcontainer')->getDataAccess()->execute('SELECT itemid '.'FROM cache_items '.'WHERE application='.InnomaticContainer::instance('innomaticcontainer')->getDataAccess()->formatText('innowork-core').' '.'AND itemid LIKE '.InnomaticContainer::instance('innomaticcontainer')->getDataAccess()->formatText('itemtypesearch-'.$this->mItemType.'%'));
+		$cache_query = \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getDataAccess()->execute('SELECT itemid '.'FROM cache_items '.'WHERE application='.\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getDataAccess()->formatText('innowork-core').' '.'AND itemid LIKE '.\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getDataAccess()->formatText('itemtypesearch-'.$this->mItemType.'%'));
 
 		while (!$cache_query->eof) {
-			$cached_item = new CachedItem(InnomaticContainer::instance('innomaticcontainer')->getDataAccess(), 'innowork-core', $cache_query->getFields('itemid'));
+			$cached_item = new \Innomatic\Datatransfer\Cache\CachedItem(\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getDataAccess(), 'innowork-core', $cache_query->getFields('itemid'));
 			$cached_item->destroy();
 			$cache_query->moveNext();
 		}
@@ -388,5 +386,3 @@ class InnoworkAcl {
 		return $result;
 	}
 }
-
-?>

@@ -113,5 +113,3 @@ class InnoworkDefaultAclItem extends InnoworkItem {
         return false;
     }
 }
-
-?>

@@ -27,10 +27,10 @@ global $gLocale, $gPage_status, $innowork_core;
 global $gPage_content, $innowork_core, $gLocale, $gWui, $gPage_status, $gPage_title;
 
 require_once('innomatic/locale/LocaleCatalog.php');
-$gLocale = new LocaleCatalog('innowork-core::core', InnomaticContainer::instance('innomaticcontainer')->getCurrentUser()->getLanguage());
+$gLocale = new LocaleCatalog('innowork-core::core', \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentUser()->getLanguage());
 
 require_once('innowork/core/InnoworkCore.php');
-$innowork_core = InnoworkCore::instance('innoworkcore', InnomaticContainer::instance('innomaticcontainer')->getDataAccess(), InnomaticContainer::instance('innomaticcontainer')->getCurrentDomain()->getDataAccess());
+$innowork_core = InnoworkCore::instance('innoworkcore', \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getDataAccess(), \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->getDataAccess());
 
 require_once('innomatic/wui/Wui.php');
 $gWui = Wui::instance('wui');
@@ -65,7 +65,7 @@ function action_restore_item($eventData) {
 	if (!class_exists($class_name)) {
 		return false;
 	}
-	$tmp_class = new $class_name(InnomaticContainer::instance('innomaticcontainer')->getDataAccess(), InnomaticContainer::instance('innomaticcontainer')->getCurrentDomain()->getDataAccess(), $eventData['itemid']);
+	$tmp_class = new $class_name(\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getDataAccess(), \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->getDataAccess(), $eventData['itemid']);
 
 	$tmp_class->Restore();
 	$gPage_status = $gLocale->getStr('item_restored.status');
@@ -196,7 +196,7 @@ function main_search($eventData) {
 	if (isset($eventData['searchkey'])) {
 		require_once('innowork/core/InnoworkKnowledgeBase.php');
 		 
-		$innowork_kb = new InnoworkKnowledgeBase(InnomaticContainer::instance('innomaticcontainer')->getDataAccess(), InnomaticContainer::instance('innomaticcontainer')->getCurrentDomain()->getDataAccess());
+		$innowork_kb = new InnoworkKnowledgeBase(\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getDataAccess(), \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->getDataAccess());
 		$global_search = $innowork_kb->GlobalSearch($eventData['searchkey'], $eventData['type'], false, 0, $eventData['restrictto']);
 
 		if ($global_search['founditems']) {
@@ -225,7 +225,7 @@ function main_relateditems($eventData) {
 		if (!class_exists($class_name)) {
 			return false;
 		}
-		$tmp_class = new $class_name(InnomaticContainer::instance('innomaticcontainer')->getDataAccess(), InnomaticContainer::instance('innomaticcontainer')->getCurrentDomain()->getDataAccess(), $eventData['itemid']);
+		$tmp_class = new $class_name(\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getDataAccess(), \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->getDataAccess(), $eventData['itemid']);
 
 		$global_search = $tmp_class->GetRelatedItems();
 
@@ -258,7 +258,7 @@ function main_trashcan($eventData) {
 	$summaries = $innowork_core->GetSummaries();
 
 	require_once('innowork/core/InnoworkKnowledgeBase.php');
-	$innowork_kb = new InnoworkKnowledgeBase(InnomaticContainer::instance('innomaticcontainer')->getDataAccess(), InnomaticContainer::instance('innomaticcontainer')->getCurrentDomain()->getDataAccess());
+	$innowork_kb = new InnoworkKnowledgeBase(\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getDataAccess(), \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->getDataAccess());
 
 	$global_search = $innowork_kb->GlobalSearch('', '', true);
 
@@ -319,7 +319,7 @@ function main_today_activities($eventData) {
 	}
 	else {
 		require_once('innomatic/locale/LocaleCountry.php');
-		$country = new LocaleCountry(InnomaticContainer::instance('innomaticcontainer')->getCurrentUser()->getCountry());
+		$country = new LocaleCountry(\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentUser()->getCountry());
 
 		$date = $country->GetDateArrayFromShortDateStamp($eventData['date']);
 	}
@@ -407,7 +407,7 @@ function main_aboutinnowork($eventData) {
     
         <image>
           <args>
-            <imageurl type="encoded">'.urlencode(InnomaticContainer::instance('innomaticcontainer')->getBaseUrl(false).'/shared/innowork-core_logo_innowork.png').'</imageurl>
+            <imageurl type="encoded">'.urlencode(\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getBaseUrl(false).'/shared/innowork-core_logo_innowork.png').'</imageurl>
             <width>289</width>
             <height>24</height>
           </args>
@@ -442,30 +442,30 @@ function main_stats($eventData) {
 
 	$stats_ok = false;
 	require_once('innomatic/locale/LocaleCountry.php');
-	$locale_country = new LocaleCountry(InnomaticContainer::instance('innomaticcontainer')->getCurrentUser()->getCountry());
+	$locale_country = new LocaleCountry(\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentUser()->getCountry());
 
 	if (isset($eventData['statsfrom']) and isset($eventData['statsto'])) {
 		//$stats_ok = true;
 
 		$from_date = $locale_country->GetDateArrayFromShortDateStamp($eventData['statsfrom']);
-		$from_ts = InnomaticContainer::instance('innomaticcontainer')->getCurrentDomain()->getDataAccess()->GetTimestampFromDateArray($from_date);
+		$from_ts = \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->getDataAccess()->GetTimestampFromDateArray($from_date);
 		$from_secs = mktime(0, 0, 0, $from_date['mon'], $from_date['mday'], $from_date['year']);
 
 		$to_date = $locale_country->GetDateArrayFromShortDateStamp($eventData['statsto']);
 		$to_date['hours'] = 23;
 		$to_date['minutes'] = 59;
 		$to_date['seconds'] = 59;
-		$to_ts = InnomaticContainer::instance('innomaticcontainer')->getCurrentDomain()->getDataAccess()->GetTimestampFromDateArray($to_date);
+		$to_ts = \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->getDataAccess()->GetTimestampFromDateArray($to_date);
 		$to_secs = mktime(23, 59, 59, $to_date['mon'], $to_date['mday'], $to_date['year']);
 
-		$stats_query = InnomaticContainer::instance('innomaticcontainer')->getCurrentDomain()->getDataAccess()->execute('SELECT * '.'FROM innowork_core_itemslog '.'WHERE eventtime>='.InnomaticContainer::instance('innomaticcontainer')->getCurrentDomain()->getDataAccess()->formatText($from_ts).' '.'AND eventtime<='.InnomaticContainer::instance('innomaticcontainer')->getCurrentDomain()->getDataAccess()->formatText($to_ts));
+		$stats_query = \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->getDataAccess()->execute('SELECT * '.'FROM innowork_core_itemslog '.'WHERE eventtime>='.\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->getDataAccess()->formatText($from_ts).' '.'AND eventtime<='.\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->getDataAccess()->formatText($to_ts));
 
-		$users_stats_query = InnomaticContainer::instance('innomaticcontainer')->getCurrentDomain()->getDataAccess()->execute('SELECT username,count(username) AS count '.'FROM innowork_core_itemslog '.'WHERE eventtime>='.InnomaticContainer::instance('innomaticcontainer')->getCurrentDomain()->getDataAccess()->formatText($from_ts).' '.'AND eventtime<='.InnomaticContainer::instance('innomaticcontainer')->getCurrentDomain()->getDataAccess()->formatText($to_ts).' '.'GROUP BY username');
+		$users_stats_query = \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->getDataAccess()->execute('SELECT username,count(username) AS count '.'FROM innowork_core_itemslog '.'WHERE eventtime>='.\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->getDataAccess()->formatText($from_ts).' '.'AND eventtime<='.\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->getDataAccess()->formatText($to_ts).' '.'GROUP BY username');
 
 		$stats_data = $_stats_data = array();
 
 		while (!$stats_query->eof) {
-			$tmp_date = InnomaticContainer::instance('innomaticcontainer')->getCurrentDomain()->getDataAccess()->GetDateArrayFromTimestamp($stats_query->getFields('eventtime'));
+			$tmp_date = \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->getDataAccess()->GetDateArrayFromTimestamp($stats_query->getFields('eventtime'));
 
 			if (!isset($_stats_data[$tmp_date['year'].$tmp_date['mon'].$tmp_date['mday']])) {
 				$_stats_data[$tmp_date['year'].$tmp_date['mon'].$tmp_date['mday']]['changes'] = 1;
@@ -641,5 +641,3 @@ $innomatictoolbars = array(new WuiInnomaticToolBar('view', array('toolbars' => $
 $gWui->addChild(new WuiInnomaticPage('page', array('pagetitle' => $gPage_title, 'icon' => 'desktop', 'toolbars' => $innomatictoolbars, 'maincontent' => $gPage_content, 'status' => $gPage_status)));
 
 $gWui->render();
-
-?>
