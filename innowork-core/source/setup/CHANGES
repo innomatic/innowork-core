@@ -6,8 +6,8 @@
 
 
 
-3.3
-----------------
+3.3.0 - 2014/02/02
+------------------
 NEW FEATURES:
 - Added item type tag feature. An Innowork Item can define multiple item type
   tags. External code may fetch item types with a certain tag. (Alex Pagnoni)
