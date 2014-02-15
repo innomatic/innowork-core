@@ -6,6 +6,13 @@
 
 
 
+3.x.x.
+------------------
+FIXES:
+- Fixed Logger::WARNING error. (Alex Pagnoni)
+
+
+
 3.3.0 - 2014/02/02
 ------------------
 NEW FEATURES:
