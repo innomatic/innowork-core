@@ -151,7 +151,7 @@ abstract class InnoworkItem
                 $this->mOwnerId = $check_query->getFields('ownerid');
             } else {
                 $log = \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getLogger();
-                $log->logEvent('innoworkcore.innoworkcore.innoworkitem.innoworkitem', 'Invalid item id '.$this->mItemId.' from '.$this->mItemType.' item type handler', Logger::WARNING);
+                $log->logEvent('innoworkcore.innoworkcore.innoworkitem.innoworkitem', 'Invalid item id '.$this->mItemId.' from '.$this->mItemType.' item type handler', \Innomatic\Logging\Logger::WARNING);
                 $this->mItemId = 0;
             }
             $check_query->Free();

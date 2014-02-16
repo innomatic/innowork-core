@@ -274,6 +274,7 @@ class InnoworkCore extends Singleton {
 
                 // Checks if the class exists.
                 if (!class_exists($class_name)) {
+                    $act_query->moveNext();
                 	continue;
                 }
                 
