@@ -12,6 +12,9 @@ NEW FEATURES:
 - Added trashcan button in traybar. (Alex Pagnoni)
 - Added search button in traybar. (Alex Pagnoni)
 
+CHANGES:
+- Removed search and trashcan buttons from shared toolbar. (Alex Pagnoni)
+
 FIXES:
 - Fixed wrong handling of searches when no acl properties is set to true. (Alex Pagnoni)
 - Fixed implementation of no acl property. (Alex Pagnoni)

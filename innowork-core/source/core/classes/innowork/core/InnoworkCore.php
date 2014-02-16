@@ -15,7 +15,7 @@
  * The Original Code is Innowork.
  *
  * The Initial Developer of the Original Code is Innoteam.
- * Portions created by the Initial Developer are Copyright (C) 2002-2013
+ * Portions created by the Initial Developer are Copyright (C) 2002-2014
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
@@ -124,6 +124,7 @@ class InnoworkCore extends Singleton {
 										$result[$item_type]['domainpanel'] = $itemtype_query->getFields('domainpanel');
 										// @todo adminevent is old - change to panelevent
 										$result[$item_type]['adminevent'] = $itemtype_query->getFields('adminevent');
+										$result[$item_type]['panelevent'] = $itemtype_query->getFields('adminevent');
 										$result[$item_type]['miniicon'] = $itemtype_query->getFields('miniicon');
 										$result[$item_type]['showmode'] = $itemtype_query->getFields('showmode');
 										$result[$item_type]['table'] = $tmp_class->mTable;
@@ -176,24 +177,22 @@ class InnoworkCore extends Singleton {
      */
     public function getMainToolBar($type = 'app', $itemType = '', $itemId = '') {    	
         $summaries = $this->getSummaries();
-        $result['main'] = array(
-        		'search' => array('label' => $this->mLocale->getStr('search.button'), 'themeimage' => 'zoom', 'horiz' => 'true', 'action' => \Innomatic\Wui\Dispatch\WuiEventsCall::buildEventsCallString('1innoworkcore', array(array('view', 'search', ''))))
-        		);
+
         $result['tools'] = array(
-        		'todayactivities' => array('label' => $this->mLocale->getStr('today_activities.button'), 'themeimage' => 'calendarempty', 'horiz' => 'true', 'action' => \Innomatic\Wui\Dispatch\WuiEventsCall::buildEventsCallString('1innoworkcore', array(array('view', 'today_activities', '')))),
-        		'trashcan' => array('label' => $this->mLocale->getStr('trashcan.button'), 'themeimage' => 'trash', 'horiz' => 'true', 'action' => \Innomatic\Wui\Dispatch\WuiEventsCall::buildEventsCallString('1innoworkcore', array(array('view', 'trashcan', ''))))
-        		);
+    		'todayactivities' => array('label' => $this->mLocale->getStr('today_activities.button'), 'themeimage' => 'calendarempty', 'horiz' => 'true', 'action' => \Innomatic\Wui\Dispatch\WuiEventsCall::buildEventsCallString('1innoworkcore', array(array('view', 'today_activities', ''))))
+    		);
         if (is_array($summaries)) {
             while (list ($type, $summary) = each($summaries)) {
-                if ($summary['showmode'] == $type)
+                if ($summary['showmode'] == $type) {
                     $result['itemtypes'][$type] = array('label' => $summary['label'], 'themeimage' => $summary['miniicon'], 'action' => \Innomatic\Wui\Dispatch\WuiEventsCall::buildEventsCallString($summary['domainpanel'], array(array('view', $summary['adminevent'], ''))));
+                }
             }
             reset($summaries);
         }
         if (strlen($itemType) and strlen($itemId)) {
             $result['itemtools'] = array('relateditems' => array('label' => $this->mLocale->getStr('relateditems.button'), 'themeimage' => 'chart2', 'horiz' => 'true', 'action' => \Innomatic\Wui\Dispatch\WuiEventsCall::buildEventsCallString('1innoworkcore', array(array('view', 'relateditems', array('itemtype' => $itemType, 'itemid' => $itemId))))));
         }
-        //$result['settings'] = array('innowork' => array('label' => $this->mLocale->getStr('innoworksettings.button'), 'themeimage' => 'settings1', 'horiz' => 'true', 'action' => \Innomatic\Wui\Dispatch\WuiEventsCall::buildEventsCallString('innoworkcoreprefs', array(array('view', 'default', '')))));
+
         return $result;
     }
 
