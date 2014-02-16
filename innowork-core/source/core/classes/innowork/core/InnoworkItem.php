@@ -588,17 +588,8 @@ abstract class InnoworkItem
             //
             if (is_array($search_result) and count($search_result)) {
                 while (list ($id, $val) = each($search_result)) {
-                    /*
-                    if ( $this->mNoAcl )
-                    {
-                        $result[$id] = $val;
-                    }
-                    else
-                    {
-                    */
-
                     $tmp_acl = new InnoworkAcl($this->mrRootDb, $this->mrDomainDA, $this->mItemType, $id);
-                    if ($val['ownerid'] == \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentUser()->getUserId() or $tmp_acl->checkPermission('', $userId) >= InnoworkAcl::PERMS_SEARCH) {
+                    if ($this->mNoAcl == true or $val['ownerid'] == \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentUser()->getUserId() or $tmp_acl->checkPermission('', $userId) >= InnoworkAcl::PERMS_SEARCH) {
                         $restrict = false;
 
                         switch ($restrictToPermission) {
@@ -628,7 +619,6 @@ abstract class InnoworkItem
                             $result[$id]['_acl']['type'] = $tmp_acl->GetType();
                         }
                     }
-                    //}
                 }
             }
         }

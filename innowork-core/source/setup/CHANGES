@@ -6,6 +6,13 @@
 
 
 
+3.x.x
+------------------
+FIXES:
+- Fixed wrong handling of searches when no acl properties is set to true. (Alex Pagnoni)
+
+
+
 3.3.1 - 2014/02/16
 ------------------
 FIXES:
