@@ -78,12 +78,6 @@ $gAction_disp->Dispatch();
 $main_disp = new WuiDispatcher('view');
 
 $main_disp->addEvent('default', 'main_search');
-function main_default($eventData) {
-	global $gPage_content, $innowork_core, $gWui;
-	$gWui->LoadWidget('innoworksummary');
-	$gPage_content = new WuiInnoworkSummary('innoworksummary', array('appsummaries' => $innowork_core->GetSummaries('app', true), 'listsummaries' => $innowork_core->GetSummaries('list', true)));
-}
-
 $main_disp->addEvent('search', 'main_search');
 function main_search($eventData) {
 	global $gPage_content, $innowork_core, $gWui, $gPage_status, $gPage_title, $gLocale;

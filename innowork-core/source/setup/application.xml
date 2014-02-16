@@ -60,14 +60,11 @@
 		<hookhandler name="innoworkcore"
 			file="InnoworkCoreHookHandler.php" />
 
-		<wuiwidget name="innoworksummary" file="WuiInnoworksummary.php" />
 		<wuiwidget name="innoworksearch" file="WuiInnoworksearch.php" />
 		<wuiwidget name="innoworkitemacl" file="WuiInnoworkitemacl.php" />
 
 		<wuivalidator name="innoworkitemacl"
 			file="InnoworkitemaclWuiValidator.php" />
-		<wuivalidator name="innoworksummary"
-			file="InnoworksummaryWuiValidator.php" />
 
 		<hook name="innoworkcore_domain_group_remove_groupremoved"
 			functionapplication="innomatic" function="domain.group.remove"
