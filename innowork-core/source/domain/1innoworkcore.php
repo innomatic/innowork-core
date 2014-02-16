@@ -39,7 +39,7 @@ $gWui->loadWidget( 'innomatictoolbar' );
 $gWui->loadWidget( 'innomaticpage' );
 $gPage_content = false;
 $gPage_status = '';
-$gPage_title = $gLocale->getStr('innoworksummary.title');
+$gPage_title = '';
 
 //$summaries['directorycompany']['widget'] = new WuiLabel( 'mycompany', array( 'label' => 'My company' ) );
 
@@ -77,7 +77,7 @@ $gAction_disp->Dispatch();
 
 $main_disp = new WuiDispatcher('view');
 
-$main_disp->addEvent('default', 'main_default');
+$main_disp->addEvent('default', 'main_search');
 function main_default($eventData) {
 	global $gPage_content, $innowork_core, $gWui;
 	$gWui->LoadWidget('innoworksummary');
@@ -211,7 +211,7 @@ function main_search($eventData) {
     ';
 
 	$gPage_content = new WuiXml('page', array('definition' => $xml_def));
-	$gPage_title.= ' - '.$gLocale->getStr('globalsearch.title');
+	$gPage_title = $gLocale->getStr('globalsearch.title');
 }
 
 $main_disp->addEvent('relateditems', 'main_relateditems');
@@ -248,7 +248,7 @@ function main_relateditems($eventData) {
 		$gPage_status = sprintf($gLocale->getStr('found_items.status'), $global_search['founditems']);
 		$gPage_content = new WuiXml('page', array('definition' => $xml_def));
 	}
-	$gPage_title.= ' - '.$gLocale->getStr('relateditems.title');
+	$gPage_title = $gLocale->getStr('relateditems.title');
 }
 
 $main_disp->addEvent('trashcan', 'main_trashcan');
@@ -304,7 +304,7 @@ function main_trashcan($eventData) {
 	$gPage_status = sprintf($gLocale->getStr('found_items.status'), $global_search['founditems']);
 	$gPage_content = new WuiXml('page', array('definition' => $xml_def));
 
-	$gPage_title.= ' - '.$gLocale->getStr('trashcan.title');
+	$gPage_title = $gLocale->getStr('trashcan.title');
 }
 
 $main_disp->addEvent('today_activities', 'main_today_activities');
@@ -390,50 +390,7 @@ function main_today_activities($eventData) {
 	$gPage_status = sprintf($gLocale->getStr('found_items.status'), $activities['founditems']);
 	$gPage_content = new WuiXml('page', array('definition' => $xml_def));
 
-	$gPage_title.= ' - '.$gLocale->getStr('today_activities.title');
-}
-
-$main_disp->addEvent('aboutinnowork', 'main_aboutinnowork');
-function main_aboutinnowork($eventData) {
-	global $gPage_title, $gPage_content, $gLocale;
-
-	$xml_def = '
-    <vertgroup>
-      <args>
-        <groupalign>center</groupalign>
-        <align>center</align>
-      </args>
-      <children>
-    
-        <image>
-          <args>
-            <imageurl type="encoded">'.urlencode(\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getBaseUrl(false).'/shared/innowork-core_logo_innowork.png').'</imageurl>
-            <width>289</width>
-            <height>24</height>
-          </args>
-        </image>
-    
-        <link>
-          <args>
-            <label type="encoded">'.urlencode($gLocale->getStr('innowork_copyright.label')).'</label>
-            <link type="encoded">'.urlencode('http://www.innomatica.it/').'</link>
-          </args>
-        </link>
-    
-        <link>
-          <args>
-            <label type="encoded">'.urlencode('http://www.innomatica.it/prodotti/innowork/').'</label>
-            <link type="encoded">'.urlencode('http://www.innomatica.it/prodotti/innowork/').'</link>
-            <target>_blank</target>
-          </args>
-        </link>
-    
-      </children>
-    </vertgroup>';
-
-	$gPage_content = new WuiXml('page', array('definition' => $xml_def));
-
-	$gPage_title.= ' - '.$gLocale->getStr('about_innowork.title');
+	$gPage_title = $gLocale->getStr('today_activities.title');
 }
 
 $main_disp->addEvent('stats', 'main_stats');
@@ -623,7 +580,7 @@ function main_stats($eventData) {
 
 	$gPage_content = new WuiXml('page', array('definition' => $xml_def));
 
-	$gPage_title.= ' - '.$gLocale->getStr('statistics.title');
+	$gPage_title = $gLocale->getStr('statistics.title');
 }
 
 $main_disp->Dispatch();

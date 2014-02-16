@@ -81,8 +81,6 @@
 		<roottable name="innowork_core_itemtypes"
 			file="innowork_core_itemtypes.xml" />
 
-		<shared name="innowork-core_logo_innowork.png" />
-
 		<class name="innowork/core/InnoworkAcl.php" />
 		<class name="innowork/core/InnoworkCore.php" />
 		<class name="innowork/core/InnoworkDefaultAclItem.php" />
@@ -92,13 +90,13 @@
 		
         <traybaritem
             name="innoworktrashcan"
-            panel=""
+            panel="1innoworkcore"
             file="InnoworkTrashcanTraybarItem.php"
             class="\\Shared\\Traybar\\InnoworkTrashcanTraybarItem" />
 
         <traybaritem
             name="innoworksearch"
-            panel=""
+            panel="1innoworkcore"
             file="InnoworkSearchTraybarItem.php"
             class="\\Shared\\Traybar\\InnoworkSearchTraybarItem" />
 

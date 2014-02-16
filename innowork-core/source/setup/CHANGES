@@ -14,6 +14,7 @@ NEW FEATURES:
 
 CHANGES:
 - Removed search and trashcan buttons from shared toolbar. (Alex Pagnoni)
+- Removed old about page and image. (Alex Pagnoni)
 
 FIXES:
 - Fixed wrong handling of searches when no acl properties is set to true. (Alex Pagnoni)
