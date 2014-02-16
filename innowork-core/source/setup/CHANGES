@@ -10,6 +10,7 @@
 ------------------
 FIXES:
 - Fixed wrong handling of searches when no acl properties is set to true. (Alex Pagnoni)
+- Fixed implementation of no acl property. (Alex Pagnoni)
 
 
 
