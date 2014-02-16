@@ -6,7 +6,7 @@
 
 
 
-3.x.x.
+3.3.1 - 2014/02/16
 ------------------
 FIXES:
 - Fixed Logger::WARNING error. (Alex Pagnoni)

@@ -11,7 +11,7 @@
 <project name="Innowork Core" default="package">
 
 	<property name="name" value="innowork-core" />
-	<property name="version" value="3.3.0" />
+	<property name="version" value="3.3.1" />
 
 	<target name="sources">
 		<tar destfile="${basedir}/build/${name}-src-${version}.tgz" compression="gzip">
