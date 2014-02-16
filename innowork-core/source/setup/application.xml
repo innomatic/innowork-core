@@ -3,7 +3,7 @@
 	<definition>
 		<idname>innowork-core</idname>
 		<release>
-			<version>3.3.1</version>
+			<version>3.4.0</version>
 			<date>2014/02/16</date>
 			<changesfile>CHANGES</changesfile>
 		</release>

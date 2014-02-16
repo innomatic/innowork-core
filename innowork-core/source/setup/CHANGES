@@ -6,8 +6,12 @@
 
 
 
-3.x.x
+3.4.0
 ------------------
+NEW FEATURES:
+- Added trashcan button in traybar. (Alex Pagnoni)
+- Added search button in traybar. (Alex Pagnoni)
+
 FIXES:
 - Fixed wrong handling of searches when no acl properties is set to true. (Alex Pagnoni)
 - Fixed implementation of no acl property. (Alex Pagnoni)
