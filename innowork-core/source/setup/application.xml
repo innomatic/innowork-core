@@ -135,5 +135,19 @@
 			themeicontype="apps" catalog="innowork-core::misc"
 			category="1summary" />
 
+        <!-- Roles -->
+        
+        <role name="accounting" title="accounting" description="" catalog="innowork-core::roles" />
+        <role name="customer" title="customer" description="" catalog="innowork-core::roles" />
+        <role name="employee" title="employee" description="" catalog="innowork-core::roles" />
+        <role name="freelance_manager" title="freelance_manager" description="" catalog="innowork-core::roles" />
+        <role name="freelance" title="freelance" description="" catalog="innowork-core::roles" />
+        <role name="helpdesk" title="helpdesk" description="" catalog="innowork-core::roles" />
+        <role name="hrmanager" title="hrmanager" description="" catalog="innowork-core::roles" />
+        <role name="marketing" title="marketing" description="" catalog="innowork-core::roles" />
+        <role name="projectmanager" title="projectmanager" description="" catalog="innowork-core::roles" />
+        <role name="sales" title="sales" description="" catalog="innowork-core::roles" />
+        <role name="seniormanager" title="seniormanager" description="" catalog="innowork-core::roles" />
+        
 	</components>
 </application>
