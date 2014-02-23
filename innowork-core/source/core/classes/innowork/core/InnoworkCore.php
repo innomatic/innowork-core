@@ -79,7 +79,7 @@ class InnoworkCore extends Singleton {
             if (is_object($enabledtypes_query)) {
                 $result = array();
                 
-                $tmp_perm = new \Innomatic\Domain\User\Permissions($this->mrDomainDA, \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentUser()->getGroup());
+                $tmp_perm = new \Innomatic\Desktop\Auth\DesktopPanelAuthorizator($this->mrDomainDA, \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentUser()->getGroup());
                 while (!$enabledtypes_query->eof) {
                     switch ($showMode) {
                         case 'app' :
@@ -97,7 +97,7 @@ class InnoworkCore extends Singleton {
                         $node_id = $tmp_perm->getNodeIdFromFileName($itemtype_query->getFields('domainpanel'));
 
                         if ($node_id or !strlen($itemtype_query->getFields('domainpanel'))) {
-                            if (!strlen($itemtype_query->getFields('domainpanel')) or $tmp_perm->check($node_id, Permissions::NODETYPE_PAGE) != Permissions::NODE_NOTENABLED) {
+                            if (!strlen($itemtype_query->getFields('domainpanel')) or $tmp_perm->check($node_id, \Innomatic\Desktop\Auth\DesktopPanelAuthorizator::NODETYPE_PAGE) != \Innomatic\Desktop\Auth\DesktopPanelAuthorizator::NODE_NOTENABLED) {
                                 require_once($itemtype_query->getFields('classfile'));
 
                                 $class_name = $itemtype_query->getFields('classname');
