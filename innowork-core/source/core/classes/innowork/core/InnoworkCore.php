@@ -175,7 +175,8 @@ class InnoworkCore extends Singleton {
     
      @abstract Gets the Wui main toolbar array.
      */
-    public function getMainToolBar($type = 'app', $itemType = '', $itemId = '') {    	
+    public function getMainToolBar($type = 'app', $itemType = '', $itemId = '') {
+        /*
         $summaries = $this->getSummaries();
 
         $result['tools'] = array(
@@ -189,6 +190,7 @@ class InnoworkCore extends Singleton {
             }
             reset($summaries);
         }
+        */
         if (strlen($itemType) and strlen($itemId)) {
             $result['itemtools'] = array('relateditems' => array('label' => $this->mLocale->getStr('relateditems.button'), 'themeimage' => 'chart2', 'horiz' => 'true', 'action' => \Innomatic\Wui\Dispatch\WuiEventsCall::buildEventsCallString('1innoworkcore', array(array('view', 'relateditems', array('itemtype' => $itemType, 'itemid' => $itemId))))));
         }
