@@ -571,7 +571,6 @@ abstract class InnoworkItem
         }
 
         if ($goon) {
-            
             // Check if we should use the current user id
             //
             if (!strlen($userId)) {
