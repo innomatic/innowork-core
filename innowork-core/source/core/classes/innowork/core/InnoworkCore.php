@@ -110,7 +110,8 @@ class InnoworkCore extends Singleton {
 	
 										$item_type = $enabledtypes_query->getFields('itemtype');
 	
-										$result[$item_type]['type'] = $item_type;
+                                        $result[$item_type]['type'] = $item_type;
+                                        $result[$item_type]['typeplural'] = $tmp_class->getItemTypePlural();
 										$result[$item_type]['classname'] = $itemtype_query->getFields('classname');
 										$result[$item_type]['catalog'] = $itemtype_query->getFields('catalog');
 										$result[$item_type]['label'] = $tmp_locale->getStr($itemtype_query->getFields('summaryname'));
