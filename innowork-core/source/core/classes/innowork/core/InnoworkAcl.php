@@ -178,9 +178,14 @@ class InnoworkAcl {
 				$result = InnoworkAcl::PERMS_ALL;
 				break;
 
-			case InnoworkAcl::TYPE_PRIVATE :
-                if (\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentUser()->getUserName() == \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->getDomainId()
-                    or \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentUser()->hasPermission('view_all_'.$summaries[$this->mItemType]['typeplural'])) {
+            case InnoworkAcl::TYPE_PRIVATE :
+                if (!$userId) {
+                    return InnoworkAcl::PERMS_NONE;
+                }
+                $tmp_user = new \Innomatic\Domain\User\User(\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->domaindata['id'], $userId);
+
+                if (\Innomatic\Domain\User\User::isAdminUser($tmp_user->getUserName(), \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->getDomainId())
+                    or $tmp_user->hasPermission('view_all_'.$summaries[$this->mItemType]['typeplural'])) {
                     $result = InnoworkAcl::PERMS_ALL;
                 } else {
                     $result = InnoworkAcl::PERMS_NONE; // Always NONE because the file owner should not issue the checkPermission() method call.
@@ -188,16 +193,20 @@ class InnoworkAcl {
 				break;
 
 			case InnoworkAcl::TYPE_ACL :
-				if (\Innomatic\Domain\User\User::isAdminUser(\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentUser()->getUserName(), \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->getDomainId()) or \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentUser()->hasPermission('view_all_'.$summaries[$this->mItemType]['typeplural'])) {
-                    $result = InnoworkAcl::PERMS_ALL;
-                } elseif (strlen($groupId) xor strlen($userId)) {
+		        if (strlen($groupId) xor strlen($userId)) {
 					$result = InnoworkAcl::PERMS_NONE;
 					$goon = true;
 
 					if ($userId) {
-						
+                        $tmp_user = new \Innomatic\Domain\User\User(\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->domaindata['id'], $userId);
+
+                        if (\Innomatic\Domain\User\User::isAdminUser($tmp_user->getUserName(),
+                            \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->getDomainId())
+                            or $tmp_user->hasPermission('view_all_'.$summaries[$this->mItemType]['typeplural'])) {
+                            return InnoworkAcl::PERMS_ALL;
+                        }
+
 						if (!isset($GLOBALS['innowork-core']['acl-checkperm'][$userId]['groupid'])) {
-							$tmp_user = new \Innomatic\Domain\User\User(\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->domaindata['id'], $userId);
 							$groupId = $GLOBALS['innowork-core']['acl-checkperm'][$userId]['groupid'] = $tmp_user->GetGroup();
                         } else {
                             $groupId = $GLOBALS['innowork-core']['acl-checkperm'][$userId]['groupid'];

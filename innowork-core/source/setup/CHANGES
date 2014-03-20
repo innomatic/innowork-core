@@ -20,6 +20,7 @@ CHANGES:
 - Removed old about page and image. (Alex Pagnoni)
 - Removed summary WUI widget. (Alex Pagnoni)
 - Removed "Today" button. (Alex Pagnoni)
+- Improved handling of Innowork ACLs. (Alex Pagnoni)
 
 FIXES:
 - Fixed wrong handling of searches when no acl properties is set to true. (Alex Pagnoni)
