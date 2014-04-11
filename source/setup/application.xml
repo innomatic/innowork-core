@@ -4,7 +4,7 @@
 		<idname>innowork-core</idname>
 		<release>
 			<version>3.4.0</version>
-			<date>2014/02/16</date>
+			<date>2014/04/11</date>
 			<changesfile>CHANGES</changesfile>
 		</release>
 		<description>Innowork Engine</description>
@@ -21,18 +21,18 @@
 			<author>
 				<name>Innoteam Srl</name>
 				<email>info@innoteam.it</email>
-				<web>http://www.innoteam.it/</web>
+				<web>http://www.innomatic.io/</web>
 			</author>
 			<copyright>Copyright (c) 2002-2014 Innoteam Srl</copyright>
 			<license>MPL</license>
 			<licensefile>LICENSE</licensefile>
 		</legal>
 		<support>
-			<supportemail>helpdesk@innoteam.it</supportemail>
-			<bugsemail>helpdesk@innoteam.it</bugsemail>
+			<supportemail>helpdesk@innomatic.io</supportemail>
+			<bugsemail>helpdesk@innomatic.io</bugsemail>
 			<maintainer>
 				<name>Alex Pagnoni</name>
-				<email>alex.pagnoni@innoteam.it</email>
+				<email>alex.pagnoni@innomatic.io</email>
 			</maintainer>
 		</support>
 	</definition>
@@ -84,7 +84,7 @@
 		<class name="innowork/core/InnoworkItem.php" />
 		<class name="innowork/core/InnoworkItemLog.php" />
 		<class name="innowork/core/InnoworkKnowledgeBase.php" />
-		
+
         <traybaritem
             name="innoworktrashcan"
             panel="1innoworkcore"
@@ -136,7 +136,7 @@
 			category="1summary" />
 
         <!-- Roles -->
-        
+
         <role name="accounting" title="accounting" description="" catalog="innowork-core::roles" />
         <role name="customer" title="customer" description="" catalog="innowork-core::roles" />
         <role name="employee" title="employee" description="" catalog="innowork-core::roles" />
@@ -148,6 +148,6 @@
         <role name="projectmanager" title="projectmanager" description="" catalog="innowork-core::roles" />
         <role name="sales" title="sales" description="" catalog="innowork-core::roles" />
         <role name="seniormanager" title="seniormanager" description="" catalog="innowork-core::roles" />
-        
+
 	</components>
 </application>
