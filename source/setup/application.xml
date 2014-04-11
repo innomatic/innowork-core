@@ -1,0 +1,153 @@
+<?xml version='1.0'?>
+<application>
+	<definition>
+		<idname>innowork-core</idname>
+		<release>
+			<version>3.4.0</version>
+			<date>2014/04/11</date>
+			<changesfile>CHANGES</changesfile>
+		</release>
+		<description>Innowork Engine</description>
+		<category>intranet</category>
+		<iconfile></iconfile>
+		<dependencies>
+			<dependency>innomatic[6.4.0]</dependency>
+			<dependency>phplotlib[5.0-3]</dependency>
+		</dependencies>
+		<options>
+			<!-- <option></option> -->
+		</options>
+		<legal>
+			<author>
+				<name>Innoteam Srl</name>
+				<email>info@innoteam.it</email>
+				<web>http://www.innomatic.io/</web>
+			</author>
+			<copyright>Copyright (c) 2002-2014 Innoteam Srl</copyright>
+			<license>MPL</license>
+			<licensefile>LICENSE</licensefile>
+		</legal>
+		<support>
+			<supportemail>helpdesk@innomatic.io</supportemail>
+			<bugsemail>helpdesk@innomatic.io</bugsemail>
+			<maintainer>
+				<name>Alex Pagnoni</name>
+				<email>alex.pagnoni@innomatic.io</email>
+			</maintainer>
+		</support>
+	</definition>
+	<components>
+
+		<domaingroup name="1summary"
+			catalog="innowork-core::misc" />
+
+		<domaintable name="innowork_core_acls"
+			file="innowork_core_acls.xml" />
+		<domaintable name="innowork_core_itemtypes_enabled"
+			file="innowork_core_itemtypes_enabled.xml" />
+		<domaintable name="innowork_core_itemslog"
+			file="innowork_core_itemslog.xml" />
+
+		<domainpanel name="1innoworkcore" file="1innoworkcore.php"
+			themeicon="desktop" themeicontype="filesystems"
+			catalog="innowork-core::misc" category="1summary" />
+
+		<catalog name="innowork-core" />
+
+		<component name="innoworkitemtype"
+			file="InnoworkitemtypeComponent.php" />
+
+		<hookhandler name="innoworkcore"
+			file="InnoworkCoreHookHandler.php" />
+
+		<wuiwidget name="innoworksearch" file="WuiInnoworksearch.php" />
+		<wuiwidget name="innoworkitemacl" file="WuiInnoworkitemacl.php" />
+
+		<wuivalidator name="innoworkitemacl"
+			file="InnoworkitemaclWuiValidator.php" />
+
+		<hook name="innoworkcore_domain_group_remove_groupremoved"
+			functionapplication="innomatic" function="domain.group.remove"
+			event="groupremoved" hookhandler="InnoworkCoreHookHandler.php"
+			hookmethod="InnoworkCoreHookHandler::domain_group_remove_groupremoved" />
+		<hook name="innoworkcore_domain_user_remove_userremoved"
+			functionapplication="innomatic" function="domain.user.remove"
+			event="userremoved" hookhandler="InnoworkCoreHookHandler.php"
+			hookmethod="InnoworkCoreHookHandler::domain_user_remove_userremoved" />
+
+		<roottable name="innowork_core_itemtypes"
+			file="innowork_core_itemtypes.xml" />
+
+		<class name="innowork/core/InnoworkAcl.php" />
+		<class name="innowork/core/InnoworkCore.php" />
+		<class name="innowork/core/InnoworkDefaultAclItem.php" />
+		<class name="innowork/core/InnoworkItem.php" />
+		<class name="innowork/core/InnoworkItemLog.php" />
+		<class name="innowork/core/InnoworkKnowledgeBase.php" />
+
+        <traybaritem
+            name="innoworktrashcan"
+            panel="1innoworkcore"
+            file="InnoworkTrashcanTraybarItem.php"
+            class="\\Shared\\Traybar\\InnoworkTrashcanTraybarItem" />
+
+        <traybaritem
+            name="innoworksearch"
+            panel="1innoworkcore"
+            file="InnoworkSearchTraybarItem.php"
+            class="\\Shared\\Traybar\\InnoworkSearchTraybarItem" />
+
+		<!-- Preferences -->
+
+		<domainpanel name="innoworkcoreprefs"
+			file="innoworkcoreprefs.php" themeicon="desktop"
+			themeicontype="filesystems"
+			catalog="innowork-core::misc" category="preferences" />
+
+		<!-- Default acl items -->
+
+		<innoworkitemtype name="defaultaclitem" file="defaultaclitem"
+			catalog="innowork-core::misc" classfile="innowork/core/InnoworkDefaultAclItem.php"
+			classname="InnoworkDefaultAclItem"
+			domainpanel="innoworkcoreprefs" />
+
+		<domaintable name="innowork_core_acls_defaults"
+			file="innowork_core_acls_defaults.xml" />
+
+		<!-- Clippings -->
+
+		<innoworkitemtype name="clipping" file="clipping"
+			catalog="innowork-core::misc"
+			classfile="innowork/core/clipping/InnoworkClipping.php" classname="InnoworkClipping"
+			icon="fileopen" icontype="apps"
+			domainpanel="innoworkclippings" miniicon="misc3"
+			summaryname="clipping-name" showmode="app" />
+
+		<class name="innowork/core/clipping/InnoworkClipping.php" />
+
+		<domaintable name="innowork_core_clippings"
+			file="innowork_core_clippings.xml" />
+		<domaintable name="innowork_core_clippings_items"
+			file="innowork_core_clippings_items.xml" />
+
+		<domainpanel name="innoworkclippings"
+			file="innoworkclippings.php" themeicon="fileopen"
+			themeicontype="apps" catalog="innowork-core::misc"
+			category="1summary" />
+
+        <!-- Roles -->
+
+        <role name="accounting" title="accounting" description="" catalog="innowork-core::roles" />
+        <role name="customer" title="customer" description="" catalog="innowork-core::roles" />
+        <role name="employee" title="employee" description="" catalog="innowork-core::roles" />
+        <role name="freelance_manager" title="freelance_manager" description="" catalog="innowork-core::roles" />
+        <role name="freelance" title="freelance" description="" catalog="innowork-core::roles" />
+        <role name="helpdesk" title="helpdesk" description="" catalog="innowork-core::roles" />
+        <role name="hrmanager" title="hrmanager" description="" catalog="innowork-core::roles" />
+        <role name="marketing" title="marketing" description="" catalog="innowork-core::roles" />
+        <role name="projectmanager" title="projectmanager" description="" catalog="innowork-core::roles" />
+        <role name="sales" title="sales" description="" catalog="innowork-core::roles" />
+        <role name="seniormanager" title="seniormanager" description="" catalog="innowork-core::roles" />
+
+	</components>
+</application>
