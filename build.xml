@@ -16,7 +16,6 @@
 	<target name="sources">
 		<tar destfile="${basedir}/build/${name}-src-${version}.tgz" compression="gzip">
 			<tarfileset dir="${basedir}/source" prefix="${name}-src-${version}">
-				<exclude name="**/.svn/**" />
 				<exclude name=".cache/**" />
 			</tarfileset>
 		</tar>
@@ -25,17 +24,27 @@
 	<target name="package">
 		<tar destfile="${basedir}/build/${name}-${version}.tgz" compression="gzip">
 			<tarfileset dir="${basedir}/source" prefix="${name}-${version}">
-				<exclude name="**/.cvsignore" />
-				<exclude name="**/.svn/**" />
 				<exclude name="build/**" />
-				<exclude name="nbproject/**" />
-				<exclude name="project.index" />
-				<exclude name=".project" />
-				<exclude name=".settings/**" />
 				<exclude name=".cache/**" />
 				<exclude name="build.xml" />
 			</tarfileset>
 		</tar>
+	</target>
+
+	<target name="dev" depends="package">
+        <exec executable="scp">
+            <arg value="${basedir}/build/${name}-${version}.tgz" />
+            <arg value="innomatic-dev:/tmp/" />
+        </exec>
+
+        <exec executable="ssh">
+            <arg value="innomatic-dev" />
+            <arg value="-C" />
+            <arg value="php" />
+            <arg value="/vagrant/dev/innomatic/core/scripts/application.php" />
+            <arg value="deploy" />
+            <arg value="/tmp/${name}-${version}.tgz" />
+        </exec>
 	</target>
 
 </project>
