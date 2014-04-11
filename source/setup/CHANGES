@@ -14,6 +14,7 @@ NEW FEATURES:
 - Added a set of default roles. (Alex Pagnoni)
 - Added support for "view_all_(itemtype)" permission: if the user has the
   permission, he can access all the item type objects. (Alex Pagnoni)
+- Added support for search in multiple types in knowledgebase search. (Alex Pagnoni)
 
 CHANGES:
 - Removed search and trashcan buttons from shared toolbar. (Alex Pagnoni)

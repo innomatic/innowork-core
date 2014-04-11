@@ -47,12 +47,21 @@ class InnoworkKnowledgeBase {
         }
     }
 
-    /*!
-     @function GlobalSearch
+    /* public &globalSearch($searchKeys, $type = '', $trashcan = false, $limit = 0, $restrictToPermission = InnoworkItem::SEARCH_RESTRICT_NONE) {{{ */
+    /**
+     * Executes a global search in multiple types.
+     *
+     * @param mixed $searchKeys
+     * @param string|array $type A type or array of types to be searched for.
+     * @param bool $trashcan
+     * @param int $limit
+     * @param bool $restrictToPermission
+     * @access public
+     * @return void
      */
     public function &globalSearch($searchKeys, $type = '', $trashcan = false, $limit = 0, $restrictToPermission = InnoworkItem::SEARCH_RESTRICT_NONE) {
         $result = array();
-        
+
         if (\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getState() == InnomaticContainer::STATE_DEBUG) {
             \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getLoadTimer()->Mark('InnoworkCore: start global search');
         }
@@ -60,7 +69,7 @@ class InnoworkKnowledgeBase {
         $result['founditems'] = 0;
 
         while (list ($key, $value) = each($this->mSummaries)) {
-            if ($value['searchable'] and ($type == '' or ($type != '' and $type == $key))) {
+            if ($value['searchable'] and ($type == '' or ($type != '' and ((!is_array($type) and $type == $key) or (is_array($type) and in_array($key, $type)))))) {
                 $class_name = $this->mSummaries[$key]['classname'];
 				if (!class_exists($class_name)) {
 					continue;
@@ -80,4 +89,5 @@ class InnoworkKnowledgeBase {
         }
         return $result;
     }
+    /* }}} */
 }
