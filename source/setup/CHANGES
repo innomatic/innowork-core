@@ -13,6 +13,11 @@ NEW FEATURES:
 - Do not show anything in Wui ACL widget when the item permission is none.
   (Alex Pagnoni)
 
+SECURITY:
+- Added check in ACL widget validator: ACLs can be changed only when the user
+  has enough permissions, preventing forged operations by unauthorized users.
+  (Alex Pagnoni)
+
 
 
 3.4.0 - 2014/04/11

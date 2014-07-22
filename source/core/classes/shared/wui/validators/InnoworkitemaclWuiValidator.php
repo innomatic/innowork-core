@@ -24,7 +24,12 @@
  * ***** END LICENSE BLOCK ***** */
 
 require_once('innomatic/wui/Wui.php');
-if ( (isset(Wui::instance('wui')->parameters['wui']['wui']['evd']['aclitemtype']) or isset(Wui::instance('wui')->parameters['wui']['wui']['evd']['aclmode']) or (isset(Wui::instance('wui')->parameters['wui']['wui']['evn']) and (Wui::instance('wui')->parameters['wui']['wui']['evn'] == 'innoworkacladd' or Wui::instance('wui')->parameters['wui']['wui']['evn'] == 'innoworkaclremove')))) {
+if ((isset(Wui::instance('wui')->parameters['wui']['wui']['evd']['aclitemtype'])
+    or isset(Wui::instance('wui')->parameters['wui']['wui']['evd']['aclmode'])
+    or (isset(Wui::instance('wui')->parameters['wui']['wui']['evn'])
+    and (Wui::instance('wui')->parameters['wui']['wui']['evn'] == 'innoworkacladd'
+    or Wui::instance('wui')->parameters['wui']['wui']['evn'] == 'innoworkaclremove')))
+) {
     require_once('innowork/core/InnoworkAcl.php');
     $acl = new InnoworkAcl(
     	\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getDataAccess(),
@@ -45,40 +50,64 @@ if ( (isset(Wui::instance('wui')->parameters['wui']['wui']['evd']['aclitemtype']
     if (isset(Wui::instance('wui')->parameters['wui']['wui']['evn'])) {
         switch (Wui::instance('wui')->parameters['wui']['wui']['evn']) {
             case 'innoworkacladd' :
-                foreach (Wui::instance('wui')->parameters['wui']['wui']['evd']['limitedacl'] as $item) {
-                    switch (substr($item, 0, 1)) {
-                        case 'g' :
-                            if (!isset(Wui::instance('wui')->parameters['wui']['wui']['evd']['aclperms']))
-                                Wui::instance('wui')->parameters['wui']['wui']['evd']['aclperms'] = InnoworkAcl::PERMS_ALL;
-                            //$acl->removePermission( str_replace( 'g', '', $item ), '' );
-                            $acl->setPermission(str_replace('g', '', $item), '', Wui::instance('wui')->parameters['wui']['wui']['evd']['aclperms']);
-                            $GLOBALS['innoworkcore']['itemacl'][Wui::instance('wui')->parameters['wui']['wui']['evd']['aclitemtype']][Wui::instance('wui')->parameters['wui']['wui']['evd']['aclitemid']] = true;
-                            break;
-                        case 'u' :
-                            if (!isset(Wui::instance('wui')->parameters['wui']['wui']['evd']['aclperms']))
-                                Wui::instance('wui')->parameters['wui']['wui']['evd']['aclperms'] = InnoworkAcl::PERMS_ALL;
+                $tmp_innoworkcore = InnoworkCore::instance('innoworkcore', \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getDataAccess(), \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->getDataAccess());
+                $summaries = $tmp_innoworkcore->getSummaries();
+                $class_name = $summaries[Wui::instance('wui')->parameters['wui']['wui']['evd']['aclitemtype']]['classname'];
+				if (!class_exists($class_name)) {
+					break;
+				}
+				$tmpItem = new $class_name (\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getDataAccess(), \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->getDataAccess(), Wui::instance('wui')->parameters['wui']['wui']['evd']['aclitemid']);
+                if ($tmpItem->mItemOwnerId == \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentUser()->getUserId()
+                    or User::isAdminUser(\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentUser()->getUserName(), \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->getDomainId())
+                    or $acl->checkPermission('', \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentUser()->getUserId()) >= InnoworkAcl::PERMS_RESPONSIBLE) {
+                    foreach (Wui::instance('wui')->parameters['wui']['wui']['evd']['limitedacl'] as $item) {
+                        switch (substr($item, 0, 1)) {
+                            case 'g' :
+                                if (!isset(Wui::instance('wui')->parameters['wui']['wui']['evd']['aclperms'])) {
+                                    Wui::instance('wui')->parameters['wui']['wui']['evd']['aclperms'] = InnoworkAcl::PERMS_ALL;
+                                }
+                                //$acl->removePermission( str_replace( 'g', '', $item ), '' );
+                                $acl->setPermission(str_replace('g', '', $item), '', Wui::instance('wui')->parameters['wui']['wui']['evd']['aclperms']);
+                                $GLOBALS['innoworkcore']['itemacl'][Wui::instance('wui')->parameters['wui']['wui']['evd']['aclitemtype']][Wui::instance('wui')->parameters['wui']['wui']['evd']['aclitemid']] = true;
+                                break;
+                            case 'u' :
+                                if (!isset(Wui::instance('wui')->parameters['wui']['wui']['evd']['aclperms'])) {
+                                    Wui::instance('wui')->parameters['wui']['wui']['evd']['aclperms'] = InnoworkAcl::PERMS_ALL;
+                                }
 
-                            //$acl->removePermission( '', str_replace( 'u', '', $item ) );
-                            $acl->setPermission('', str_replace('u', '', $item), Wui::instance('wui')->parameters['wui']['wui']['evd']['aclperms']);
-                            $GLOBALS['innoworkcore']['itemacl'][Wui::instance('wui')->parameters['wui']['wui']['evd']['aclitemtype']][Wui::instance('wui')->parameters['wui']['wui']['evd']['aclitemid']] = true;
-                            break;
+                                //$acl->removePermission( '', str_replace( 'u', '', $item ) );
+                                $acl->setPermission('', str_replace('u', '', $item), Wui::instance('wui')->parameters['wui']['wui']['evd']['aclperms']);
+                                $GLOBALS['innoworkcore']['itemacl'][Wui::instance('wui')->parameters['wui']['wui']['evd']['aclitemtype']][Wui::instance('wui')->parameters['wui']['wui']['evd']['aclitemid']] = true;
+                                break;
+                        }
                     }
                 }
                 break;
 
             case 'innoworkaclremove' :
-                foreach (Wui::instance('wui')->parameters['wui']['wui']['evd']['limitedacl'] as $item) {
-                    switch (substr($item, 0, 1)) {
-                        case 'g' :
-                            //$acl->removePermission( str_replace( 'g', '', $item ), '' );
-                            $acl->setPermission(str_replace('g', '', $item), '', InnoworkAcl::PERMS_NONE);
-                            $GLOBALS['innoworkcore']['itemacl'][Wui::instance('wui')->parameters['wui']['wui']['evd']['aclitemtype']][Wui::instance('wui')->parameters['wui']['wui']['evd']['aclitemid']] = true;
-                            break;
-                        case 'u' :
-                            //$acl->removePermission( '', str_replace( 'u', '', $item ) );
-                            $acl->setPermission('', str_replace('u', '', $item), InnoworkAcl::PERMS_NONE);
-                            $GLOBALS['innoworkcore']['itemacl'][Wui::instance('wui')->parameters['wui']['wui']['evd']['aclitemtype']][Wui::instance('wui')->parameters['wui']['wui']['evd']['aclitemid']] = true;
-                            break;
+                $tmp_innoworkcore = InnoworkCore::instance('innoworkcore', \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getDataAccess(), \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->getDataAccess());
+                $summaries = $tmp_innoworkcore->getSummaries();
+                $class_name = $summaries[Wui::instance('wui')->parameters['wui']['wui']['evd']['aclitemtype']]['classname'];
+				if (!class_exists($class_name)) {
+					break;
+				}
+				$tmpItem = new $class_name (\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getDataAccess(), \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->getDataAccess(), Wui::instance('wui')->parameters['wui']['wui']['evd']['aclitemid']);
+                if ($tmpItem->mItemOwnerId == \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentUser()->getUserId()
+                    or User::isAdminUser(\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentUser()->getUserName(), \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->getDomainId())
+                    or $acl->checkPermission('', \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentUser()->getUserId()) >= InnoworkAcl::PERMS_RESPONSIBLE) {
+                    foreach (Wui::instance('wui')->parameters['wui']['wui']['evd']['limitedacl'] as $item) {
+                        switch (substr($item, 0, 1)) {
+                            case 'g' :
+                                //$acl->removePermission( str_replace( 'g', '', $item ), '' );
+                                $acl->setPermission(str_replace('g', '', $item), '', InnoworkAcl::PERMS_NONE);
+                                $GLOBALS['innoworkcore']['itemacl'][Wui::instance('wui')->parameters['wui']['wui']['evd']['aclitemtype']][Wui::instance('wui')->parameters['wui']['wui']['evd']['aclitemid']] = true;
+                                break;
+                            case 'u' :
+                                //$acl->removePermission( '', str_replace( 'u', '', $item ) );
+                                $acl->setPermission('', str_replace('u', '', $item), InnoworkAcl::PERMS_NONE);
+                                $GLOBALS['innoworkcore']['itemacl'][Wui::instance('wui')->parameters['wui']['wui']['evd']['aclitemtype']][Wui::instance('wui')->parameters['wui']['wui']['evd']['aclitemid']] = true;
+                                break;
+                        }
                     }
                 }
                 break;
