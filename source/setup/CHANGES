@@ -10,6 +10,8 @@ x.x.x
 ------------------
 NEW FEATURES:
 - Completed support for parent item ACLs. (Alex Pagnoni)
+- Do not show anything in Wui ACL widget when the item permission is none.
+  (Alex Pagnoni)
 
 
 
