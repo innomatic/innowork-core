@@ -48,15 +48,25 @@ abstract class InnoworkItem
     /*! @var mCreated timestamp - Item creation date. */
     public $mCreated;
     /*! @var mParentType - Item type name of the item parent, if any. */
-    public $mParentType;
+    public $mParentType = '';
+    /**
+     * Name of the table field containing the parent id, if defined.
+     *
+     * The field must be declared in $mViewableSearchResultKeys array.
+     * The parent item type must support ACLs ($mNoAcl must be false).
+     *
+     * @var string
+     * @access public
+     */
+    public $mParentIdField = '';
     /*! @var mParentId - Item id number of item parent, if any. */
-    public $mParentId;
+    public $mParentId = 0;
 
 	const SEARCH_RESTRICT_NONE = 0;
 	const SEARCH_RESTRICT_TO_OWNER = 1;
 	const SEARCH_RESTRICT_TO_RESPONSIBLE = 2;
 	const SEARCH_RESTRICT_TO_PARTICIPANT = 3;
-    
+
     // Extension class defined vars
 
     /*! @var mItemType string - Item type name. */
@@ -92,15 +102,14 @@ abstract class InnoworkItem
     public $mGenericFields = array();
     /*! @var mConvertible boolean - True if the item accepts to be converted from or to another item. */
     public $mConvertible = false;
-    
+
     /**
      * Array of tags supported by this item type, eg. task, invoice, project, etc.
      * @var array
      */
     public $mTypeTags = array();
-    
+
     public $mFsBasePath;
-    
 
     /*!
      @function InnoworkItem
@@ -144,11 +153,23 @@ abstract class InnoworkItem
         // Check if the item id is valid
         //
         if ($this->mItemId) {
-            $check_query = $this->mrDomainDA->execute('SELECT ownerid FROM '.$this->mTable.' WHERE id='.$this->mItemId);
+            // Extract parent id field, if supported
+            $parentField = '';
+            if (strlen($this->mParentType) > 0 && strlen($this->mParentIdField) > 0) {
+                $parentField = ", {$this->mParentIdField} ";
+            }
+
+            $check_query = $this->mrDomainDA->execute("SELECT ownerid $parentField FROM ".$this->mTable.' WHERE id='.$this->mItemId);
             if ($check_query->getNumberRows()) {
                 // Get owner id
                 //
                 $this->mOwnerId = $check_query->getFields('ownerid');
+
+                // Extract parent id, if supported
+                if (strlen($this->mParentType) > 0 && strlen($this->mParentIdField) > 0) {
+                    $this->mParentId = $check_query->getFields($this->mParentIdField);
+                }
+
             } else {
                 $log = \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getLogger();
                 $log->logEvent('innoworkcore.innoworkcore.innoworkitem.innoworkitem', 'Invalid item id '.$this->mItemId.' from '.$this->mItemType.' item type handler', \Innomatic\Logging\Logger::WARNING);
@@ -158,7 +179,7 @@ abstract class InnoworkItem
         }
 
         // Item ACL
-        if (strlen($this->mParentType) and $this->mParentId) {
+        if (strlen($this->mParentType) and $this->mParentId > 0) {
         	// Gets the ACL from the parent object
             require_once('innowork/core/InnoworkCore.php');
         	$core = InnoworkCore::instance('innoworkcore', $this->mrRootDb, $this->mrDomainDA);
@@ -185,7 +206,7 @@ abstract class InnoworkItem
         	'spenttime' => '',
         	'cost' => ''
         );
-        
+
         // Item folder in filesystem
         if ($itemId != 0) {
             $this->mFsBasePath = \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->getHome().'files/'.$this->getItemTypePlural().'/'.$this->mItemId.'/';
@@ -203,7 +224,7 @@ abstract class InnoworkItem
         $result = false;
         if ($this->mItemId == 0) {
             if (!strlen($userId)) {
-                
+
                 $userId = \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentUser()->getUserId();
             }
 
@@ -215,7 +236,7 @@ abstract class InnoworkItem
 
                 // Item folder in filesystem
                 $this->mFsBasePath = \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->getHome().'files/'.$this->getItemTypePlural().'/'.$this->mItemId.'/';
-                
+
                 if (!strlen($this->mParentType)) {
                     $this->mAcl->mItemId = $item_id;
                     if (!isset($this->_mSkipAclSet)) {
@@ -305,7 +326,7 @@ abstract class InnoworkItem
 
     /**
      * Returns item type identifier.
-     * 
+     *
      * @return string
      */
     public function getItemType()
@@ -316,14 +337,14 @@ abstract class InnoworkItem
     /**
      * Returns item type identifier in plural version.
      * Items with a non simple plural (eg. "companies") should overwrite this method.
-     * 
+     *
      * @return string
      */
     public function getItemTypePlural()
     {
         return $this->mItemType.'s';
     }
-    
+
     public function getItemId()
     {
         return $this->mItemId;
@@ -582,29 +603,65 @@ abstract class InnoworkItem
             //
             $search_result = $this->doSearch($searchKeys, $userId, $globalSearch, $trashcan, $limit, $offset);
 
+
+            if (strlen($this->mParentType) > 0 && strlen($this->mParentIdField) > 0) {
+                require_once('innowork/core/InnoworkCore.php');
+                $tmp_innoworkcore = InnoworkCore::instance(
+                    'innoworkcore',
+                    \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getDataAccess(),
+                    \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->getDataAccess()
+                );
+
+                $summaries = $tmp_innoworkcore->getSummaries();
+                $parentTable = $summaries[$this->mParentType]['table'];
+            }
+
             // Check if the user has enough permissions for each row in the result set,
             // and add the ones with enough permissions
             //
             if (is_array($search_result) and count($search_result)) {
                 while (list ($id, $val) = each($search_result)) {
-                    $tmp_acl = new InnoworkAcl($this->mrRootDb, $this->mrDomainDA, $this->mItemType, $id);
-                    if ($this->mNoAcl == true or $val['ownerid'] == \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentUser()->getUserId() or $tmp_acl->checkPermission('', $userId) >= InnoworkAcl::PERMS_SEARCH) {
+                    // Get the item ACL or the item parent ACL if supported
+                    if (strlen($this->mParentType) > 0 && strlen($this->mParentIdField) > 0) {
+                        $aclItemId = $val[$this->mParentIdField];
+                        $aclItemType = $this->mParentType;
+
+                        $aclItemOwnerId = '';
+                        if (strlen($parentTable)) {
+                            $parentOwnerQuery = \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->getDataAccess()->execute(
+                                "SELECT ownerid FROM $parentTable WHERE id=$aclItemId"
+                            );
+                            if ($parentOwnerQuery->getNumberRows() > 0) {
+                                $aclItemOwnerId = $parentOwnerQuery->getFields('ownerid');
+                            }
+                        }
+                        $aclNoAcl = false;
+                    } else {
+                        $aclItemId = $id;
+                        $aclItemType = $this->mItemType;
+                        $aclItemOwnerId = $val['ownerid'];
+                        $aclNoAcl = $this->mNoAcl;
+                    }
+
+                    $tmp_acl = new InnoworkAcl($this->mrRootDb, $this->mrDomainDA, $aclItemType, $aclItemId);
+
+                    if ($aclNoAcl == true or $aclItemOwnerId == \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentUser()->getUserId() or $tmp_acl->checkPermission('', $userId) >= InnoworkAcl::PERMS_SEARCH) {
                         $restrict = false;
 
                         switch ($restrictToPermission) {
                             case InnoworkItem::SEARCH_RESTRICT_TO_OWNER :
-                                if ($val['ownerid'] != \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentUser()->getUserId())
+                                if ($aclItemOwnerId != \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentUser()->getUserId())
                                     $restrict = true;
                                 break;
 
                             case InnoworkItem::SEARCH_RESTRICT_TO_RESPONSIBLE :
                                 $restrict = true;
-                                if ($val['ownerid'] == \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentUser()->getUserId() or $tmp_acl->checkPermission('', $userId) == InnoworkAcl::PERMS_RESPONSIBLE)
+                                if ($aclItemOwnerId == \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentUser()->getUserId() or $tmp_acl->checkPermission('', $userId) == InnoworkAcl::PERMS_RESPONSIBLE)
                                     $restrict = false;
                                 break;
 
                             case InnoworkItem::SEARCH_RESTRICT_TO_PARTICIPANT :
-                                if ($val['ownerid'] == \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentUser()->getUserId() or $tmp_acl->checkPermission('', $userId) >= InnoworkAcl::PERMS_ALL)
+                                if ($aclItemOwnerId == \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentUser()->getUserId() or $tmp_acl->checkPermission('', $userId) >= InnoworkAcl::PERMS_ALL)
                                     $restrict = true;
                                 break;
 
@@ -652,7 +709,7 @@ abstract class InnoworkItem
                 {
                     $searchKeys[$key] = $searchWord;
                 }
-                
+
                 unset( $searchWord );
                 */
             }
@@ -897,12 +954,12 @@ abstract class InnoworkItem
     {
     	return in_array($tag, $this->mTypeTags);
     }
-    
+
     public function getExternalItemWidgetXmlData($item)
     {
     	return '';
     }
-    
+
     /**
      * Creates a new item of another type from the current item.
      *
@@ -1026,25 +1083,25 @@ abstract class InnoworkItem
         $sem = new \Innomatic\Process\Semaphore('innoworkitem_'.$this->mItemType, $this->mItemId);
         $sem->waitGreen();
     }
-    
+
     public function getBaseFolder() {
         return InnoworkJurisDossier::$this->mFsBasePath;
     }
-    
+
     public function checkBaseFolder() {
         if (!is_dir($this->getBaseFolder())) {
             require_once('innomatic/io/filesystem/DirectoryUtils.php');
             DirectoryUtils::mktree($this->getBaseFolder(), 0755);
         }
     }
-    
+
     public function getFilesList($path) {
         $this->checkBaseFolder();
-         
+
         $files = array();
-         
+
         $dir = $this->getBaseFolder().$path.'/';
-         
+
         if (is_dir($dir)) {
             if ($dh = opendir($dir)) {
                 while (($file = readdir($dh)) !== false) {
@@ -1055,36 +1112,36 @@ abstract class InnoworkItem
                 closedir($dh);
             }
         }
-    
+
         usort($files, 'InnoworkProject::filesListSort');
-         
+
         return $files;
     }
-    
+
     public function mkdir($dirname) {
         $dirname = $this->getBaseFolder().$dirname.'/';
-         
+
         require_once('innomatic/io/filesystem/DirectoryUtils.php');
         DirectoryUtils::mktree($dirname, 0755);
     }
-    
+
     public function addFile($path, $tmp_file, $name) {
         $dest_name = $this->getBaseFolder().$path.'/'.$name;
-         
+
         $result = copy(
             $tmp_file,
             $dest_name
         );
     }
-    
+
     /*
      public function checkDuplicateProtocol($path, $name)
      {
     $this->checkBaseFolder();
     $check_parts = explode(' ', $name);
-     
+
     $dir = $this->getBaseFolder().$path.'/';
-    
+
     if (is_dir($dir)) {
     if ($dh = opendir($dir)) {
     while (($file = readdir($dh)) !== false) {
@@ -1099,18 +1156,18 @@ abstract class InnoworkItem
     closedir($dh);
     }
     }
-     
+
     return false;
     }
     */
-    
+
     public function renameFile($path, $oldName, $newName) {
         return rename($this->getBaseFolder().$path.'/'.$oldName, $this->getBaseFolder().$path.'/'.$newName);
     }
-    
+
     public function removeFile($file) {
         $filePath = $this->getBaseFolder().$file;
-         
+
         if (is_dir($filePath)) {
             require_once('innomatic/io/filesystem/DirectoryUtils.php');
             DirectoryUtils::unlinkTree($filePath);
@@ -1120,21 +1177,21 @@ abstract class InnoworkItem
                 unlink($filePath);
                 return true;
             }
-    
+
             // File doesn't exist
             return false;
         }
     }
-    
+
     public function getFileSize($file)
     {
         $stat = stat($this->getBaseFolder().$file);
         return $stat['size'];
     }
-    
+
     public function downloadFile($file) {
         $file = $this->getBaseFolder().$file;
-         
+
         if (file_exists($file)) {
             header('Content-Description: File Transfer');
             header('Content-Type: application/octet-stream');
@@ -1152,7 +1209,7 @@ abstract class InnoworkItem
             return false;
         }
     }
-    
+
     public static function filesListSort($a, $b)
     {
         if ($a['type'] == $b['type']) {
@@ -1166,11 +1223,11 @@ abstract class InnoworkItem
             return ($a['name'] < $b['name']) ? -1 : 1;
             */
         }
-         
+
         if ($a['type'] == 'dir' and $b['type'] == 'file') {
             return -1;
         }
-    
+
         if ($a['type'] == 'file' and $b['type'] == 'dir') {
             return 1;
         }

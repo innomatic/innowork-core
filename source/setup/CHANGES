@@ -6,6 +6,13 @@
 
 
 
+x.x.x
+------------------
+NEW FEATURES:
+- Completed support for parent item ACLs. (Alex Pagnoni)
+
+
+
 3.4.0 - 2014/04/11
 ------------------
 NEW FEATURES:
