@@ -141,8 +141,12 @@ class WuiInnoworkitemacl extends \Shared\Wui\WuiXml
         $row = 0;
 
         if ($acl_mode == 'advanced') {
-            $groups_query = \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->getDataAccess()->execute('SELECT id,groupname FROM domain_users_groups ORDER BY groupname ');
-            $users_query = \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->getDataAccess()->execute('SELECT id,groupid,username,fname,lname FROM domain_users ORDER BY username');
+            $domainDa = \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->getDataAccess();
+            $groups_query = $domainDa->execute('SELECT id,groupname FROM domain_users_groups ORDER BY groupname ');
+            $users_query = $domainDa->execute(
+                'SELECT id,groupid,username,fname,lname FROM domain_users WHERE disabled IS NULL or disabled <> '.$domainDa->formatText($domainDa->fmttrue).
+                ' ORDER BY username'
+            );
             $limited_acls = array();
             $users = array();
 
