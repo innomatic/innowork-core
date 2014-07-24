@@ -38,16 +38,25 @@ class WuiInnoworksearch extends WuiXml {
     function __construct($elemName, $elemArgs = '', $elemTheme = '', $dispEvents = '') {
         parent::__construct($elemName, $elemArgs, $elemTheme, $dispEvents);
 
-        if (isset($this->mArgs['summaries']) and is_array($this->mArgs['summaries']))
+        if (isset($this->mArgs['summaries']) and is_array($this->mArgs['summaries'])) {
             $this->mSummaries = $this->mArgs['summaries'];
-        if (isset($this->mArgs['searchresult']) and is_array($this->mArgs['searchresult']))
+        }
+
+        if (isset($this->mArgs['searchresult']) and is_array($this->mArgs['searchresult'])) {
             $this->mSearchResult = $this->mArgs['searchresult'];
-        if (isset($this->mArgs['trashcan']) and $this->mArgs['trashcan'] == 'true')
+        }
+
+        if (isset($this->mArgs['trashcan']) and $this->mArgs['trashcan'] == 'true') {
             $this->mTrashcan = 'true';
-        if (isset($this->mArgs['clipping']) and $this->mArgs['clipping'] == 'true')
+        }
+
+        if (isset($this->mArgs['clipping']) and $this->mArgs['clipping'] == 'true') {
             $this->mClipping = 'true';
-        if (isset($this->mArgs['clippingid']))
+        }
+
+        if (isset($this->mArgs['clippingid'])) {
             $this->mClippingId = (int) $this->mArgs['clippingid'];
+        }
 
         $this->_FillDefinition();
     }
@@ -64,7 +73,7 @@ class WuiInnoworksearch extends WuiXml {
         $this->mDefinition = '
                     <vertgroup><name>searchresult</name><children>';
 
-        while (list ($type, $results) = each($this->mSearchResult)) {
+        while (list($type, $results) = each($this->mSearchResult)) {
             if (count($results)) {
                 $tmp_locale = new LocaleCatalog($this->mSummaries[$type]['catalog'], \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentUser()->getLanguage());
 
@@ -87,11 +96,11 @@ class WuiInnoworksearch extends WuiXml {
                                       </args>
                                     </button>';
 
-                $headers = array();
-                $header_count = 1;
+                $headers        = array();
+                $header_count   = 1;
                 $locale_country = new LocaleCountry(\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentUser()->getCountry());
 
-                while (list (, $keyname) = each($this->mSummaries[$type]['viewablesearchresultkeys'])) {
+                while (list(, $keyname) = each($this->mSummaries[$type]['viewablesearchresultkeys'])) {
                     $headers[$header_count ++]['label'] = $tmp_locale->getStr($keyname);
                 }
 
@@ -149,10 +158,11 @@ class WuiInnoworksearch extends WuiXml {
                                     break;
 
                                 case 'boolean' :
-                                    if ($value == \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->getDataAccess()->fmttrue)
+                                    if ($value == \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->getDataAccess()->fmttrue) {
                                         $value = 'true';
-                                    else
+                                    } else {
                                         $value = 'false';
+                                    }
                                     break;
 
                                 case 'table' :
@@ -160,14 +170,14 @@ class WuiInnoworksearch extends WuiXml {
                                         $tmp_query = \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->getDataAccess()->execute('SELECT '.$key_type[2].' FROM '.$key_type[1].' WHERE id='.$value);
                                         if ($tmp_query->getNumberRows()) {
                                             $value = $tmp_query->getFields($key_type[2]);
-                                        }
-                                        else
+                                        } else {
                                             $value = '';
+                                        }
 
                                         $tmp_query->Free();
-                                    }
-                                    else
+                                    } else {
                                         $value = '';
+                                    }
                                     break;
 
                                 default :
