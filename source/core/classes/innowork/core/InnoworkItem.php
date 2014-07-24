@@ -59,7 +59,13 @@ abstract class InnoworkItem
      * @access public
      */
     public $mParentIdField = '';
-    /*! @var mParentId - Item id number of item parent, if any. */
+
+    /**
+     * Item id number of item parent, if any.
+     *
+     * @var integer
+     * @access public
+     */
     public $mParentId = 0;
 
 	const SEARCH_RESTRICT_NONE = 0;
@@ -69,16 +75,46 @@ abstract class InnoworkItem
 
     // Extension class defined vars
 
-    /*! @var mItemType string - Item type name. */
+    /**
+     * Item type name.
+     *
+     * @var string
+     * @access public
+     */
     public $mItemType;
-    /*! @var mItemId integer - Item id number. */
+
+    /**
+     * Item id number.
+     *
+     * @var integer
+     * @access public
+     */
     public $mItemId;
 
     // To be explicitly defined by the extension class
 
-    /*! @var mTable string - Item type database table name. */
+    /**
+     * Item type database table name.
+     *
+     * @var string
+     * @access public
+     */
+
     public $mTable;
-    /*! @var mKeys array - Array of the searchable keys. */
+    /**
+     * Array of searchable item keys.
+     *
+     * Supported types:
+     * - integer
+     * - text
+     *  - boolean
+     *  - timestamp
+     *  - table (relation to an external table)
+     *  - userid (the search result is translated to an Innomatic user in the search widget)
+     *
+     * @var array
+     * @access public
+     */
     public $mKeys;
     /*! @var mSearchable boolean - True if the item type is searchable. */
     public $mSearchable = true;

@@ -180,6 +180,21 @@ class WuiInnoworksearch extends WuiXml {
                                     }
                                     break;
 
+                                case 'userid' :
+                                    if (strlen($value)) {
+                                        $tmp_query = \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->getDataAccess()->execute('SELECT id,username,fname,lname FROM domain_users WHERE id='.$value);
+                                        if ($tmp_query->getNumberRows()) {
+                                            $value = $tmp_query->getFields('fname').' '.$tmp_query->getFields('lname');
+                                        } else {
+                                            $value = '';
+                                        }
+
+                                        $tmp_query->Free();
+                                    } else {
+                                        $value = '';
+                                    }
+                                    break;
+
                                 default :
                                     break;
                             }

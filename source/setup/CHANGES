@@ -12,6 +12,7 @@ NEW FEATURES:
 - Completed support for parent item ACLs. (Alex Pagnoni)
 - Do not show anything in Wui ACL widget when the item permission is none.
   (Alex Pagnoni)
+- Added "userid" key type. (Alex Pagnoni)
 
 SECURITY:
 - Added check in ACL widget validator: ACLs can be changed only when the user
