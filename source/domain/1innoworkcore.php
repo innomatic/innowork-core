@@ -104,10 +104,10 @@ function main_search($eventData) {
           <action type="encoded">'.urlencode(WuiEventsCall::buildEventsCallString('', array(array('view', 'search')))).'</action>
         </args>
         <children>
-    
+
           <grid>
             <children>
-    
+
               <label row="0" col="0"><name>searchlabel</name><args><label type="encoded">'.urlencode($gLocale->getStr('search.label')).'</label></args></label>
           <horizgroup row="0" col="1"><args><align>center</align></args><children>
             <string><name>searchkey</name>
@@ -130,19 +130,20 @@ function main_search($eventData) {
               <args>
                 <themeimage>zoom</themeimage>
                 <horiz>true</horiz>
+                <mainaction>true</mainaction>
                 <label type="encoded">'.urlencode($gLocale->getStr('search.submit')).'</label>
                 <formsubmit>search</formsubmit>
                 <action type="encoded">'.urlencode(WuiEventsCall::buildEventsCallString('', array(array('view', 'search')))).'</action>
               </args>
             </button>
           </children></horizgroup>
-    
+
 <!--
               <label row="1" col="0" halign="" valign="top"><args><label type="encoded">'.urlencode($gLocale->getStr('restrict_to.label')).'</label></args></label>
-    
+
               <vertgroup row="1" col="1">
                 <children>
-    
+
                   <radio><name>restrictto</name>
                     <args>
                       <disp>view</disp>
@@ -151,7 +152,7 @@ function main_search($eventData) {
                       <checked>'. ($eventData['restrictto'] == InnoworkItem::SEARCH_RESTRICT_NONE ? 'true' : 'false').'</checked>
                     </args>
                   </radio>
-    
+
                   <radio><name>restrictto</name>
                     <args>
                       <disp>view</disp>
@@ -160,7 +161,7 @@ function main_search($eventData) {
                       <checked>'. ($eventData['restrictto'] == InnoworkItem::SEARCH_RESTRICT_TO_OWNER ? 'true' : 'false').'</checked>
                     </args>
                   </radio>
-    
+
                   <radio><name>restrictto</name>
                     <args>
                       <disp>view</disp>
@@ -169,7 +170,7 @@ function main_search($eventData) {
                       <checked>'. ($eventData['restrictto'] == InnoworkItem::SEARCH_RESTRICT_TO_RESPONSIBLE ? 'true' : 'false').'</checked>
                     </args>
                   </radio>
-    
+
                   <radio><name>restrictto</name>
                     <args>
                       <disp>view</disp>
@@ -178,7 +179,7 @@ function main_search($eventData) {
                       <checked>'. ($eventData['restrictto'] == InnoworkItem::SEARCH_RESTRICT_TO_PARTICIPANT ? 'true' : 'false').'</checked>
                     </args>
                   </radio>
-    
+
                 </children>
               </vertgroup>
 -->
@@ -189,7 +190,7 @@ function main_search($eventData) {
 
 	if (isset($eventData['searchkey'])) {
 		require_once('innowork/core/InnoworkKnowledgeBase.php');
-		 
+
 		$innowork_kb = new InnoworkKnowledgeBase(\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getDataAccess(), \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->getDataAccess());
 		$global_search = $innowork_kb->GlobalSearch($eventData['searchkey'], $eventData['type'], false, 0, $eventData['restrictto']);
 
@@ -268,7 +269,7 @@ function main_trashcan($eventData) {
 		$xml_def = '
         <vertgroup><name>trashcan</name>
           <children>
-        
+
             <innoworksearch><name>searchresult</name>
               <args>
                 <searchresult type="array">'.WuiXml::encode($global_search['result']).'</searchresult>
@@ -276,13 +277,14 @@ function main_trashcan($eventData) {
                 <trashcan>true</trashcan>
               </args>
             </innoworksearch>
-        
+
             <horizbar/>
-        
+
             <button><name>emptytrashcan</name>
               <args>
                 <label type="encoded">'.urlencode($gLocale->getStr('empty_trashcan.button')).'</label>
                 <themeimage>buttonok</themeimage>
+                <dangeraction>true</dangeraction>
                 <horiz>true</horiz>
                 <frame>false</frame>
                 <needconfirm>true</needconfirm>
@@ -290,7 +292,7 @@ function main_trashcan($eventData) {
                 <action type="encoded">'.urlencode(WuiEventsCall::buildEventsCallString('', array(array('view', 'trashcan'), array('action', 'empty_trashcan')))).'</action>
               </args>
             </button>
-        
+
           </children>
         </vertgroup>';
 	}
@@ -325,32 +327,32 @@ function main_today_activities($eventData) {
 	$xml_def = '
     <vertgroup>
       <children>
-    
+
         <form><name>date</name>
           <args>
             <action type="encoded">'.urlencode(WuiEventsCall::buildEventsCallString('', array(array('view', 'today_activities')))).'</action>
           </args>
           <children>
-    
+
             <horizgroup>
               <args>
                 <align>middle</align>
               </args>
               <children>
-    
+
                 <label>
                   <args>
                     <label type="encoded">'.urlencode($gLocale->getStr('day_activities.label')).'</label>
                   </args>
                 </label>
-    
+
                 <date><name>date</name>
                   <args>
                     <disp>view</disp>
                     <value type="array">'.WuiXml::encode($date).'</value>
                   </args>
                 </date>
-    
+
                 <button>
                   <args>
                     <horiz>true</horiz>
@@ -361,10 +363,10 @@ function main_today_activities($eventData) {
             <action type="encoded">'.urlencode(WuiEventsCall::buildEventsCallString('', array(array('view', 'today_activities')))).'</action>
                   </args>
                 </button>
-    
+
               </children>
             </horizgroup>
-    
+
           </children>
         </form>';
 
@@ -486,45 +488,45 @@ function main_stats($eventData) {
 	$xml_def = '
     <vertgroup>
       <children>
-    
+
         <form><name>stats</name>
           <args>
                     <action type="encoded">'.urlencode(WuiEventsCall::buildEventsCallString('', array(array('view', 'stats')))).'</action>
           </args>
           <children>
-    
+
             <horizgroup>
               <args>
                 <align>middle</align>
               </args>
               <children>
-    
+
                 <label>
                   <args>
                     <label type="encoded">'.urlencode($gLocale->getStr('stats_from.label')).'</label>
                   </args>
                 </label>
-    
+
                 <date><name>statsfrom</name>
                   <args>
                     <disp>view</disp>
                     <value type="array">'.WuiXml::encode($from_date).'</value>
                   </args>
                 </date>
-    
+
                 <label>
                   <args>
                     <label type="encoded">'.urlencode($gLocale->getStr('stats_to.label')).'</label>
                   </args>
                 </label>
-    
+
                 <date><name>statsto</name>
                   <args>
                     <disp>view</disp>
                     <value type="array">'.WuiXml::encode($to_date).'</value>
                   </args>
                 </date>
-    
+
                 <button>
                   <args>
                     <themeimage>buttonok</themeimage>
@@ -534,10 +536,10 @@ function main_stats($eventData) {
                     <action type="encoded">'.urlencode(WuiEventsCall::buildEventsCallString('', array(array('view', 'stats')))).'</action>
                   </args>
                 </button>
-    
+
               </children>
             </horizgroup>
-    
+
           </children>
         </form>';
 
@@ -545,7 +547,7 @@ function main_stats($eventData) {
 		$legend = array($gLocale->getStr('activites_legend.label'), $gLocale->getStr('trend_legend.label'));
 
 		$xml_def.= '<horizbar/>
-        
+
         <phplot>
           <args>
             <data type="array">'.WuiXml::encode($stats_data).'</data>
@@ -556,7 +558,7 @@ function main_stats($eventData) {
             <pointsize>1</pointsize>
           </args>
         </phplot>
-        
+
         <phplot>
           <args>
             <data type="array">'.WuiXml::encode($users_stats_data).'</data>
