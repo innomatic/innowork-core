@@ -3,7 +3,7 @@
 	<definition>
 		<idname>innowork-core</idname>
 		<release>
-			<version>3.4.0</version>
+			<version>3.5.0</version>
 			<date>2014/04/11</date>
 			<changesfile>CHANGES</changesfile>
 		</release>
@@ -89,13 +89,14 @@
             name="innoworktrashcan"
             panel="1innoworkcore"
             file="InnoworkTrashcanTraybarItem.php"
-            class="\\Shared\\Traybar\\InnoworkTrashcanTraybarItem" />
+            class="\Shared\Traybar\InnoworkTrashcanTraybarItem" />
 
         <traybaritem
             name="innoworksearch"
             panel="1innoworkcore"
             file="InnoworkSearchTraybarItem.php"
-            class="\\Shared\\Traybar\\InnoworkSearchTraybarItem" />
+            class="\Shared\Traybar\InnoworkSearchTraybarItem" />
+
 
 		<!-- Preferences -->
 
