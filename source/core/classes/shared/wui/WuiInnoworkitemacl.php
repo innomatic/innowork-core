@@ -50,7 +50,7 @@ class WuiInnoworkitemacl extends \Shared\Wui\WuiXml
         $this->mItemOwnerId = $this->mArgs['itemownerid'];
         $this->fillDefinition();
     }
-    
+
     /*!
      @function fillDefinition
      */
@@ -74,6 +74,9 @@ class WuiInnoworkitemacl extends \Shared\Wui\WuiXml
 		);
         $summaries = $tmp_innoworkcore->getSummaries();
 
+        // Default parent ACL mode
+        $parentAcl = false;
+
         // Item object
         $class_name = $summaries[$this->mItemType]['classname'];
         if (class_exists($class_name)) {
@@ -82,18 +85,26 @@ class WuiInnoworkitemacl extends \Shared\Wui\WuiXml
 	        	\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->getDataAccess(),
     	    	$this->mItemId
         	);
+
+            $acl = $item_object->mAcl;
+
+            // Check parent ACL mode
+            if (strlen($item_object->mParentType) and $item_object->mParentId > 0) {
+                $parentAcl = true;
+            }
         } else {
         	$item_object = null;
+
+            // Access list
+            require_once('innowork/core/InnoworkAcl.php');
+            $acl = new InnoworkAcl(
+                \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getDataAccess(),
+                \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->getDataAccess(),
+                $this->mItemType,
+                $this->mItemId
+            );
         }
-        
-        // Access list
-		require_once('innowork/core/InnoworkAcl.php');
-        $acl = new InnoworkAcl(
-        	\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getDataAccess(),
-        	\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->getDataAccess(),
-        	$this->mItemType,
-        	$this->mItemId
-		);
+
         $tmp_acl_type = $acl->getType();
         if (strlen($tmp_acl_type)) {
             $this->mAclType = $tmp_acl_type;
@@ -102,8 +113,8 @@ class WuiInnoworkitemacl extends \Shared\Wui\WuiXml
         $acls_query = \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->getDataAccess()->execute(
         	'SELECT groupid, userid, rights '.
         	'FROM innowork_core_acls '.
-        	'WHERE itemtype='.\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->getDataAccess()->formatText($this->mItemType).
-        	' '.'AND itemid='.$this->mItemId
+        	'WHERE itemtype='.\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->getDataAccess()->formatText($acl->mItemType).
+        	' '.'AND itemid='.$acl->mItemId
 		);
         $owner = '';
 
@@ -130,8 +141,12 @@ class WuiInnoworkitemacl extends \Shared\Wui\WuiXml
         $row = 0;
 
         if ($acl_mode == 'advanced') {
-            $groups_query = \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->getDataAccess()->execute('SELECT id,groupname FROM domain_users_groups ORDER BY groupname ');
-            $users_query = \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->getDataAccess()->execute('SELECT id,groupid,username,fname,lname FROM domain_users ORDER BY username');
+            $domainDa = \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->getDataAccess();
+            $groups_query = $domainDa->execute('SELECT id,groupname FROM domain_users_groups ORDER BY groupname ');
+            $users_query = $domainDa->execute(
+                'SELECT id,groupid,username,fname,lname FROM domain_users WHERE disabled IS NULL or disabled <> '.$domainDa->formatText($domainDa->fmttrue).
+                ' ORDER BY username'
+            );
             $limited_acls = array();
             $users = array();
 
@@ -239,16 +254,16 @@ class WuiInnoworkitemacl extends \Shared\Wui\WuiXml
         }
 
         $item_actions = array();
-        
+
         // Other items widget actions
-        if (is_object($item_object)) {
+        if (is_object($item_object) && $acl->checkPermission('', \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentUser()->getUserId()) > InnoworkAcl::PERMS_NONE) {
 	        foreach ($summaries as $item_type => $item_desc) {
 	        	if ($item_type == $this->mItemType) {
 	        		continue;
 	        	}
-	        	
+
 	        	$tmp_class = $item_desc['classname'];
-	        	
+
 	        	$tmp_obj = new $tmp_class(
 	        		\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getDataAccess(),
 	        		\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->getDataAccess()
@@ -259,8 +274,10 @@ class WuiInnoworkitemacl extends \Shared\Wui\WuiXml
 	        	}
 	        }
         }
-        
-        if ($this->mItemOwnerId == \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentUser()->getUserId() or User::isAdminUser(\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentUser()->getUserName(), \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->getDomainId()) or $acl->checkPermission('', \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentUser()->getUserId()) >= InnoworkAcl::PERMS_RESPONSIBLE) {
+
+        if ($acl->checkPermission('', \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentUser()->getUserId()) == InnoworkAcl::PERMS_NONE) {
+            $this->mDefinition = '<empty/>';
+        } elseif (!$parentAcl and ($this->mItemOwnerId == \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentUser()->getUserId() or User::isAdminUser(\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentUser()->getUserName(), \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->getDomainId()) or $acl->checkPermission('', \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentUser()->getUserId()) >= InnoworkAcl::PERMS_RESPONSIBLE)) {
             $this->mDefinition = '
 <empty><name>innoworkitemacl</name>
   <children>
@@ -290,7 +307,7 @@ class WuiInnoworkitemacl extends \Shared\Wui\WuiXml
             		$this->mDefinition .= '</children></vertgroup>';
             	}
             }
-            
+
             $this->mDefinition .= '<vertgroup row="'.$row ++.'" col="0" halign="" valign="" nowrap="true">
       <children>
     <form><name>itemacl'.md5($this->mItemType.'-'.$this->mItemId).'</name>
@@ -599,7 +616,7 @@ $this->mDefinition .=
 
                 if ($summaries[$this->mItemType]['convertible']) {
                 $convert_types = array();
-                
+
                 foreach ($summaries as $type => $item) {
                     if ($item['convertible'] and $type != $this->mItemType) {
 						$tmp_locale = new \Innomatic\Locale\LocaleCatalog($item['catalog'], \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentUser()->getLanguage());
@@ -784,7 +801,7 @@ $this->mDefinition .=
         <headers type="array">'.WuiXml::encode(array('0' => array('label' => $locale->getStr('item_properties.label')))).'</headers>
           </args>
           <children>';
-            
+
             if (count($item_actions)) {
             	foreach ($item_actions as $item_action) {
             		$this->mDefinition .= '<vertgroup row="'.$row ++.'" col="0"><children>';
@@ -792,7 +809,7 @@ $this->mDefinition .=
             		$this->mDefinition .= '</children></vertgroup>';
             	}
             }
-            
+
             $this->mDefinition .='
         <vertgroup row="'.$row ++.'" col="0" halign="" valign="" nowrap="true"><name>vg</name><children>
         <horizgroup>
@@ -923,7 +940,7 @@ $this->mDefinition .=
 
                 if ($summaries[$this->mItemType]['convertible']) {
                 $convert_types = array();
-                
+
                 foreach ($summaries as $type => $item) {
                     if ($item['convertible'] and $type != $this->mItemType) {
 $tmp_locale = new \Innomatic\Locale\LocaleCatalog($item['catalog'], \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentUser()->getLanguage());
@@ -1067,7 +1084,7 @@ unset($tmp_locale);
                 </form>
               </children>
             </vertgroup>';
-                }                
+                }
             }
 
             $this->mDefinition.= '
