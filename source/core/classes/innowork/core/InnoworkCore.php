@@ -44,7 +44,7 @@ class InnoworkCore extends Singleton {
 
     /*!
      @function InnoworkCore
-    
+
      @abstract Class constructor.
      */
     public function ___construct(\Innomatic\Dataaccess\DataAccess $rrootDb, \Innomatic\Dataaccess\DataAccess $rdomainDA) {
@@ -70,15 +70,15 @@ class InnoworkCore extends Singleton {
             $env_section = 'short_summaries'.$showMode;
         }
 
-        if (!count($tags) and isset($this->wholeSummaries[$env_section])) {
-            $this->mSummaries = &$this->wholeSummaries[$env_section];
-            $result = &$this->wholeSummaries[$env_section];
+        if (count($tags) == 0 and isset($this->wholeSummaries[$env_section])) {
+            $this->mSummaries = $this->wholeSummaries[$env_section];
+            $result = $this->wholeSummaries[$env_section];
         } else {
             $enabledtypes_query = $this->mrDomainDA->Execute('SELECT itemtype FROM innowork_core_itemtypes_enabled ORDER BY itemtype');
 
             if (is_object($enabledtypes_query)) {
                 $result = array();
-                
+
                 $tmp_perm = new \Innomatic\Desktop\Auth\DesktopPanelAuthorizator($this->mrDomainDA, \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentUser()->getGroup());
                 while (!$enabledtypes_query->eof) {
                     switch ($showMode) {
@@ -107,9 +107,9 @@ class InnoworkCore extends Singleton {
 									// Check if there is a filter by tags
 									if (count($tags) == 0 or count(array_intersect($tmp_class->mTypeTags, $tags)) > 0) {
 										$tmp_locale = new LocaleCatalog($itemtype_query->getFields('catalog'), \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentUser()->getLanguage());
-	
+
 										$item_type = $enabledtypes_query->getFields('itemtype');
-	
+
                                         $result[$item_type]['type'] = $item_type;
                                         $result[$item_type]['typeplural'] = $tmp_class->getItemTypePlural();
 										$result[$item_type]['classname'] = $itemtype_query->getFields('classname');
@@ -117,11 +117,11 @@ class InnoworkCore extends Singleton {
 										$result[$item_type]['label'] = $tmp_locale->getStr($itemtype_query->getFields('summaryname'));
 										$result[$item_type]['icon'] = $itemtype_query->getFields('icon');
 										$result[$item_type]['icontype'] = $itemtype_query->getFields('icontype');
-	
+
 										if ($complete) {
 											$result[$item_type]['widget'] = $tmp_class->getSummary();
 										}
-	
+
 										$result[$item_type]['domainpanel'] = $itemtype_query->getFields('domainpanel');
 										// @todo adminevent is old - change to panelevent
 										$result[$item_type]['adminevent'] = $itemtype_query->getFields('adminevent');
@@ -156,7 +156,7 @@ class InnoworkCore extends Singleton {
                 }
 
                 $this->mSummaries = $result;
-                if (!count($tags)) {
+                if (count($tags) == 0) {
                     $this->wholeSummaries[$env_section] = $this->mSummaries;
                 }
             }
@@ -173,7 +173,7 @@ class InnoworkCore extends Singleton {
 
     /*!
      @function getMainToolBar
-    
+
      @abstract Gets the Wui main toolbar array.
      */
     public function getMainToolBar($type = 'app', $itemType = '', $itemId = '') {
@@ -239,7 +239,7 @@ class InnoworkCore extends Singleton {
 
 	/**
 	 * Returns a list of the item created/changed today (or at the given date).
-	 * 
+	 *
 	 * @param string $date
 	 * @param integer $userId
 	 * @return array
@@ -279,7 +279,7 @@ class InnoworkCore extends Singleton {
                     $act_query->moveNext();
                 	continue;
                 }
-                
+
                 $tmp_class = new $class_name(\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getDataAccess(), \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->getDataAccess(), $act_query->getFields('itemid'));
 
                 if (is_object($tmp_class)) {
