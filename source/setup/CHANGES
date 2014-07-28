@@ -9,7 +9,7 @@
 3.5.1
 ------------------
 NEW FEATURES:
-- Added the InnooworkCore::getItem() method to get a new instance of the given
+- Added the InnoworkCore::getItem() method to get a new instance of the given
   Innowork item. (Alex Pagnoni)
 
 FIXES:
