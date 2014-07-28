@@ -306,4 +306,45 @@ class InnoworkCore extends Singleton {
         }
         return $result;
     }
+
+    /* public getItem($itemType, $itemId = 0) {{{ */
+    /**
+     * Returns a new instance ot the given Innowork item object.
+     *
+     * @param string $itemType Internal type name.
+     * @param int $itemId Optional item id.
+     * @static
+     * @access public
+     * @return false|InnoworkItem subclass instance
+     */
+    public static function getItem($itemType, $itemId = 0)
+    {
+        // Get the items list
+        $core = self::instance('innoworkcore',
+            \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getDataAccess(),
+            \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->getDataAccess()
+        );
+        $summaries = $core->getSummaries();
+
+        // Check if the type exists
+        if (!isset($summaries[$itemType]['classname'])) {
+            return false;
+        }
+
+        // Check if the given type has a class
+        $className = $summaries[$itemType]['classname'];
+        if (!strlen($className)) {
+            return false;
+        }
+
+        // Create a new item instance
+        $itemObject = new $className(
+            \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getDataAccess(),
+            \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->getDataAccess(),
+            $itemId
+        );
+
+        return $itemObject;
+    }
+    /* }}} */
 }
