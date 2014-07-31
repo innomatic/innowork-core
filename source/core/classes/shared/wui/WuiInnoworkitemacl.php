@@ -32,22 +32,30 @@ class WuiInnoworkitemacl extends \Shared\Wui\WuiXml
     var $mDefaultAction;
     var $mAclType;
 
-    /*!
-     @function WuiInnoworkItemAcl
-     */
     public function __construct($elemName, $elemArgs = '', $elemTheme = '', $dispEvents = '')
     {
         parent::__construct($elemName, $elemArgs, $elemTheme, $dispEvents);
-        if (isset($this->mArgs['itemtype']))
-        $this->mItemType = $this->mArgs['itemtype'];
-        if (isset($this->mArgs['itemid']))
-        $this->mItemId = $this->mArgs['itemid'];
-        if (isset($this->mArgs['defaultaction']))
-        $this->mDefaultAction = $this->mArgs['defaultaction'];
-        if (isset($this->mArgs['acltype']))
-        $this->mAclType = $this->mArgs['acltype'];
-        if (isset($this->mArgs['itemownerid']))
-        $this->mItemOwnerId = $this->mArgs['itemownerid'];
+
+        if (isset($this->mArgs['itemtype'])) {
+            $this->mItemType = $this->mArgs['itemtype'];
+        }
+
+        if (isset($this->mArgs['itemid'])) {
+            $this->mItemId = $this->mArgs['itemid'];
+        }
+
+        if (isset($this->mArgs['defaultaction'])) {
+            $this->mDefaultAction = $this->mArgs['defaultaction'];
+        }
+
+        if (isset($this->mArgs['acltype'])) {
+            $this->mAclType = $this->mArgs['acltype'];
+        }
+
+        if (isset($this->mArgs['itemownerid'])) {
+            $this->mItemOwnerId = $this->mArgs['itemownerid'];
+        }
+
         $this->fillDefinition();
     }
 
@@ -127,7 +135,7 @@ class WuiInnoworkitemacl extends \Shared\Wui\WuiXml
 
         if ($this->mItemOwnerId) {
             $owner_user = new \Innomatic\Domain\User\User(\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->domaindata['id'], $this->mItemOwnerId);
-            $owner_user_data = $owner_user->GetUserData();
+            $owner_user_data = $owner_user->getUserData();
             $owner = (strlen($owner_user_data['fname']) ? $owner_user_data['fname'].' ' : '').$owner_user_data['lname'];
         }
 
@@ -142,7 +150,7 @@ class WuiInnoworkitemacl extends \Shared\Wui\WuiXml
 
         if ($acl_mode == 'advanced') {
             $domainDa = \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->getDataAccess();
-            $groups_query = $domainDa->execute('SELECT id,groupname FROM domain_users_groups ORDER BY groupname ');
+            $groups_query = $domainDa->execute('SELECT id,groupname FROM domain_users_groups ORDER BY groupname');
             $users_query = $domainDa->execute(
                 'SELECT id,groupid,username,fname,lname FROM domain_users WHERE disabled IS NULL or disabled <> '.$domainDa->formatText($domainDa->fmttrue).
                 ' ORDER BY username'
@@ -171,18 +179,23 @@ class WuiInnoworkitemacl extends \Shared\Wui\WuiXml
 	                case InnoworkAcl::PERMS_NONE:
 	                    $limited_acls['g'.$groups_query->getFields('id')] = '[-] '.$groups_query->getFields('groupname');
 	                    break;
+
 	                case InnoworkAcl::PERMS_SEARCH:
 	                    $limited_acls['g'.$groups_query->getFields('id')] = '['.$locale->getStr('perm_search_short.label').'] '.$groups_query->getFields('groupname');
 	                    break;
+
 	                case InnoworkAcl::PERMS_READ:
 	                    $limited_acls['g'.$groups_query->getFields('id')] = '['.$locale->getStr('perm_read_short.label').'] '.$groups_query->getFields('groupname');
 	                    break;
+
 	                case InnoworkAcl::PERMS_EDIT:
 	                    $limited_acls['g'.$groups_query->getFields('id')] = '['.$locale->getStr('perm_edit_short.label').'] '.$groups_query->getFields('groupname');
 	                    break;
+
 	                case InnoworkAcl::PERMS_DELETE:
 	                    $limited_acls['g'.$groups_query->getFields('id')] = '['.$locale->getStr('perm_delete_short.label').'] '.$groups_query->getFields('groupname');
 	                    break;
+
 	                case InnoworkAcl::PERMS_ALL:
 	                    $limited_acls['g'.$groups_query->getFields('id')] = '[+] '.$groups_query->getFields('groupname');
 	                    break;
