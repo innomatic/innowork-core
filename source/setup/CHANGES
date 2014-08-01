@@ -11,6 +11,8 @@
 NEW FEATURES:
 - Added the InnoworkCore::getItem() method to get a new instance of the given
   Innowork item. (Alex Pagnoni)
+- Added the InnoworkCore::getShowItemAction() method to get the show action of
+  the given Innowork item. (Alex Pagnoni)
 
 FIXES:
 - Fixed handling of summaries caching in InnoworkCore that led to a wrong item

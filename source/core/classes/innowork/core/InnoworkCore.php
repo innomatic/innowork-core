@@ -347,4 +347,37 @@ class InnoworkCore extends Singleton {
         return $itemObject;
     }
     /* }}} */
+
+    /* public getShowItemAction($itemType, $itemId) {{{ */
+    /**
+     * Return a WUI event call for viewing the given item type / item id.
+     *
+     * @param string $itemType Internal item type
+     * @param string $itemId Item id
+     * @static
+     * @access public
+     * @return string WUI event call url string
+     */
+    public static function getShowItemAction($itemType, $itemId)
+    {
+        // Get the items list
+        $core = self::instance('innoworkcore',
+            \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getDataAccess(),
+            \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->getDataAccess()
+        );
+        $summaries = $core->getSummaries();
+
+        // Check if the type exists
+        if (!isset($summaries[$itemType]['classname'])) {
+            return '';
+        }
+
+        // Build the WUI event URL string
+        $action = \Innomatic\Wui\Dispatch\WuiEventsCall::buildEventsCallString(
+            $summaries[$itemType]['domainpanel'], array(array($summaries[$itemType]['showdispatcher'], $summaries[$itemType]['showevent'], array('id' => $itemId)))
+        );
+
+        return $action;
+    }
+    /* }}} */
 }
