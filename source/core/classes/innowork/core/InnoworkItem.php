@@ -258,13 +258,15 @@ abstract class InnoworkItem
     public function create($params, $userId = '')
     {
         $result = false;
-        if ($this->mItemId == 0) {
-            if (!strlen($userId)) {
+        $hook = new \Innomatic\Process\Hook($this->rootDA, 'innowork-core', 'innowork.item.create');
 
+        if ($this->mItemId == 0 && $hook->callHooks('startcall', $this, array('params' => $params, 'userid' => $userId)) == \Innomatic\Process\Hook::RESULT_OK) {
+            if (!strlen($userId)) {
                 $userId = \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentUser()->getUserId();
             }
 
-	    $item_id = $this->doCreate($params, $userId);
+            $item_id = $this->doCreate($params, $userId);
+
             if ($item_id) {
                 $this->mItemId = $item_id;
                 $this->mOwnerId = $userId;
@@ -308,6 +310,10 @@ abstract class InnoworkItem
                 // Flush item type cache
                 $this->cleanCache();
                 $result = true;
+            }
+
+            if ($hook->callHooks('endcall', $this, array('params' => $params, 'userid' => $userId)) != \Innomatic\Process\Hook::RESULT_OK) {
+                $result = false;
             }
         }
         return $result;
@@ -395,8 +401,9 @@ abstract class InnoworkItem
     public function edit($params, $userId = '')
     {
         $result = false;
+        $hook = new \Innomatic\Process\Hook($this->rootDA, 'innowork-core', 'innowork.item.edit');
 
-        if ($this->mItemId) {
+        if ($this->mItemId && $hook->callHooks('startcall', $this, array('params' => $params, 'userid' => $userId)) == \Innomatic\Process\Hook::RESULT_OK) {
             if (!strlen($userId)) {
                 $userId = \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentUser()->getUserId();
             }
@@ -415,6 +422,10 @@ abstract class InnoworkItem
                 }
             } else {
                 $this->mLastError = InnoworkAcl::ERROR_NOT_ENOUGH_PERMS;
+            }
+
+            if ($hook->callHooks('endcall', $this, array('params' => $params, 'userid' => $userId)) != \Innomatic\Process\Hook::RESULT_OK) {
+                $result = false;
             }
         }
         return $result;
@@ -459,8 +470,9 @@ abstract class InnoworkItem
     public function remove($userId = '')
     {
         $result = false;
+        $hook = new \Innomatic\Process\Hook($this->rootDA, 'innowork-core', 'innowork.item.remove');
 
-        if ($this->mItemId) {
+        if ($this->mItemId && $hook->callHooks('startcall', $this, array('userid' => $userId)) == \Innomatic\Process\Hook::RESULT_OK) {
             if (!strlen($userId)) {
                 $userId = \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentUser()->getUserId();
             }
@@ -491,7 +503,12 @@ abstract class InnoworkItem
             } else {
                 $this->mLastError = InnoworkAcl::ERROR_NOT_ENOUGH_PERMS;
             }
+
+            if ($hook->callHooks('endcall', $this, array('userid' => $userId)) != \Innomatic\Process\Hook::RESULT_OK) {
+                $result = false;
+            }
         }
+
         return $result;
     }
 
@@ -511,8 +528,9 @@ abstract class InnoworkItem
     public function trash($userId = '')
     {
         $result = false;
+        $hook = new \Innomatic\Process\Hook($this->rootDA, 'innowork-core', 'innowork.item.trash');
 
-        if ($this->mItemId and $this->mNoTrash == false) {
+        if ($this->mItemId and $this->mNoTrash == false && $hook->callHooks('startcall', $this, array('userid' => $userId)) == \Innomatic\Process\Hook::RESULT_OK) {
             if (!strlen($userId)) {
                 $userId = \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentUser()->getUserId();
             }
@@ -527,6 +545,10 @@ abstract class InnoworkItem
                 }
             } else {
                 $this->mLastError = InnoworkAcl::ERROR_NOT_ENOUGH_PERMS;
+            }
+
+            if ($hook->callHooks('endcall', $this, array('userid' => $userId)) != \Innomatic\Process\Hook::RESULT_OK) {
+                $result = false;
             }
         }
         return $result;
@@ -543,8 +565,9 @@ abstract class InnoworkItem
     public function restore($userId = '')
     {
         $result = false;
+        $hook = new \Innomatic\Process\Hook($this->rootDA, 'innowork-core', 'innowork.item.restore');
 
-        if ($this->mItemId and $this->mNoTrash == false) {
+        if ($this->mItemId and $this->mNoTrash == false && $hook->callHooks('startcall', $this, array('userid' => $userId)) == \Innomatic\Process\Hook::RESULT_OK) {
             if (!strlen($userId)) {
                 $userId = \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentUser()->getUserId();
             }
@@ -558,6 +581,10 @@ abstract class InnoworkItem
                 }
             } else {
                 $this->mLastError = InnoworkAcl::ERROR_NOT_ENOUGH_PERMS;
+            }
+
+            if ($hook->callHooks('endcall', $this, array('userid' => $userId)) != \Innomatic\Process\Hook::RESULT_OK) {
+                $result = false;
             }
         }
         return $result;

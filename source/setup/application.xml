@@ -97,6 +97,35 @@
             file="InnoworkSearchTraybarItem.php"
             class="\Shared\Traybar\InnoworkSearchTraybarItem" />
 
+        <hookevent name="innowork.item.create.startcall"
+            function="innowork.item.create" event="startcall" />
+
+        <hookevent name="innowork.item.create.endcall"
+            function="innowork.item.create" event="endcall" />
+
+        <hookevent name="innowork.item.edit.startcall"
+            function="innowork.item.edit" event="startcall" />
+
+        <hookevent name="innowork.item.edit.endcall"
+            function="innowork.item.edit" event="endcall" />
+
+        <hookevent name="innowork.item.remove.startcall"
+            function="innowork.item.remove" event="startcall" />
+
+        <hookevent name="innowork.item.remove.endcall"
+            function="innowork.item.remove" event="endcall" />
+
+        <hookevent name="innowork.item.trash.startcall"
+            function="innowork.item.trash" event="startcall" />
+
+        <hookevent name="innowork.item.trash.endcall"
+            function="innowork.item.trash" event="endcall" />
+
+        <hookevent name="innowork.item.restore.startcall"
+            function="innowork.item.restore" event="startcall" />
+
+        <hookevent name="innowork.item.restore.endcall"
+            function="innowork.item.restore" event="endcall" />
 
 		<!-- Preferences -->
 

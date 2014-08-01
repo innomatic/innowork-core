@@ -13,6 +13,7 @@ NEW FEATURES:
   Innowork item. (Alex Pagnoni)
 - Added the InnoworkCore::getShowItemAction() method to get the show action of
   the given Innowork item. (Alex Pagnoni)
+- Added hook events for the main item action. (Alex Pagnoni)
 
 FIXES:
 - Fixed handling of summaries caching in InnoworkCore that led to a wrong item
