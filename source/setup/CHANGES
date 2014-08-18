@@ -19,6 +19,10 @@ FIXES:
 - Fixed handling of summaries caching in InnoworkCore that led to a wrong item
   types list when using item tags. (Alex Pagnoni)
 
+DEPRECATED:
+- Removed InnoworkItem::getSummary() since Innowork no more provides a
+  dashboard view. (Alex Pagnoni)
+
 
 
 3.5.0 - 2014/07/25
