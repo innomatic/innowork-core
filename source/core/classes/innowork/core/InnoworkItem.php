@@ -599,23 +599,6 @@ abstract class InnoworkItem
     }
 
     /*!
-     @function getSummary
-     @abstract Returns the summary for this item type.
-     */
-    public function &getSummary()
-    {
-        return $this->doGetSummary();
-    }
-
-    /*!
-     @function _GetSummary
-     */
-    protected function &doGetSummary()
-    {
-        return false;
-    }
-
-    /*!
      @function Search
      @abstract Searches in the items. If $globalSearch is set to true, an OR search is performed,
      an AND search in the other case. If $searchKeys is not an array but a string, the search is

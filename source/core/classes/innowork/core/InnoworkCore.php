@@ -64,11 +64,7 @@ class InnoworkCore extends Singleton {
             \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getLoadTimer()->Mark('start - InnoworkCore::GetSummaries()');
         }
 
-        if ($complete) {
-            $env_section = 'complete_summaries'.$showMode;
-        } else {
-            $env_section = 'short_summaries'.$showMode;
-        }
+        $env_section = $showMode;
 
         if (count($tags) == 0 and isset($this->wholeSummaries[$env_section])) {
             $this->mSummaries = $this->wholeSummaries[$env_section];
@@ -117,10 +113,6 @@ class InnoworkCore extends Singleton {
 										$result[$item_type]['label'] = $tmp_locale->getStr($itemtype_query->getFields('summaryname'));
 										$result[$item_type]['icon'] = $itemtype_query->getFields('icon');
 										$result[$item_type]['icontype'] = $itemtype_query->getFields('icontype');
-
-										if ($complete) {
-											$result[$item_type]['widget'] = $tmp_class->getSummary();
-										}
 
 										$result[$item_type]['domainpanel'] = $itemtype_query->getFields('domainpanel');
 										// @todo adminevent is old - change to panelevent
