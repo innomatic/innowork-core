@@ -806,26 +806,40 @@ abstract class InnoworkItem
         $result = false;
         $hook = new \Innomatic\Process\Hook($this->mrRootDb, 'innowork-core', 'innowork.item.restore');
 
-        if ($this->mItemId and $this->mNoTrash == false && $hook->callHooks('startcall', $this, array('userid' => $userId)) == \Innomatic\Process\Hook::RESULT_OK) {
-            if (!strlen($userId)) {
-                $userId = \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentUser()->getUserId();
-            }
-
-            if ($this->mNoAcl == true or $userId == $this->mOwnerId or $this->mAcl->checkPermission('', $userId) >= InnoworkAcl::PERMS_DELETE) {
-                $result = $this->doRestore($userId);
-
-                if ($result) {
-                    $result = \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->getDataAccess()->execute('UPDATE '.$this->mTable.' SET trashed='.\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->getDataAccess()->formatText(\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->getDataAccess()->fmtfalse).' WHERE id='.$this->mItemId);
-                    $this->CleanCache();
-                }
-            } else {
-                $this->mLastError = InnoworkAcl::ERROR_NOT_ENOUGH_PERMS;
-            }
-
-            if ($hook->callHooks('endcall', $this, array('userid' => $userId)) != \Innomatic\Process\Hook::RESULT_OK) {
-                $result = false;
-            }
+        // Call startcall hooks
+        if ($this->mItemId and $this->mNoTrash == false && $hook->callHooks('startcall', $this, array('userid' => $userId)) != \Innomatic\Process\Hook::RESULT_OK) {
+            return false;
         }
+
+        // If no user id has been give, user the current user one
+        if (!strlen($userId)) {
+            $userId = \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentUser()->getUserId();
+        }
+
+        // If the user has enough ACL permissions, restore the item
+        if ($this->mNoAcl == true or $userId == $this->mOwnerId or $this->mAcl->checkPermission('', $userId) >= InnoworkAcl::PERMS_DELETE) {
+            $result = $this->doRestore($userId);
+
+            if ($result) {
+                // Set the item as not trashed
+                $result = $this->mrDomainDA->execute(
+                    'UPDATE '.$this->mTable.
+                    ' SET trashed='.$this->mrDomainDA->formatText($this->mrDomainDA->fmtfalse).
+                    ' WHERE id='.$this->mItemId
+                );
+
+                // Clean item cache
+                $this->cleanCache();
+            }
+        } else {
+            $this->mLastError = InnoworkAcl::ERROR_NOT_ENOUGH_PERMS;
+        }
+
+        // Call endcall hooks
+        if ($hook->callHooks('endcall', $this, array('userid' => $userId)) != \Innomatic\Process\Hook::RESULT_OK) {
+            return false;
+        }
+
         return $result;
     }
 
@@ -1304,70 +1318,106 @@ abstract class InnoworkItem
         return $result;
     }
 
+    /* public cleanCache() {{{ */
     /**
-     * Clears the cache for the current item.
+     * Clears the current item cache.
      *
+     * @access public
      * @return boolean
      */
     public function cleanCache()
     {
-        $cache_query = \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getDataAccess()->execute(
-        	'SELECT itemid
-        	FROM
-        		cache_items
-        	WHERE
-        		application='.\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getDataAccess()->formatText('innowork-core').' AND
-        		itemid LIKE '.\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getDataAccess()->formatText('itemtypesearch-'.$this->mItemType.'%'));
+        $cache_query = $this->mrRootDb->execute(
+            'SELECT itemid'.
+            ' FROM cache_items'.
+            ' WHERE application='.$this->mrRootDb->formatText('innowork-core').
+            ' AND itemid LIKE '.$this->mrRootDb->formatText('itemtypesearch-'.$this->mItemType.'%')
+        );
 
         while (!$cache_query->eof) {
-            $cached_item = new \Innomatic\Datatransfer\Cache\CachedItem(\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getDataAccess(), 'innowork-core', $cache_query->getFields('itemid'));
+            $cached_item = new \Innomatic\Datatransfer\Cache\CachedItem(
+                $this->mrRootDb,
+                'innowork-core',
+                $cache_query->getFields('itemid')
+            );
             $cached_item->destroy();
             $cache_query->moveNext();
         }
+
         $cache_query->free();
         return true;
     }
+    /* }}} */
 
+    /* public lock() {{{ */
     /**
      * Locks the current item.
      *
+     * Locks is only meant for write actions like change, while an item should
+     * be anyway accessible in read only mode when locked.
+     *
+     * @todo The system should support automatic expiry of locks after n
+     * seconds, and an optional alert to the user (eg. a javascript alert).
+     *
+     * @todo This method should optionally accept a max lock time in seconds.
+     *
+     * @access public
+     * @return void
      */
     public function lock()
     {
         $sem = new \Innomatic\Process\Semaphore('innoworkitem_'.$this->mItemType, $this->mItemId);
         $sem->setRed();
     }
+    /* }}} */
 
+    /* public unlock() {{{ */
     /**
      * Unlocks the current item.
      *
+     * @access public
+     * @return void
      */
     public function unlock()
     {
         $sem = new \Innomatic\Process\Semaphore('innoworkitem_'.$this->mItemType, $this->mItemId);
         $sem->setGreen();
     }
+    /* }}} */
 
+    /* public isLocked() {{{ */
     /**
-     * Tells if the current item is locked.
+     * Checks if the current item is locked.
      *
-     * @return bool
+     * @access public
+     * @return boolean
      */
     public function isLocked()
     {
         $sem = new \Innomatic\Process\Semaphore('innoworkitem_'.$this->mItemType, $this->mItemId);
         return $sem->checkStatus() == Semaphore::STATUS_RED ? true : false;
     }
+    /* }}} */
 
+    /* public waitLock() {{{ */
     /**
-     * Waits until the item is unlocked by another instance.
+     * Waits until the item has been unlocked by another instance.
      *
+     * This action is potentially dangerous since it may block user interface
+     * until the lock has been released.
+     *
+     * @todo Should accept an optional argument to override the lock and return
+     * false if the lock is not returned by x seconds.
+     *
+     * @access public
+     * @return void
      */
     public function waitLock()
     {
         $sem = new \Innomatic\Process\Semaphore('innoworkitem_'.$this->mItemType, $this->mItemId);
         $sem->waitGreen();
     }
+    /* }}} */
 
     public function getBaseFolder() {
         return InnoworkJurisDossier::$this->mFsBasePath;
@@ -1418,33 +1468,6 @@ abstract class InnoworkItem
             $dest_name
         );
     }
-
-    /*
-     public function checkDuplicateProtocol($path, $name)
-     {
-    $this->checkBaseFolder();
-    $check_parts = explode(' ', $name);
-
-    $dir = $this->getBaseFolder().$path.'/';
-
-    if (is_dir($dir)) {
-    if ($dh = opendir($dir)) {
-    while (($file = readdir($dh)) !== false) {
-    if ($file != '.' and $file != '..') {
-    $parts = explode(' ', $file);
-    if ($parts[0] == $check_parts[0]) {
-    closedir($dh);
-    return true;
-    }
-    }
-    }
-    closedir($dh);
-    }
-    }
-
-    return false;
-    }
-    */
 
     public function renameFile($path, $oldName, $newName) {
         return rename($this->getBaseFolder().$path.'/'.$oldName, $this->getBaseFolder().$path.'/'.$newName);
