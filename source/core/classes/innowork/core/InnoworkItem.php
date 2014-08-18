@@ -23,34 +23,108 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-/*!
- @class InnoworkItem
- @abstract Base item class.
+/**
+ * InnoworkItem abstract class.
+ *
+ * This is the base class for all Innowork item types.
+ *
+ * @abstract
+ * @copyright Copyright (c) 2002-2014 the Initial Developer. All rights reserved.
+ * @author Alex Pagnoni <alex.pagnoni@innomatic.io>
+ * @license MPL 1.1 {@link http://www.mozilla.org/MPL/}
  */
 abstract class InnoworkItem
 {
     // InnoworkItem defined vars
 
-    /*! @var mrRootDb DataAccess class - Innomatic database handler. */
-    public $mrRootDb;
-    /*! @var mrDomainDA DataAccess class - Domain database handler. */
-    public $mrDomainDA;
-    /*! @var mNoLog boolean - Flag to specify if item changed should be logged. */
-    public $mNoLog = false;
-    /*! @var mNoAcl boolean - Flag to specify if the item is ACL based or not. */
-    public $mNoAcl = false;
-    /*! @var mAcl InnoworkAcl class - Access list handler. */
-    public $mAcl;
-    /*! @var mLastError integer - Last error id number. */
-    public $mLastError;
-    /*! @var mOwnerId integer - User id number of the item owner. */
-    public $mOwnerId;
-    /*! @var mCreated timestamp - Item creation date. */
-    public $mCreated;
-    /*! @var mParentType - Item type name of the item parent, if any. */
-    public $mParentType = '';
     /**
-     * Name of the table field containing the parent id, if defined.
+     * Innomatic root data access.
+     *
+     * @var \Innomatic\Dataaccess\DataAccess
+     * @access public
+     */
+    public $mrRootDb;
+
+    /**
+     * Domain data access.
+     *
+     * Domain data access must be explicitly given since Innowork supports
+     * accessing object from other tenants.
+     *
+     * @var \Innomatic\Dataaccess\DataAccess
+     * @access public
+     */
+    public $mrDomainDA;
+
+    /**
+     * Flag to specify if item changes should not be logged.
+     *
+     * Defaults to false, item changes are logged.
+     *
+     * @var bool
+     * @access public
+     */
+    public $mNoLog = false;
+
+    /**
+     * Flag to specify if the item should not use ACLs.
+     *
+     * Defaults to false, ACL is supported.
+     *
+     * @var bool
+     * @access public
+     */
+    public $mNoAcl = false;
+
+    /**
+     * Item ACL object, if supported.
+     *
+     * @var InnoworkACL
+     * @access public
+     */
+    public $mAcl;
+
+    /**
+     * Last error id number.
+     *
+     * @var mixed
+     * @access public
+     */
+    public $mLastError;
+
+    /**
+     * User id number of the item owner.
+     *
+     * @var integer
+     * @access public
+     */
+    public $mOwnerId;
+
+    /**
+     * Item creation date.
+     *
+     * @var string timestamp
+     * @access public
+     */
+    public $mCreated;
+
+    const SEARCH_RESTRICT_NONE = 0;
+    const SEARCH_RESTRICT_TO_OWNER = 1;
+    const SEARCH_RESTRICT_TO_RESPONSIBLE = 2;
+    const SEARCH_RESTRICT_TO_PARTICIPANT = 3;
+
+    // Extension class defined vars
+
+    /**
+     * Item type name of the item parent, if supported.
+     *
+     * @var string
+     * @access public
+     */
+    public $mParentType = '';
+
+    /**
+     * Name of the table field containing the parent id, if supported and defined.
      *
      * The field must be declared in $mViewableSearchResultKeys array.
      * The parent item type must support ACLs ($mNoAcl must be false).
@@ -61,19 +135,12 @@ abstract class InnoworkItem
     public $mParentIdField = '';
 
     /**
-     * Item id number of item parent, if any.
+     * Item id number of item parent, if supported and defined
      *
      * @var integer
      * @access public
      */
     public $mParentId = 0;
-
-	const SEARCH_RESTRICT_NONE = 0;
-	const SEARCH_RESTRICT_TO_OWNER = 1;
-	const SEARCH_RESTRICT_TO_RESPONSIBLE = 2;
-	const SEARCH_RESTRICT_TO_PARTICIPANT = 3;
-
-    // Extension class defined vars
 
     /**
      * Item type name.
@@ -99,44 +166,136 @@ abstract class InnoworkItem
      * @var string
      * @access public
      */
-
     public $mTable;
+
     /**
      * Array of searchable item keys.
      *
      * Supported types:
      * - integer
      * - text
-     *  - boolean
-     *  - timestamp
-     *  - table (relation to an external table)
-     *  - userid (the search result is translated to an Innomatic user in the search widget)
+     * - boolean
+     * - timestamp
+     * - table (relation to an external table)
+     * - userid (the search result is translated to an Innomatic user in the search widget)
      *
      * @var array
      * @access public
      */
     public $mKeys;
-    /*! @var mSearchable boolean - True if the item type is searchable. */
+
+    /**
+     * True if the item type is searchable.
+     *
+     * Defaults to true, the item type is searchable.
+     * @var bool
+     * @access public
+     */
     public $mSearchable = true;
-    /*! @var mSearchResultKeys array - Array of the search result keys. */
+
+    /**
+     * Array of the search result keys.
+     *
+     * @var array
+     * @access public
+     */
     public $mSearchResultKeys;
-    /*! @var mSearchResultKeys array - Array of the viewable search result keys. */
+
+    /**
+     * Array of the viewable search result keys.
+     *
+     * @var array
+     * @access public
+     */
     public $mViewableSearchResultKeys;
-    /*! @var mSearchOrderBy string - Key names on which the search results should be sorted, separated by a comma. */
+
+    /**
+     * Key names on which the search results should be sorted, separated by a comma.
+     *
+     * Defaults to id field.
+     *
+     * @var string
+     * @access public
+     */
     public $mSearchOrderBy = 'id';
-    /*! @var mSimpleSearch boolean - Set to true if the search can be performed by the internal generic search engine. */
+
+    /**
+     * Set to true if the search can be performed by the internal generic search engine.
+     *
+     * Defaults to true, the internal search engine is used.
+     * @var bool
+     * @access public
+     */
     public $mSimpleSearch = true;
+
+    /**
+     * WUI event dispatcher name for show item action.
+     *
+     * @var string
+     * @access public
+     */
     public $mShowDispatcher = 'view';
+
+    /**
+     * WUI event dispatcher action name for show item action.
+     *
+     * @var string
+     * @access public
+     */
     public $mShowEvent = 'show';
+
+    /**
+     * WUI event dispatcher name for new item action.
+     *
+     * @var string
+     * @access public
+     */
     public $mNewDispatcher = 'view';
+
+    /**
+     * WUI event dispatcher action for new item action.
+     *
+     * @var bool
+     * @access public
+     */
     public $mNewEvent = 'new';
+
+    /**
+     * Array of fields to look for when searching for related items.
+     *
+     * @var array
+     * @access public
+     */
     public $mRelatedItemsFields = array();
-    /*! @var mNoTrash boolean - Set to true if the item is not trashable. */
+
+    /**
+     * Set to true if the item is not trashable.
+     *
+     * Default to true, item is trashable.
+     *
+     * @var bool
+     * @access public
+     */
     public $mNoTrash = true;
 
-    /*! @var mGenericFields array - Array for mapping item's own fields to generic ones. */
+    /**
+     * Array for mapping item's own fields to generic ones.
+     *
+     * mConvertible property must be set to true in order to work.
+     *
+     * @var array
+     * @access public
+     */
     public $mGenericFields = array();
-    /*! @var mConvertible boolean - True if the item accepts to be converted from or to another item. */
+
+    /**
+     * True if the item accepts to be converted from or to another item.
+     *
+     * Defaults to false, item is not convertible.
+     *
+     * @var bool
+     * @access public
+     */
     public $mConvertible = false;
 
     /**
@@ -145,49 +304,69 @@ abstract class InnoworkItem
      */
     public $mTypeTags = array();
 
+    /**
+     * File system base path for item files repository.
+     *
+     * @var string
+     * @access public
+     */
     public $mFsBasePath;
 
-    /*!
-     @function InnoworkItem
-     @abstract Class constructor.
-     @param rrootDb DataAccess class - Innomatic database handler.
-     @param rdomainDA DataAccess class - Domain database handler.
-     @param itemType string - Item type name.
-     @param itemId integer - Item id number.
+    /* public __construct(\Innomatic\Dataaccess\DataAccess $rrootDb, \Innomatic\Dataaccess\DataAccess $rdomainDA, $itemType, $itemId = 0) {{{ */
+    /**
+     * Item constructor.
+     *
+     * @param \Innomatic\Dataaccess\DataAccess $rrootDb Innomatic root data
+     * access.
+     * @param \Innomatic\Dataaccess\DataAccess $rdomainDA Domain data access.
+     * @param string $itemType Item type name
+     * @param int $itemId Item identifier number
+     * @access public
+     * @return void
      */
     public function __construct(\Innomatic\Dataaccess\DataAccess $rrootDb, \Innomatic\Dataaccess\DataAccess $rdomainDA, $itemType, $itemId = 0)
     {
-    	require_once('innowork/core/InnoworkAcl.php');
-    	// Item identification (type + id)
+        require_once('innowork/core/InnoworkAcl.php');
+
+        $innomaticCore = \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer');
+
+        // Item identification (type + id)
         $this->mItemType = $itemType;
         $this->mItemId = $itemId;
+
         // DataAccess
         $this->mrRootDb = $rrootDb;
         $this->mrDomainDA = $rdomainDA;
+
         // Item keys
         $this->mKeys['id'] = 'integer';
+
         // Trash support
         if ($this->mNoTrash == false) {
             $this->mKeys['trashed'] = 'boolean';
         }
 
         // Redundant to the default value but safe
-        //
         if (!strlen($this->mSearchOrderBy)) {
             $this->mSearchOrderBy = 'id';
         }
 
+        // Search result keys
         $this->mSearchResultKeys[] = 'id';
         $this->mSearchResultKeys[] = 'ownerid';
         if ($this->mNoTrash == false) {
+            // If the item type supports trash action, add trashed field to the
+            // search result keys
             $this->mSearchResultKeys[] = 'trashed';
         }
+
+        // If this item doesn't support ACLs and there is no defined default
+        // creation ACL, set the item as public.
         if ($this->mNoAcl and !isset($this->_mCreationAcl)) {
             $this->_mCreationAcl = InnoworkAcl::TYPE_PUBLIC;
         }
 
         // Check if the item id is valid
-        //
         if ($this->mItemId) {
             // Extract parent id field, if supported
             $parentField = '';
@@ -207,7 +386,7 @@ abstract class InnoworkItem
                 }
 
             } else {
-                $log = \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getLogger();
+                $log = $innomaticCore->getLogger();
                 $log->logEvent('innoworkcore.innoworkcore.innoworkitem.innoworkitem', 'Invalid item id '.$this->mItemId.' from '.$this->mItemType.' item type handler', \Innomatic\Logging\Logger::WARNING);
                 $this->mItemId = 0;
             }
@@ -245,21 +424,32 @@ abstract class InnoworkItem
 
         // Item folder in filesystem
         if ($itemId != 0) {
-            $this->mFsBasePath = \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->getHome().'files/'.$this->getItemTypePlural().'/'.$this->mItemId.'/';
+            $this->mFsBasePath = $innomaticCore->getCurrentDomain()->getHome().'files/'.$this->getItemTypePlural().'/'.$this->mItemId.'/';
         }
     }
+    /* }}} */
 
-    /*!
-     @function Create
-     @abstract Creates a new item.
-     @param params array - Array of the item parameters.
-     @param userId integer - User id number of the owner, or none if the current user id should be used.
+    /* public create($params, $userId = '') {{{ */
+    /**
+     * Creates a new item.
+     *
+     * This method supports a hook called "innowork.item.create" with two
+     * events:
+     * - startcall: called before creating the item
+     * - endcall:   called after the item has been created
+     *
+     * @param array $params Array of item properties.
+     * @param string $userId User identifier number of the owner, or null if
+     * the current user id shoul be used.
+     * @access public
+     * @return boolean
      */
     public function create($params, $userId = '')
     {
         $result = false;
-        $hook = new \Innomatic\Process\Hook($this->rootDA, 'innowork-core', 'innowork.item.create');
+        $hook = new \Innomatic\Process\Hook($this->mrRootDb, 'innowork-core', 'innowork.item.create');
 
+        // Call startcall hook
         if ($this->mItemId == 0 && $hook->callHooks('startcall', $this, array('params' => $params, 'userid' => $userId)) == \Innomatic\Process\Hook::RESULT_OK) {
             if (!strlen($userId)) {
                 $userId = \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentUser()->getUserId();
@@ -318,14 +508,25 @@ abstract class InnoworkItem
         }
         return $result;
     }
+    /* }}} */
 
-    /*!
-     @function _Create
+    /* protected doCreate($params, $userId) {{{ */
+    /**
+     * Add item to the database.
+     *
+     * This method must be extended, if not returns false and the item is not
+     * added to the database.
+     *
+     * @param mixed $params Array of item properties.
+     * @param mixed $userId Creator user identifier number.
+     * @access protected
+     * @return boolean
      */
     protected function doCreate($params, $userId)
     {
         return false;
     }
+    /* }}} */
 
     /*!
      @function getItem
@@ -401,7 +602,7 @@ abstract class InnoworkItem
     public function edit($params, $userId = '')
     {
         $result = false;
-        $hook = new \Innomatic\Process\Hook($this->rootDA, 'innowork-core', 'innowork.item.edit');
+        $hook = new \Innomatic\Process\Hook($this->mrRootDb, 'innowork-core', 'innowork.item.edit');
 
         if ($this->mItemId && $hook->callHooks('startcall', $this, array('params' => $params, 'userid' => $userId)) == \Innomatic\Process\Hook::RESULT_OK) {
             if (!strlen($userId)) {
@@ -470,7 +671,7 @@ abstract class InnoworkItem
     public function remove($userId = '')
     {
         $result = false;
-        $hook = new \Innomatic\Process\Hook($this->rootDA, 'innowork-core', 'innowork.item.remove');
+        $hook = new \Innomatic\Process\Hook($this->mrRootDb, 'innowork-core', 'innowork.item.remove');
 
         if ($this->mItemId && $hook->callHooks('startcall', $this, array('userid' => $userId)) == \Innomatic\Process\Hook::RESULT_OK) {
             if (!strlen($userId)) {
@@ -528,7 +729,7 @@ abstract class InnoworkItem
     public function trash($userId = '')
     {
         $result = false;
-        $hook = new \Innomatic\Process\Hook($this->rootDA, 'innowork-core', 'innowork.item.trash');
+        $hook = new \Innomatic\Process\Hook($this->mrRootDb, 'innowork-core', 'innowork.item.trash');
 
         if ($this->mItemId and $this->mNoTrash == false && $hook->callHooks('startcall', $this, array('userid' => $userId)) == \Innomatic\Process\Hook::RESULT_OK) {
             if (!strlen($userId)) {
@@ -565,7 +766,7 @@ abstract class InnoworkItem
     public function restore($userId = '')
     {
         $result = false;
-        $hook = new \Innomatic\Process\Hook($this->rootDA, 'innowork-core', 'innowork.item.restore');
+        $hook = new \Innomatic\Process\Hook($this->mrRootDb, 'innowork-core', 'innowork.item.restore');
 
         if ($this->mItemId and $this->mNoTrash == false && $hook->callHooks('startcall', $this, array('userid' => $userId)) == \Innomatic\Process\Hook::RESULT_OK) {
             if (!strlen($userId)) {
