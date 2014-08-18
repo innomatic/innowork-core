@@ -556,19 +556,22 @@ abstract class InnoworkItem
     {
         $result = false;
 
-        $item_query = $this->mrDomainDA->execute('SELECT * FROM '.$this->mTable.' WHERE id='.$this->mItemId);
+        $item_query = $this->mrDomainDA->execute(
+            'SELECT * FROM '.$this->mTable.
+            ' WHERE id='.$this->mItemId
+        );
 
-        if (is_object($item_query) and $item_query->getNumberRows()) {
+        if (is_object($item_query) && $item_query->getNumberRows()) {
             $result = $item_query->getFields();
 
-            $item_query->Free();
+            $item_query->free();
         }
 
         return $result;
     }
 
     /**
-     * Returns item type identifier.
+     * Gets item type identifier.
      *
      * @return string
      */
@@ -588,6 +591,11 @@ abstract class InnoworkItem
         return $this->mItemType.'s';
     }
 
+    /**
+     * Gets current item identifier number.
+     *
+     * @return integer
+     */
     public function getItemId()
     {
         return $this->mItemId;
@@ -713,55 +721,85 @@ abstract class InnoworkItem
         return $result;
     }
 
-    /*!
-     @function _Remove
-     */
     protected function doRemove($userId)
     {
         return false;
     }
 
-    /*!
-     @function Trash
-     @abstract Trash the item.
-     @param userId integer - user id number of the owner, or none if the current user id should be used.
+    /* public trash($userId = '') {{{ */
+    /**
+     * Trashes the current item.
+     *
+     * A trashed item can be restored with the restore() method.
+     *
+     * This method supports a hook called "innowork.item.trash" with two
+     * events:
+     * - startcall: called before trashing the item
+     * - endcall:   called after the item has been trashed
+     *
+     * @param integer $userId User identifier number of the owner, or null
+     * if the current user id should be used.
+     * @return boolean
      */
     public function trash($userId = '')
     {
         $result = false;
         $hook = new \Innomatic\Process\Hook($this->mrRootDb, 'innowork-core', 'innowork.item.trash');
 
-        if ($this->mItemId and $this->mNoTrash == false && $hook->callHooks('startcall', $this, array('userid' => $userId)) == \Innomatic\Process\Hook::RESULT_OK) {
-            if (!strlen($userId)) {
-                $userId = \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentUser()->getUserId();
-            }
-
-            if ($this->mNoAcl == true or $userId == $this->mOwnerId or $this->mAcl->checkPermission('', $userId) >= InnoworkAcl::PERMS_DELETE) {
-                $result = $this->doTrash($userId);
-
-                if ($result) {
-                    $result = \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->getDataAccess()->execute('UPDATE '.$this->mTable.' SET trashed='.\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->getDataAccess()->formatText(\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->getDataAccess()->fmttrue).' WHERE id='.$this->mItemId);
-                    // Flush item type cache
-                    $this->CleanCache();
-                }
-            } else {
-                $this->mLastError = InnoworkAcl::ERROR_NOT_ENOUGH_PERMS;
-            }
-
-            if ($hook->callHooks('endcall', $this, array('userid' => $userId)) != \Innomatic\Process\Hook::RESULT_OK) {
-                $result = false;
-            }
+        // Call startcall hooks
+        if ($this->mItemId and $this->mNoTrash == false && $hook->callHooks('startcall', $this, array('userid' => $userId)) != \Innomatic\Process\Hook::RESULT_OK) {
+            return false;
         }
+
+        // If no user id has been given, use the current user one
+        if (!strlen($userId)) {
+            $userId = \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentUser()->getUserId();
+        }
+
+        // If the current user has enough ACL permissions, trash the item
+        if ($this->mNoAcl == true or $userId == $this->mOwnerId or $this->mAcl->checkPermission('', $userId) >= InnoworkAcl::PERMS_DELETE) {
+            $result = $this->doTrash($userId);
+
+            if ($result) {
+                // Update the item table and set the item as trashed
+                $result = $this->mrDomainDA->execute(
+                    'UPDATE '.$this->mTable.
+                    ' SET trashed='.$this->mrDomainDA->formatText($this->mrDomainDA->fmttrue).
+                    ' WHERE id='.$this->mItemId
+                );
+
+                // Flush item type cache
+                $this->cleanCache();
+            }
+        } else {
+            $this->mLastError = InnoworkAcl::ERROR_NOT_ENOUGH_PERMS;
+        }
+
+        // Call endcall hooks
+        if ($hook->callHooks('endcall', $this, array('userid' => $userId)) != \Innomatic\Process\Hook::RESULT_OK) {
+            return false;
+        }
+
         return $result;
     }
+    /* }}} */
 
-    /*!
-     @function _Trash
+    /* protected doTrash($userId) {{{ */
+    /**
+     * Executes the trash action.
+     *
+     * This method must be extended, if not returns false and the item is not
+     * set as trashed in the database.
+     *
+     * @param integer $userId User identifier number.
+     * @access protected
+     * @return boolean
      */
     protected function doTrash($userId)
     {
         return false;
     }
+    /* }}} */
 
     public function restore($userId = '')
     {
