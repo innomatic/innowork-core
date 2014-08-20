@@ -18,6 +18,8 @@ NEW FEATURES:
 FIXES:
 - Fixed handling of summaries caching in InnoworkCore that led to a wrong item
   types list when using item tags. (Alex Pagnoni)
+- Fixed items search when involving keys of type userid, that were treated as
+  strings with the LIKE operator. (Alex Pagnoni)
 
 DEPRECATED:
 - Removed InnoworkItem::getSummary() since Innowork no more provides a

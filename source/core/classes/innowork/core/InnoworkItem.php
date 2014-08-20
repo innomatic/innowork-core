@@ -1059,6 +1059,7 @@ abstract class InnoworkItem
                                 break;
 
                             case 'integer' :
+                            case 'userid':
                                 if (is_numeric($val)) {
                                     $ok = true;
                                     $ok_str.= ' '.$key.' '. ($not ? '<>' : '=').' '.$val;
@@ -1150,6 +1151,7 @@ abstract class InnoworkItem
                                     break;
 
                                 case 'integer' :
+                                case 'userid':
                                     if (is_numeric($val)) {
                                         $ok = true;
                                         $ok_str.= ' '.$key.' = '.$val;
