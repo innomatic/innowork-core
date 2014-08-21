@@ -26,13 +26,13 @@
 require_once('innowork/core/InnoworkItem.php');
 
 class InnoworkDefaultAclItem extends InnoworkItem {
-    var $mTable = 'innowork_core_acls_defaults';
-    var $mNoTrash = true;
-    var $mConvertible = false;
-    var $mSearchable = false;
+    public $mTable = 'innowork_core_acls_defaults';
+    public $mNoTrash = true;
+    public $mConvertible = false;
+    public $mSearchable = false;
 	public $mNewDispatcher = '';
-    var $mNoAcl = false;
-    var $mNoLog = true;
+    public $mNoAcl = false;
+    public $mNoLog = true;
 
     public function innoworkDefaultAclItem($rrootDb, $rdomainDA, $itemId = 0) {
         parent::__construct($rrootDb, $rdomainDA, 'defaultaclitem', $itemId);
@@ -101,12 +101,12 @@ class InnoworkDefaultAclItem extends InnoworkItem {
     }
 
     protected function doRemove($userId) {
-        $result = false;
-        $result = $this->mrDomainDA->execute('DELETE FROM '.$this->mTable.' WHERE id='.$this->mItemId);
-        if ($result) {
+        if ($this->mrDomainDA->execute('DELETE FROM '.$this->mTable.' WHERE id='.$this->mItemId)) {
             $this->mrDomainDA->execute('DELETE FROM innowork_core_acls_defaults WHERE ticketid='.$this->mItemId);
+            return true;
+        } else {
+            return false;
         }
-        return $result;
     }
 
     protected function doGetSummary() {
