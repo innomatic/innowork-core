@@ -334,9 +334,9 @@ abstract class InnoworkItem
      */
     public function __construct(\Innomatic\Dataaccess\DataAccess $rrootDb, \Innomatic\Dataaccess\DataAccess $rdomainDA, $itemType, $itemId = 0)
     {
-        require_once('innowork/core/InnoworkAcl.php');
+        $this->container = \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer');
 
-        $innomaticCore = \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer');
+        require_once('innowork/core/InnoworkAcl.php');
 
         // Item identification (type + id)
         $this->mItemType = $itemType;
@@ -394,7 +394,7 @@ abstract class InnoworkItem
                 }
 
             } else {
-                $log = $innomaticCore->getLogger();
+                $log = $this->container->getLogger();
                 $log->logEvent('innoworkcore.innoworkcore.innoworkitem.innoworkitem', 'Invalid item id '.$this->mItemId.' from '.$this->mItemType.' item type handler', \Innomatic\Logging\Logger::WARNING);
                 $this->mItemId = 0;
             }
@@ -432,7 +432,7 @@ abstract class InnoworkItem
 
         // Item folder in filesystem
         if ($itemId != 0) {
-            $this->mFsBasePath = $innomaticCore->getCurrentDomain()->getHome().'files/'.$this->getItemTypePlural().'/'.$this->mItemId.'/';
+            $this->mFsBasePath = $this->container->getCurrentDomain()->getHome().'files/'.$this->getItemTypePlural().'/'.$this->mItemId.'/';
         }
     }
     /* }}} */
@@ -458,83 +458,86 @@ abstract class InnoworkItem
         $hook = new \Innomatic\Process\Hook($this->mrRootDb, 'innowork-core', 'innowork.item.create');
 
         // Call startcall hook
-        if ($this->mItemId == 0 && $hook->callHooks('startcall', $this, array('params' => $params, 'userid' => $userId)) == \Innomatic\Process\Hook::RESULT_OK) {
-            if (!strlen($userId)) {
-                $userId = $this->container->getCurrentUser()->getUserId();
-            }
+        if (!($this->mItemId == 0 && $hook->callHooks('startcall', $this, array('params' => $params, 'userid' => $userId)) == \Innomatic\Process\Hook::RESULT_OK)) {
+            return false;
+        }
 
-            // Execute the create action
-            $item_id = $this->doCreate($params, $userId);
+        if (!strlen($userId)) {
+            $userId = $this->container->getCurrentUser()->getUserId();
+        }
 
-            if ($item_id) {
-                // Assign the item id
-                $this->mItemId = $item_id;
-                // Assign the owner id
-                $this->mOwnerId = $userId;
-                // Add the creation time
-                $this->mCreated = time();
+        // Execute the create action
+        $item_id = $this->doCreate($params, $userId);
 
-                // Item folder in filesystem
-                $this->mFsBasePath = $this->container->getCurrentDomain()->getHome().'files/'.$this->getItemTypePlural().'/'.$this->mItemId.'/';
+        if ($item_id) {
+            // Assign the item id
+            $this->mItemId = $item_id;
+            // Assign the owner id
+            $this->mOwnerId = $userId;
+            // Add the creation time
+            $this->mCreated = time();
 
-                if (!strlen($this->mParentType)) {
-                    // This item has no parent item type
+            // Item folder in filesystem
+            $this->mFsBasePath = $this->container->getCurrentDomain()->getHome().'files/'.$this->getItemTypePlural().'/'.$this->mItemId.'/';
 
-                    // Assign the item id to the ACL
-                    $this->mAcl->mItemId = $item_id;
+            if (!strlen($this->mParentType)) {
+                // This item has no parent item type
 
-                    if (!isset($this->_mSkipAclSet)) {
-                        if (isset($this->_mCreationAcl)) {
-                            // If this item type has a preset creation ACL, set
-                            // it in place of the custom defined one
-                            $this->mAcl->SetType($this->_mCreationAcl);
+                // Assign the item id to the ACL
+                $this->mAcl->mItemId = $item_id;
+
+                if (!isset($this->_mSkipAclSet)) {
+                    if (isset($this->_mCreationAcl)) {
+                        // If this item type has a preset creation ACL, set
+                        // it in place of the custom defined one
+                        $this->mAcl->SetType($this->_mCreationAcl);
+                    } else {
+                        // Check if this item type has an user defined
+                        // preset ACL at item type level
+                        $check_query = $this->mrDomainDA->execute(
+                            'SELECT * FROM innowork_core_acls_defaults'
+                            .' WHERE ownerid='.$this->mOwnerId
+                            .' AND itemtype='.$this->mrDomainDA->formatText($this->mItemType)
+                        );
+
+                        if ($check_query->getNumberRows()) {
+                            // Copy the user defined preset item type ACL
+                            $this->mAcl->copyAcl('defaultaclitem', $check_query->getFields('id'));
                         } else {
-                            // Check if this item type has an user defined
-                            // preset ACL at item type level
-                            $check_query = $this->mrDomainDA->execute(
-                                'SELECT * FROM innowork_core_acls_defaults'
-                                .' WHERE ownerid='.$this->mOwnerId
-                                .' AND itemtype='.$this->mrDomainDA->formatText($this->mItemType)
-                            );
-
-                            if ($check_query->getNumberRows()) {
-                                // Copy the user defined preset item type ACL
-                                $this->mAcl->copyAcl('defaultaclitem', $check_query->getFields('id'));
-                            } else {
-                                // Set the item as private
-                                $this->mAcl->SetType(InnoworkAcl::TYPE_PRIVATE);
-                            }
+                            // Set the item as private
+                            $this->mAcl->SetType(InnoworkAcl::TYPE_PRIVATE);
                         }
                     }
-                } else {
-                    // This item has a parent item type
-                    require_once('innowork/core/InnoworkCore.php');
-                    $core = InnoworkCore::instance('innoworkcore', $this->mrRootDb, $this->mrDomainDA);
-                    $summaries = $core->getSummaries();
-                    unset($core);
-                    $class_name = $summaries[$this->mParentType]['classname'];
-                    if (!class_exists($class_name)) {
-                        return false;
-                    }
-                    $tmp_class = new $class_name($this->mrRootDb, $this->mrDomainDA, $this->mParentId);
-                    $this->mAcl = $tmp_class->mAcl;
                 }
-
-                if (!$this->mNoLog) {
-                    require_once('innowork/core/InnoworkItemLog.php');
-                    $log = new InnoworkItemLog($this->mItemType, $this->mItemId);
-                    $log->logChange($this->container->getCurrentUser()->getUserName());
+            } else {
+                // This item has a parent item type
+                require_once('innowork/core/InnoworkCore.php');
+                $core = InnoworkCore::instance('innoworkcore', $this->mrRootDb, $this->mrDomainDA);
+                $summaries = $core->getSummaries();
+                unset($core);
+                $class_name = $summaries[$this->mParentType]['classname'];
+                if (!class_exists($class_name)) {
+                    return false;
                 }
-
-                // Flush item type cache
-                $this->cleanCache();
-                $result = true;
+                $tmp_class = new $class_name($this->mrRootDb, $this->mrDomainDA, $this->mParentId);
+                $this->mAcl = $tmp_class->mAcl;
             }
 
-            if ($hook->callHooks('endcall', $this, array('params' => $params, 'userid' => $userId)) != \Innomatic\Process\Hook::RESULT_OK) {
-                $result = false;
+            if (!$this->mNoLog) {
+                require_once('innowork/core/InnoworkItemLog.php');
+                $log = new InnoworkItemLog($this->mItemType, $this->mItemId);
+                $log->logChange($this->container->getCurrentUser()->getUserName());
             }
+
+            // Flush item type cache
+            $this->cleanCache();
+            $result = true;
         }
+
+        if ($hook->callHooks('endcall', $this, array('params' => $params, 'userid' => $userId)) != \Innomatic\Process\Hook::RESULT_OK) {
+            $result = false;
+        }
+
         return $result;
     }
     /* }}} */
@@ -568,7 +571,7 @@ abstract class InnoworkItem
 
         if ($this->mItemId) {
             if (!strlen($userId)) {
-                $userId = \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentUser()->getUserId();
+                $userId = $this->container->getCurrentUser()->getUserId();
             }
 
             if ($this->mNoAcl == true or $userId == $this->mOwnerId or $this->mAcl->checkPermission('', $userId) >= InnoworkAcl::PERMS_READ) {
@@ -585,11 +588,13 @@ abstract class InnoworkItem
     {
         $result = false;
 
+        // Retrieve the item data from the database
         $item_query = $this->mrDomainDA->execute(
             'SELECT * FROM '.$this->mTable.
             ' WHERE id='.$this->mItemId
         );
 
+        // Build the data array
         if (is_object($item_query) && $item_query->getNumberRows()) {
             $result = $item_query->getFields();
 
@@ -641,31 +646,35 @@ abstract class InnoworkItem
         $result = false;
         $hook = new \Innomatic\Process\Hook($this->mrRootDb, 'innowork-core', 'innowork.item.edit');
 
-        if ($this->mItemId && $hook->callHooks('startcall', $this, array('params' => $params, 'userid' => $userId)) == \Innomatic\Process\Hook::RESULT_OK) {
-            if (!strlen($userId)) {
-                $userId = \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentUser()->getUserId();
-            }
-
-            if ($this->mNoAcl == true or $userId == $this->mOwnerId or $this->mAcl->checkPermission('', $userId) >= InnoworkAcl::PERMS_EDIT) {
-                $result = $this->doEdit($params, $userId);
-
-                if ($result) {
-                    if (!$this->mNoLog) {
-                        require_once('innowork/core/InnoworkItemLog.php');
-                    	$log = new InnoworkItemLog($this->mItemType, $this->mItemId);
-                        $log->LogChange(\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentUser()->getUserName());
-                    }
-                    // Flush item type cache
-                    $this->cleanCache();
-                }
-            } else {
-                $this->mLastError = InnoworkAcl::ERROR_NOT_ENOUGH_PERMS;
-            }
-
-            if ($hook->callHooks('endcall', $this, array('params' => $params, 'userid' => $userId)) != \Innomatic\Process\Hook::RESULT_OK) {
-                $result = false;
-            }
+        if (!($this->mItemId && $hook->callHooks('startcall', $this, array('params' => $params, 'userid' => $userId)) == \Innomatic\Process\Hook::RESULT_OK)) {
+            return false;
         }
+
+        if (!strlen($userId)) {
+            $userId = $this->container->getCurrentUser()->getUserId();
+        }
+
+        if ($this->mNoAcl == true or $userId == $this->mOwnerId or $this->mAcl->checkPermission('', $userId) >= InnoworkAcl::PERMS_EDIT) {
+            $result = $this->doEdit($params, $userId);
+
+            if ($result) {
+                if (!$this->mNoLog) {
+                    require_once('innowork/core/InnoworkItemLog.php');
+                	$log = new InnoworkItemLog($this->mItemType, $this->mItemId);
+                    $log->LogChange($this->container->getCurrentUser()->getUserName());
+                }
+
+                // Flush item type cache
+                $this->cleanCache();
+            }
+        } else {
+            $this->mLastError = InnoworkAcl::ERROR_NOT_ENOUGH_PERMS;
+        }
+
+        if ($hook->callHooks('endcall', $this, array('params' => $params, 'userid' => $userId)) != \Innomatic\Process\Hook::RESULT_OK) {
+            $result = false;
+        }
+
         return $result;
     }
 
@@ -712,7 +721,7 @@ abstract class InnoworkItem
 
         if ($this->mItemId && $hook->callHooks('startcall', $this, array('userid' => $userId)) == \Innomatic\Process\Hook::RESULT_OK) {
             if (!strlen($userId)) {
-                $userId = \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentUser()->getUserId();
+                $userId = $this->container->getCurrentUser()->getUserId();
             }
 
             if ($this->mNoAcl == true or $userId == $this->mOwnerId or $this->mAcl->checkPermission('', $userId) >= InnoworkAcl::PERMS_DELETE) {
@@ -721,20 +730,30 @@ abstract class InnoworkItem
                 if ($result) {
                     // Remove ACL
                     $this->mAcl->erase();
+
                     // Remove item from clippings
-                    \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->getDataAccess()->execute('DELETE FROM innowork_core_clippings_items WHERE itemtype='.\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->getDataAccess()->formatText($this->mItemType).' AND itemid='.$this->mItemId);
+                    $this->mrDomainDA->execute(
+                        'DELETE FROM innowork_core_clippings_items'
+                        .' WHERE itemtype='.$this->mrDomainDA->formatText($this->mItemType)
+                        .' AND itemid='.$this->mItemId
+                    );
+
                     // Remove item log
                     if (!$this->mNoLog) {
                         require_once('innowork/core/InnoworkItemLog.php');
                     	$log = new InnoworkItemLog($this->mItemType, $this->mItemId);
                         $log->Erase();
                     }
+
                     // Remove item files
                     $this->removeFile($this->getBaseFolder());
+
                     // Remove lock
                     $this->unlock();
+
                     // Flush item type cache
                     $this->cleanCache();
+
                     // Clean object id
                     $this->mItemId = 0;
                 }
@@ -782,7 +801,7 @@ abstract class InnoworkItem
 
         // If no user id has been given, use the current user one
         if (!strlen($userId)) {
-            $userId = \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentUser()->getUserId();
+            $userId = $this->container->getCurrentUser()->getUserId();
         }
 
         // If the current user has enough ACL permissions, trash the item
@@ -842,7 +861,7 @@ abstract class InnoworkItem
 
         // If no user id has been give, user the current user one
         if (!strlen($userId)) {
-            $userId = \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentUser()->getUserId();
+            $userId = $this->container->getCurrentUser()->getUserId();
         }
 
         // If the user has enough ACL permissions, restore the item
@@ -893,7 +912,7 @@ abstract class InnoworkItem
         $to_be_cached = false;
 
         if (!is_array($searchKeys) and !strlen($searchKeys) and !$trashcan and !$limit and !$offset and $restrictToPermission == InnoworkItem::SEARCH_RESTRICT_NONE) {
-            $cached_item = new \Innomatic\Datatransfer\Cache\CachedItem(\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getDataAccess(), 'innowork-core', 'itemtypesearch-'.$this->mItemType.strtolower(str_replace(' ', '', $this->mSearchOrderBy)), \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->domaindata['id'], \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentUser()->getUserId());
+            $cached_item = new \Innomatic\Datatransfer\Cache\CachedItem($this->mrRootDb, 'innowork-core', 'itemtypesearch-'.$this->mItemType.strtolower(str_replace(' ', '', $this->mSearchOrderBy)), $this->container->getCurrentDomain()->domaindata['id'], $this->container->getCurrentUser()->getUserId());
             $cache_content = $cached_item->Retrieve();
             if ($cache_content != false) {
                 $goon = false;
@@ -923,7 +942,7 @@ abstract class InnoworkItem
             // Check if we should use the current user id
             //
             if (!strlen($userId)) {
-                $userId = \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentUser()->getUserId();
+                $userId = $this->container->getCurrentUser()->getUserId();
             }
             $result = array();
 
@@ -936,8 +955,8 @@ abstract class InnoworkItem
                 require_once('innowork/core/InnoworkCore.php');
                 $tmp_innoworkcore = InnoworkCore::instance(
                     'innoworkcore',
-                    \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getDataAccess(),
-                    \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->getDataAccess()
+                    $this->mrRootDb,
+                    $this->mrDomainDA
                 );
 
                 $summaries = $tmp_innoworkcore->getSummaries();
@@ -956,7 +975,7 @@ abstract class InnoworkItem
 
                         $aclItemOwnerId = '';
                         if (strlen($parentTable)) {
-                            $parentOwnerQuery = \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->getDataAccess()->execute(
+                            $parentOwnerQuery = $this->mrDomainDA->execute(
                                 "SELECT ownerid FROM $parentTable WHERE id=$aclItemId"
                             );
                             if ($parentOwnerQuery->getNumberRows() > 0) {
@@ -973,23 +992,23 @@ abstract class InnoworkItem
 
                     $tmp_acl = new InnoworkAcl($this->mrRootDb, $this->mrDomainDA, $aclItemType, $aclItemId);
 
-                    if ($aclNoAcl == true or $aclItemOwnerId == \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentUser()->getUserId() or $tmp_acl->checkPermission('', $userId) >= InnoworkAcl::PERMS_SEARCH) {
+                    if ($aclNoAcl == true or $aclItemOwnerId == $this->container->getCurrentUser()->getUserId() or $tmp_acl->checkPermission('', $userId) >= InnoworkAcl::PERMS_SEARCH) {
                         $restrict = false;
 
                         switch ($restrictToPermission) {
                             case InnoworkItem::SEARCH_RESTRICT_TO_OWNER :
-                                if ($aclItemOwnerId != \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentUser()->getUserId())
+                                if ($aclItemOwnerId != $this->container->getCurrentUser()->getUserId())
                                     $restrict = true;
                                 break;
 
                             case InnoworkItem::SEARCH_RESTRICT_TO_RESPONSIBLE :
                                 $restrict = true;
-                                if ($aclItemOwnerId == \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentUser()->getUserId() or $tmp_acl->checkPermission('', $userId) == InnoworkAcl::PERMS_RESPONSIBLE)
+                                if ($aclItemOwnerId == $this->container->getCurrentUser()->getUserId() or $tmp_acl->checkPermission('', $userId) == InnoworkAcl::PERMS_RESPONSIBLE)
                                     $restrict = false;
                                 break;
 
                             case InnoworkItem::SEARCH_RESTRICT_TO_PARTICIPANT :
-                                if ($aclItemOwnerId == \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentUser()->getUserId() or $tmp_acl->checkPermission('', $userId) >= InnoworkAcl::PERMS_ALL)
+                                if ($aclItemOwnerId == $this->container->getCurrentUser()->getUserId() or $tmp_acl->checkPermission('', $userId) >= InnoworkAcl::PERMS_ALL)
                                     $restrict = true;
                                 break;
 
@@ -1248,9 +1267,9 @@ abstract class InnoworkItem
                         $result[$search_query->getFields('id')][$key] = $search_query->getFields($key);
                     }
                     reset($this->mSearchResultKeys);
-                    $search_query->MoveNext();
+                    $search_query->moveNext();
                 }
-                $search_query->Free();
+                $search_query->free();
             }
         }
         return $result;
@@ -1272,8 +1291,8 @@ abstract class InnoworkItem
             reset($this->mRelatedItemsFields);
             require_once('innowork/core/InnoworkKnowledgeBase.php');
             $innowork_kb = new InnoworkKnowledgeBase(
-            	\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getDataAccess(),
-            	\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->getDataAccess()
+                $this->mrRootDb,
+                $this->mrDomainDA
             );
             $result = $innowork_kb->globalSearch($search_keys, '');
         }
@@ -1300,15 +1319,15 @@ abstract class InnoworkItem
     {
         if ($this->mItemId and $this->mConvertible) {
             require_once('innowork/core/InnoworkCore.php');
-        	$tmp_innoworkcore = InnoworkCore::instance('innoworkcore', \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getDataAccess(), \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->getDataAccess());
+            $tmp_innoworkcore = InnoworkCore::instance('innoworkcore', $this->mrRootDb, $this->mrDomainDA);
             $summaries = $tmp_innoworkcore->getSummaries();
             $class_name = $summaries[$type]['classname'];
-			if (!class_exists($class_name)) {
-				return false;
-			}
+            if (!class_exists($class_name)) {
+                return false;
+            }
             $tmp_class = new $class_name(
-            	\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getDataAccess(),
-            	\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->getDataAccess()
+            	$this->mrRootDb,
+            	$this->mrDomainDA
             );
 
             if ($tmp_class->mConvertible) {
@@ -1334,16 +1353,26 @@ abstract class InnoworkItem
     {
         $result = false;
         if ($this->mConvertible) {
-            if (strlen($this->mGenericFields['companyid']))
+            if (strlen($this->mGenericFields['companyid'])) {
                 $real_data[$this->mGenericFields['companyid']] = $genericData['companyid'];
-            if (strlen($this->mGenericFields['projectid']))
+            }
+
+            if (strlen($this->mGenericFields['projectid'])) {
                 $real_data[$this->mGenericFields['projectid']] = $genericData['projectid'];
-            if (strlen($this->mGenericFields['title']))
+            }
+
+            if (strlen($this->mGenericFields['title'])) {
                 $real_data[$this->mGenericFields['title']] = $genericData['title'];
-            if (strlen($this->mGenericFields['content']))
+            }
+
+            if (strlen($this->mGenericFields['content'])) {
                 $real_data[$this->mGenericFields['content']] = $genericData['content'];
-            if (strlen($this->mGenericFields['binarycontent']))
+            }
+
+            if (strlen($this->mGenericFields['binarycontent'])) {
                 $real_data[$this->mGenericFields['binarycontent']] = $genericData['binarycontent'];
+            }
+
             $result = $this->create($real_data);
         }
         return $result;
@@ -1543,7 +1572,7 @@ abstract class InnoworkItem
             ob_clean();
             flush();
             readfile($file);
-            InnomaticContainer::instance('innomaticcontainer')->halt();
+            $this->container->halt();
         } else {
             return false;
         }
