@@ -19,7 +19,7 @@
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
- *   Alex Pagnoni <alex.pagnoni@innoteam.it>
+ *   Alex Pagnoni <alex.pagnoni@innomatic.io>
  *
  * ***** END LICENSE BLOCK ***** */
 
