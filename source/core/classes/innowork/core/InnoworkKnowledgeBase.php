@@ -15,7 +15,7 @@
  * The Original Code is Innowork.
  *
  * The Initial Developer of the Original Code is Innoteam.
- * Portions created by the Initial Developer are Copyright (C) 2002-2009
+ * Portions created by the Initial Developer are Copyright (C) 2002-2014
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
@@ -27,23 +27,33 @@ require_once('innowork/core/InnoworkCore.php');
 require_once('innowork/core/InnoworkItem.php');
 
 class InnoworkKnowledgeBase {
-    protected $mrRootDb;
-    protected $mrDomainDA;
-    protected $mLog;
-    protected $mSummaries;
-
-    /*!
-     @function InnoworkKnowledgeBase
+    /**
+     * Innomatic container
+     *
+     * @var \Innomatic\Core\InnomaticContainer
+     * @access protected
      */
-    public function __construct(\Innomatic\Dataaccess\DataAccess $rrootDb, \Innomatic\Dataaccess\DataAccess $rdomainDA, $summaries = '') {
-        $this->mLog = \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getLogger();
-        $this->mrRootDb = $rrootDb;
-        $this->mrDomainDA = $rdomainDA;
+    protected $container;
+    protected $rootDA;
+    protected $domainDA;
+    protected $log;
+    protected $summary;
+
+    public function __construct(
+        \Innomatic\Dataaccess\DataAccess $rootDA,
+        \Innomatic\Dataaccess\DataAccess $domainDA,
+        $summaries = ''
+    ) {
+        $this->container = \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer');
+        $this->log = $this->container->getLogger();
+        $this->rootDA = $rootDA;
+        $this->domainDA = $domainDA;
+
         if (is_array($summaries))
-            $this->mSummaries = $summaries;
+            $this->summary = $summaries;
         else {
-            $tmp_innoworkcore = InnoworkCore::instance('innoworkcore', $this->mrRootDb, $this->mrDomainDA);
-            $this->mSummaries = $tmp_innoworkcore->GetSummaries();
+            $tmpInnoworkcore = InnoworkCore::instance('innoworkcore', $this->rootDA, $this->domainDA);
+            $this->summary = $tmpInnoworkcore->GetSummaries();
         }
     }
 
@@ -59,34 +69,44 @@ class InnoworkKnowledgeBase {
      * @access public
      * @return void
      */
-    public function &globalSearch($searchKeys, $type = '', $trashcan = false, $limit = 0, $restrictToPermission = InnoworkItem::SEARCH_RESTRICT_NONE) {
+    public function &globalSearch(
+        $searchKeys,
+        $type = '',
+        $trashcan = false,
+        $limit = 0,
+        $restrictToPermission = InnoworkItem::SEARCH_RESTRICT_NONE
+    ) {
         $result = array();
 
-        if (\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getState() == InnomaticContainer::STATE_DEBUG) {
-            \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getLoadTimer()->Mark('InnoworkCore: start global search');
+        if ($this->container->getState() == \Innomatic\Core\InnomaticContainer::STATE_DEBUG) {
+            $this->container->getLoadTimer()->mark('InnoworkCore: start global search');
         }
+
         $result['result'] = array();
         $result['founditems'] = 0;
 
-        while (list ($key, $value) = each($this->mSummaries)) {
+        while (list ($key, $value) = each($this->summary)) {
             if ($value['searchable'] and ($type == '' or ($type != '' and ((!is_array($type) and $type == $key) or (is_array($type) and in_array($key, $type)))))) {
-                $class_name = $this->mSummaries[$key]['classname'];
-				if (!class_exists($class_name)) {
-					continue;
-				}
-                $tmp_class = new $class_name($this->mrRootDb, $this->mrDomainDA);
+                $class_name = $this->summary[$key]['classname'];
+                if (!class_exists($class_name)) {
+                    continue;
+                }
+                $tmp_class = new $class_name($this->rootDA, $this->domainDA);
 
                 if (!$trashcan or ($trashcan and $tmp_class->mNoTrash == false)) {
-                    $result['result'][$key] = $tmp_class->Search($searchKeys, '', false, $trashcan, (int) $limit, 0, $restrictToPermission);
+                    $result['result'][$key] = $tmp_class->search($searchKeys, '', false, $trashcan, (int) $limit, 0, $restrictToPermission);
                     $result['founditems'] += count($result['result'][$key]);
-                    //$tmp_locale = new LocaleCatalog( $itemtype_query->getFields( 'catalog' ), \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentUser()->getLanguage() );
+                    //$tmp_locale = new LocaleCatalog( $itemtype_query->getFields( 'catalog' ), $this->container->getCurrentUser()->getLanguage() );
                 }
             }
         }
-        reset($this->mSummaries);
-        if (\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getState() == InnomaticContainer::STATE_DEBUG) {
-            \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getLoadTimer()->Mark('InnoworkCore: end global search');
+
+        reset($this->summary);
+
+        if ($this->container->getState() == \Innomatic\Core\InnomaticContainer::STATE_DEBUG) {
+            $this->container->getLoadTimer()->mark('InnoworkCore: end global search');
         }
+
         return $result;
     }
     /* }}} */
