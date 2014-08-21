@@ -544,7 +544,7 @@ abstract class InnoworkItem
 
     /* protected doCreate($params, $userId) {{{ */
     /**
-     * Add item to the database.
+     * Adds item to the database.
      *
      * This method must be extended, if not returns false and the item is not
      * added to the database.
@@ -560,20 +560,26 @@ abstract class InnoworkItem
     }
     /* }}} */
 
-    /*!
-     @function getItem
-     @abstract Gets item data.
-     @param userId integer - user id number of the owner, or none if the current user id should be used.
+    /* public &getItem($userId = '') {{{ */
+    /**
+     * Gets item data.
+     *
+     * @param integer $userId User identifier number, or null it the current
+     * user should be used.
+     * @access public
+     * @return array
      */
     public function &getItem($userId = '')
     {
         $result = false;
 
         if ($this->mItemId) {
+            // If no user id has been given, use the current user one
             if (!strlen($userId)) {
                 $userId = $this->container->getCurrentUser()->getUserId();
             }
 
+            // Check if the user has enough permissions
             if ($this->mNoAcl == true or $userId == $this->mOwnerId or $this->mAcl->checkPermission('', $userId) >= InnoworkAcl::PERMS_READ) {
                 $result = $this->doGetItem($userId);
             } else {
@@ -583,7 +589,16 @@ abstract class InnoworkItem
 
         return $result;
     }
+    /* }}} */
 
+    /* protected &doGetItem($userId) {{{ */
+    /**
+     * Executes the get item data action.
+     *
+     * @param integer $userId User identifier number, or null it the current
+     * @access protected
+     * @return array
+     */
     protected function &doGetItem($userId)
     {
         $result = false;
@@ -603,6 +618,7 @@ abstract class InnoworkItem
 
         return $result;
     }
+    /* }}} */
 
     /**
      * Gets item type identifier.
@@ -635,33 +651,42 @@ abstract class InnoworkItem
         return $this->mItemId;
     }
 
-    /*!
-     @function Edit
-     @abstract Edits item data.
-     @param $params array - Array of the item parameters.
-     @param userId integer - user id number of the owner, or none if the current user id should be used.
+    /* public edit($params, $userId = '') {{{ */
+    /**
+     * Updates an item.
+     *
+     * @param array $params Array of item attributes to be updated.
+     * @param string $userId User identifier number of the owner, or null if
+     * the current user should be used.
+     * @access public
+     * @return boolean
      */
     public function edit($params, $userId = '')
     {
         $result = false;
         $hook = new \Innomatic\Process\Hook($this->mrRootDb, 'innowork-core', 'innowork.item.edit');
 
+        // Call the startcall event hooks
         if (!($this->mItemId && $hook->callHooks('startcall', $this, array('params' => $params, 'userid' => $userId)) == \Innomatic\Process\Hook::RESULT_OK)) {
             return false;
         }
 
+        // User current user if none given
         if (!strlen($userId)) {
             $userId = $this->container->getCurrentUser()->getUserId();
         }
 
+        // Check user permissions for this item
         if ($this->mNoAcl == true or $userId == $this->mOwnerId or $this->mAcl->checkPermission('', $userId) >= InnoworkAcl::PERMS_EDIT) {
+            // Execute the edit action
             $result = $this->doEdit($params, $userId);
 
             if ($result) {
                 if (!$this->mNoLog) {
+                    // Log item change
                     require_once('innowork/core/InnoworkItemLog.php');
-                	$log = new InnoworkItemLog($this->mItemType, $this->mItemId);
-                    $log->LogChange($this->container->getCurrentUser()->getUserName());
+                    $log = new InnoworkItemLog($this->mItemType, $this->mItemId);
+                    $log->logChange($this->container->getCurrentUser()->getUserName());
                 }
 
                 // Flush item type cache
@@ -671,15 +696,27 @@ abstract class InnoworkItem
             $this->mLastError = InnoworkAcl::ERROR_NOT_ENOUGH_PERMS;
         }
 
+        // Call the endcall event hooks
         if ($hook->callHooks('endcall', $this, array('params' => $params, 'userid' => $userId)) != \Innomatic\Process\Hook::RESULT_OK) {
             $result = false;
         }
 
         return $result;
     }
+    /* }}} */
 
-    /*!
-     @function _Edit
+    /* protected doEdit($params, $userId) {{{ */
+    /**
+     * Executes the edit item action.
+     *
+     * This method should be extended if there are particular cases to be
+     * handled when updating an item data.
+     *
+     * @param array $params Array of item attributes to be updated.
+     * @param string $userId User identifier number of the owner, or null if
+     * the current user should be used.
+     * @access protected
+     * @return boolean
      */
     protected function doEdit($params, $userId)
     {
@@ -691,16 +728,20 @@ abstract class InnoworkItem
 
                 while (list ($field, $value) = each($params)) {
                     if ($field != 'id') {
-                        if (!$start)
+                        if (!$start) {
                             $update_str.= ',';
+                        }
                         $update_str.= $field.'='.$this->mrDomainDA->formatText($value);
                         $start = 0;
                     }
                 }
+
                 $query = $this->mrDomainDA->execute(
-                	'UPDATE '.$this->mTable.
-                	' SET '.$update_str.
-                	' WHERE id='.$this->mItemId);
+                    'UPDATE '.$this->mTable.
+                    ' SET '.$update_str.
+                    ' WHERE id='.$this->mItemId
+                );
+
                 if ($query) {
                     $result = true;
                 }
@@ -708,6 +749,7 @@ abstract class InnoworkItem
         }
         return $result;
     }
+    /* }}} */
 
     /*!
      @function Remove
