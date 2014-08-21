@@ -403,31 +403,31 @@ abstract class InnoworkItem
 
         // Item ACL
         if (strlen($this->mParentType) and $this->mParentId > 0) {
-        	// Gets the ACL from the parent object
+            // Gets the ACL from the parent object
             require_once('innowork/core/InnoworkCore.php');
-        	$core = InnoworkCore::instance('innoworkcore', $this->mrRootDb, $this->mrDomainDA);
+            $core = InnoworkCore::instance('innoworkcore', $this->mrRootDb, $this->mrDomainDA);
             $summaries = $core->getSummaries();
             unset($core);
             $class_name = $summaries[$this->mParentType]['classname'];
-			if (class_exists($class_name)) {
-	            $tmp_class = new $class_name($this->mrRootDb, $this->mrDomainDA, $this->mParentId);
-				$this->mAcl = &$tmp_class->mAcl;
-			}
+            if (class_exists($class_name)) {
+                $tmp_class = new $class_name($this->mrRootDb, $this->mrDomainDA, $this->mParentId);
+                $this->mAcl = &$tmp_class->mAcl;
+            }
         } else {
-        	// Gets its own ACL
+            // Gets its own ACL
             $this->mAcl = new InnoworkAcl($this->mrRootDb, $this->mrDomainDA, $this->mItemType, $this->mItemId, $this->mOwnerId);
         }
 
         // Generic fields
         $this->mGenericFields = array(
-        	'projectid' => '',
-        	'customerid' => '',
-        	'title' => '',
-        	'content' => '',
-        	'binarycontent' => '',
-        	'date' => '',
-        	'spenttime' => '',
-        	'cost' => ''
+            'projectid' => '',
+            'customerid' => '',
+            'title' => '',
+            'content' => '',
+            'binarycontent' => '',
+            'date' => '',
+            'spenttime' => '',
+            'cost' => ''
         );
 
         // Item folder in filesystem
@@ -783,7 +783,7 @@ abstract class InnoworkItem
                     // Remove item log
                     if (!$this->mNoLog) {
                         require_once('innowork/core/InnoworkItemLog.php');
-                    	$log = new InnoworkItemLog($this->mItemType, $this->mItemId);
+                        $log = new InnoworkItemLog($this->mItemType, $this->mItemId);
                         $log->Erase();
                     }
 
@@ -1281,11 +1281,13 @@ abstract class InnoworkItem
                             $keys_str.= ' AND';
                         }
                         $keys_str.= $tmp_keys_str;
-                        if (!$start_b)
+                        if (!$start_b) {
                             $keys_str.= ')';
+                        }
                         // First key passed
-                        if ($all_ok)
+                        if ($all_ok) {
                             $start_a = false;
+                        }
                     }
                 }
             }
@@ -1293,8 +1295,9 @@ abstract class InnoworkItem
             if (is_array($this->mSearchResultKeys) and count($this->mSearchResultKeys)) {
                 $start = true;
                 while (list (, $key) = each($this->mSearchResultKeys)) {
-                    if (!$start)
+                    if (!$start) {
                         $result_keys_str.= ',';
+                    }
                     $result_keys_str.= $key;
 
                     $start = false;
@@ -1343,12 +1346,12 @@ abstract class InnoworkItem
 
     public function hasTypeTag($tag)
     {
-    	return in_array($tag, $this->mTypeTags);
+        return in_array($tag, $this->mTypeTags);
     }
 
     public function getExternalItemWidgetXmlData($item)
     {
-    	return '';
+        return '';
     }
 
     /**
@@ -1363,26 +1366,36 @@ abstract class InnoworkItem
             require_once('innowork/core/InnoworkCore.php');
             $tmp_innoworkcore = InnoworkCore::instance('innoworkcore', $this->mrRootDb, $this->mrDomainDA);
             $summaries = $tmp_innoworkcore->getSummaries();
+
             $class_name = $summaries[$type]['classname'];
             if (!class_exists($class_name)) {
                 return false;
             }
+
+            // Create the destination item object
             $tmp_class = new $class_name(
-            	$this->mrRootDb,
-            	$this->mrDomainDA
+                $this->mrRootDb,
+                $this->mrDomainDA
             );
 
+            // Check if the destination type supports item conversion
             if ($tmp_class->mConvertible) {
-                $real_data = $this->getItem();
-                $generic_data['companyid'] = $real_data[$this->mGenericFields['companyid']];
-                $generic_data['projectid'] = $real_data[$this->mGenericFields['projectid']];
-                $generic_data['title'] = $real_data[$this->mGenericFields['title']];
-                $generic_data['content'] = $real_data[$this->mGenericFields['content']];
-                $generic_data['binarycontent'] = $real_data[$this->mGenericFields['binarycontent']];
+                // Get source data
+                $realData = $this->getItem();
+
+                // Map generic attributes between source and destination items
+                $generic_data['companyid'] = $realData[$this->mGenericFields['companyid']];
+                $generic_data['projectid'] = $realData[$this->mGenericFields['projectid']];
+                $generic_data['title'] = $realData[$this->mGenericFields['title']];
+                $generic_data['content'] = $realData[$this->mGenericFields['content']];
+                $generic_data['binarycontent'] = $realData[$this->mGenericFields['binarycontent']];
+
+                // Execute the data conversion
                 return $tmp_class->convertFrom($generic_data);
             }
         }
-		return false;
+
+        return false;
     }
 
     /**
@@ -1393,31 +1406,33 @@ abstract class InnoworkItem
      */
     public function convertFrom($genericData)
     {
-        $result = false;
+        // Check if the destination item supports data conversion
         if ($this->mConvertible) {
             if (strlen($this->mGenericFields['companyid'])) {
-                $real_data[$this->mGenericFields['companyid']] = $genericData['companyid'];
+                $realData[$this->mGenericFields['companyid']] = $genericData['companyid'];
             }
 
             if (strlen($this->mGenericFields['projectid'])) {
-                $real_data[$this->mGenericFields['projectid']] = $genericData['projectid'];
+                $realData[$this->mGenericFields['projectid']] = $genericData['projectid'];
             }
 
             if (strlen($this->mGenericFields['title'])) {
-                $real_data[$this->mGenericFields['title']] = $genericData['title'];
+                $realData[$this->mGenericFields['title']] = $genericData['title'];
             }
 
             if (strlen($this->mGenericFields['content'])) {
-                $real_data[$this->mGenericFields['content']] = $genericData['content'];
+                $realData[$this->mGenericFields['content']] = $genericData['content'];
             }
 
             if (strlen($this->mGenericFields['binarycontent'])) {
-                $real_data[$this->mGenericFields['binarycontent']] = $genericData['binarycontent'];
+                $realData[$this->mGenericFields['binarycontent']] = $genericData['binarycontent'];
             }
 
-            $result = $this->create($real_data);
+            // Create the item with the converted data
+            return $this->create($realData);
         }
-        return $result;
+
+        return false;
     }
 
     /* public cleanCache() {{{ */
@@ -1429,6 +1444,7 @@ abstract class InnoworkItem
      */
     public function cleanCache()
     {
+        // Extract all the cache objects for the current item id
         $cache_query = $this->mrRootDb->execute(
             'SELECT itemid'.
             ' FROM cache_items'.
@@ -1436,12 +1452,14 @@ abstract class InnoworkItem
             ' AND itemid LIKE '.$this->mrRootDb->formatText('itemtypesearch-'.$this->mItemType.'%')
         );
 
+        // Delete the cached objects for the current item id
         while (!$cache_query->eof) {
             $cached_item = new \Innomatic\Datatransfer\Cache\CachedItem(
                 $this->mrRootDb,
                 'innowork-core',
                 $cache_query->getFields('itemid')
             );
+
             $cached_item->destroy();
             $cache_query->moveNext();
         }
