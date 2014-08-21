@@ -23,7 +23,6 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-require_once('innowork/core/InnoworkCore.php');
 require_once('innowork/core/InnoworkItem.php');
 
 class InnoworkKnowledgeBase {
@@ -52,7 +51,11 @@ class InnoworkKnowledgeBase {
         if (is_array($summaries))
             $this->summary = $summaries;
         else {
-            $tmpInnoworkcore = InnoworkCore::instance('innoworkcore', $this->rootDA, $this->domainDA);
+            $tmpInnoworkcore = InnoworkCore::instance(
+                '\Innowork\Core\InnoworkCore',
+                $this->rootDA,
+                $this->domainDA
+            );
             $this->summary = $tmpInnoworkcore->GetSummaries();
         }
     }

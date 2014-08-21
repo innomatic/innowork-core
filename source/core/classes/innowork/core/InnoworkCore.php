@@ -338,7 +338,8 @@ class InnoworkCore extends Singleton {
         $container = \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer');
 
         // Get the items list
-        $core = self::instance('innoworkcore',
+        $core = self::instance(
+            '\Innowork\Core\InnoworkCore',
             $container->getDataAccess(),
             $container->getCurrentDomain()->getDataAccess()
         );
@@ -381,7 +382,8 @@ class InnoworkCore extends Singleton {
         $container = \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer');
 
         // Get the items list
-        $core = self::instance('innoworkcore',
+        $core = self::instance(
+            '\Innowork\Core\InnoworkCore',
             $container->getDataAccess(),
             $container->getCurrentDomain()->getDataAccess()
         );

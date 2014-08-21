@@ -23,17 +23,10 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-require_once('innowork/core/InnoworkCore.php');
-
-/*!
- @class InnoworkAcl
-
- @abstract Access list handler.
- */
 class InnoworkAcl {
     protected $container;
-    public $mrRootDb;
-    public $mrDomainDA;
+    protected $rootDA;
+    protected $domainDA;
     public $mItemType;
     public $mItemId;
     public $mAclType = '';
@@ -53,40 +46,33 @@ class InnoworkAcl {
 
     const ERROR_NOT_ENOUGH_PERMS = 'innoworkacl_noperms';
 
-    /*!
-     @function InnoworkAcl
-     */
     public function __construct(
-        \Innomatic\Dataaccess\DataAccess $rrootDb,
-        \Innomatic\Dataaccess\DataAccess $rdomainDA,
+        \Innomatic\Dataaccess\DataAccess $rootDA,
+        \Innomatic\Dataaccess\DataAccess $domainDA,
         $itemType,
         $itemId,
         $ownerid=0
     ) {
         $this->container = \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer');
-        
+
         $this->mItemType = $itemType;
-        $this->mItemId = $itemId;
-        $this->mrRootDb = $rrootDb;
-        $this->mrDomainDA = $rdomainDA;
-        $this->ownerid = $ownerid;
+        $this->mItemId   = $itemId;
+        $this->rootDA    = $rootDA;
+        $this->domainDA  = $domainDA;
+        $this->ownerid   = $ownerid;
     }
 
-    /*!
-     @function getOwner
-     @abstract Gets item owner id
-     */
     public function getOwner() {
         $result = 0;
 
         if (!$this->ownerid) {
             if ($this->mItemType and $this->mItemId) {
                 $tmp_innoworkcore = InnoworkCore::instance(
-                    'innoworkcore',
-                    $this->mrRootDb,
-                    $this->mrDomainDA
+                    '\Innowork\Core\InnoworkCore',
+                    $this->rootDA,
+                    $this->domainDA
                 );
-                
+
                 $summaries = $tmp_innoworkcore->getSummaries();
 
                 $class_name = $summaries[$this->mItemType]['classname'];
@@ -94,7 +80,7 @@ class InnoworkAcl {
                 if (!class_exists($class_name)) {
                     return false;
                 }
-                $tmp_class = new $class_name($this->mrRootDb, $this->mrDomainDA, $this->mItemId);
+                $tmp_class = new $class_name($this->rootDA, $this->domainDA, $this->mItemId);
                 $result = $this->ownerid = $tmp_class->mOwnerId;
             }
         }
@@ -113,7 +99,7 @@ class InnoworkAcl {
         if (!($this->mItemType and $this->mItemId)) {
             return false;
         }
-        
+
         $owner = $this->getOwner();
 
         if ($owner == $this->container->getCurrentUser()->getUserId()
@@ -123,11 +109,11 @@ class InnoworkAcl {
             case InnoworkAcl::TYPE_PRIVATE :
             case InnoworkAcl::TYPE_PUBLIC :
             case InnoworkAcl::TYPE_ACL :
-                $acl_check = $this->mrDomainDA->execute(
+                $acl_check = $this->domainDA->execute(
                     'SELECT rights'
                     .' FROM innowork_core_acls'
                     .' WHERE itemid='.$this->mItemId
-                    .' AND itemtype='.$this->mrDomainDA->formatText($this->mItemType)
+                    .' AND itemtype='.$this->domainDA->formatText($this->mItemType)
                     .' AND userid=0 AND groupid=0'
                 );
 
@@ -135,11 +121,11 @@ class InnoworkAcl {
                     if ($acl_check->getFields('rights') != $accessType) {
                         // Update the type
                         //
-                        if ($this->mrDomainDA->execute(
+                        if ($this->domainDA->execute(
                             'UPDATE innowork_core_acls'
                             .' SET rights='.$accessType
                             .' WHERE itemid='.$this->mItemId
-                            .' AND itemtype='.$this->mrDomainDA->formatText($this->mItemType)
+                            .' AND itemtype='.$this->domainDA->formatText($this->mItemType)
                             .' AND userid=0 AND groupid=0'
                         )) {
                             // Remove the ACLs if the type is not ACL
@@ -152,12 +138,12 @@ class InnoworkAcl {
                 } else {
                     // Set the type
                     //
-                    if ($this->mrDomainDA->execute(
-                            'INSERT INTO innowork_core_acls'
-                            .' VALUES ('.$this->mItemId
-                            .','.$this->mrDomainDA->formatText($this->mItemType)
-                            .','."0,0,"
-                            .$accessType.')')
+                    if ($this->domainDA->execute(
+                        'INSERT INTO innowork_core_acls'
+                        .' VALUES ('.$this->mItemId
+                        .','.$this->domainDA->formatText($this->mItemType)
+                        .','."0,0,"
+                        .$accessType.')')
                     ) {
                         $result = true;
                     }
@@ -176,7 +162,7 @@ class InnoworkAcl {
         if ($result) {
             $this->typechanged = true;
         }
-        
+
         return $result;
     }
 
@@ -188,11 +174,11 @@ class InnoworkAcl {
         $result = false;
 
         if (!strlen($this->mAclType)) {
-            $acl_check = $this->mrDomainDA->execute(
+            $acl_check = $this->domainDA->execute(
                 'SELECT rights'
                 .' FROM innowork_core_acls'
                 .' WHERE itemid='.$this->mItemId
-                .' AND itemtype='.$this->mrDomainDA->formatText($this->mItemType)
+                .' AND itemtype='.$this->domainDA->formatText($this->mItemType)
                 .' AND userid=0'
                 .' AND groupid=0'
             );
@@ -200,7 +186,7 @@ class InnoworkAcl {
             if ($acl_check->getNumberRows()) {
                 $result = $this->mAclType = $acl_check->getFields('rights');
             }
-            
+
             $acl_check->free();
         } else {
             $result = $this->mAclType;
@@ -218,9 +204,9 @@ class InnoworkAcl {
         $type = $this->getType();
 
         $tmp_innoworkcore = InnoworkCore::instance(
-            'innoworkcore',
-            $this->mrRootDb,
-            $this->mrDomainDA
+            '\Innowork\Core\InnoworkCore',
+            $this->rootDA,
+            $this->domainDA
         );
         $summaries = $tmp_innoworkcore->getSummaries();
 
@@ -233,23 +219,23 @@ class InnoworkAcl {
             if (!$userId) {
                 return InnoworkAcl::PERMS_NONE;
             }
-            
+
             $tmp_user = new \Innomatic\Domain\User\User(
                 $this->container->getCurrentDomain()->domaindata['id'],
                 $userId
             );
 
             if (\Innomatic\Domain\User\User::isAdminUser(
-                    $tmp_user->getUserName(),
-                    $this->container->getCurrentDomain()->getDomainId()
-                )
-                or $tmp_user->hasPermission('view_all_'.$summaries[$this->mItemType]['typeplural'])) {
-                    $result = InnoworkAcl::PERMS_ALL;
-                } else {
-                    // Always NONE because the file owner should not issue the
-                    // checkPermission() method call.
-                    $result = InnoworkAcl::PERMS_NONE;
-                }
+                $tmp_user->getUserName(),
+                $this->container->getCurrentDomain()->getDomainId()
+            )
+            or $tmp_user->hasPermission('view_all_'.$summaries[$this->mItemType]['typeplural'])) {
+                $result = InnoworkAcl::PERMS_ALL;
+            } else {
+                // Always NONE because the file owner should not issue the
+                // checkPermission() method call.
+                $result = InnoworkAcl::PERMS_NONE;
+            }
             break;
 
         case InnoworkAcl::TYPE_ACL :
@@ -279,15 +265,15 @@ class InnoworkAcl {
                         $tmp_num_rows = $GLOBALS['innowork-core']['acl-checkperm'][$userId][$this->mItemType][$this->mItemId]['rights_rows'];
                         $tmp_rights = $GLOBALS['innowork-core']['acl-checkperm'][$userId][$this->mItemType][$this->mItemId]['rights'];
                     } else {
-                        $user_query = $this->mrDomainDA->execute(
+                        $user_query = $this->domainDA->execute(
                             'SELECT rights'
                             .' FROM innowork_core_acls'
                             .' WHERE userid='.$userId
                             .' AND itemid='.$this->mItemId
                             .' AND itemtype='
-                            .$this->mrDomainDA->formatText($this->mItemType)
+                            .$this->domainDA->formatText($this->mItemType)
                         );
-                        
+
                         $tmp_num_rows = $user_query->getNumberRows();
                         $tmp_rights = $user_query->getFields('rights');
 
@@ -304,7 +290,7 @@ class InnoworkAcl {
                         } else {
                             // Check the user group rights
                             //
-                            $group_query = $this->mrDomainDA->execute(
+                            $group_query = $this->domainDA->execute(
                                 'SELECT groupid'
                                 .' FROM domain_users'
                                 .' WHERE id='.$userId
@@ -322,12 +308,12 @@ class InnoworkAcl {
 
                 if ($goon) {
                     if ($groupId != '0') {
-                        $group_query = $this->mrDomainDA->execute(
+                        $group_query = $this->domainDA->execute(
                             'SELECT rights'
                             .' FROM innowork_core_acls'
                             .' WHERE groupid='.$groupId
                             .' AND itemid='.$this->mItemId
-                            .' AND itemtype='.$this->mrDomainDA->formatText($this->mItemType)
+                            .' AND itemtype='.$this->domainDA->formatText($this->mItemType)
                         );
 
                         if ($group_query->getNumberRows()) {
@@ -360,57 +346,57 @@ class InnoworkAcl {
         if ($this->getType() == InnoworkAcl::TYPE_ACL) {
             if (strlen($groupId) xor strlen($userId)) {
                 if ($userId) {
-                    $user_query = $this->mrDomainDA->execute(
+                    $user_query = $this->domainDA->execute(
                         'SELECT rights'
                         .' FROM innowork_core_acls'
                         .' WHERE userid='.$userId
                         .' AND itemid='.$this->mItemId
-                        .' AND itemtype='.$this->mrDomainDA->formatText($this->mItemType)
+                        .' AND itemtype='.$this->domainDA->formatText($this->mItemType)
                     );
 
                     if ($user_query->getNumberRows() == 0) {
-                        $result = $this->mrDomainDA->execute(
+                        $result = $this->domainDA->execute(
                             'INSERT INTO innowork_core_acls'
                             .' VALUES ('.$this->mItemId
-                            .','.$this->mrDomainDA->formatText($this->mItemType)
+                            .','.$this->domainDA->formatText($this->mItemType)
                             .','.'0,'.$userId
                             .','.$permissions.')'
                         );
                     } else {
-                        $result = $this->mrDomainDA->execute(
+                        $result = $this->domainDA->execute(
                             'UPDATE innowork_core_acls'
                             .' SET rights='.$permissions
                             .' WHERE userid='.$userId
                             .' AND itemid='.$this->mItemId
-                            .' AND itemtype='.$this->mrDomainDA->formatText($this->mItemType)
+                            .' AND itemtype='.$this->domainDA->formatText($this->mItemType)
                         );
                     }
 
                     $user_query->Free();
                 } elseif ($groupId) {
-                    $group_query = $this->mrDomainDA->execute(
+                    $group_query = $this->domainDA->execute(
                         'SELECT rights'
                         .' FROM innowork_core_acls'
                         .' WHERE groupid='.$groupId
                         .' AND itemid='.$this->mItemId
-                        .' AND itemtype='.$this->mrDomainDA->formatText($this->mItemType)
+                        .' AND itemtype='.$this->domainDA->formatText($this->mItemType)
                     );
 
                     if ($group_query->getNumberRows() == 0) {
-                        $result = $this->mrDomainDA->execute(
+                        $result = $this->domainDA->execute(
                             'INSERT INTO innowork_core_acls'
                             .' VALUES ('.$this->mItemId
-                            .','.$this->mrDomainDA->formatText($this->mItemType)
+                            .','.$this->domainDA->formatText($this->mItemType)
                             .','.$groupId.','.'0,'
                             .$permissions.')'
                         );
                     } else {
-                        $result = $this->mrDomainDA->execute(
+                        $result = $this->domainDA->execute(
                             'UPDATE innowork_core_acls'
                             .' SET rights='.$permissions
                             .' WHERE groupid='.$groupId
                             .' AND itemid='.$this->mItemId
-                            .' AND itemtype='.$this->mrDomainDA->formatText($this->mItemType)
+                            .' AND itemtype='.$this->domainDA->formatText($this->mItemType)
                         );
                     }
 
@@ -430,25 +416,25 @@ class InnoworkAcl {
         }
 
         return $result;
-    }
+        }
 
     /*!
      @function RemovePermission
      */
-    public function removePermission($groupId = '', $userId = '') {
-        $result = false;
+        public function removePermission($groupId = '', $userId = '') {
+            $result = false;
 
-        // No need to check if ACL type is set to ACL, it is safe the same
+            // No need to check if ACL type is set to ACL, it is safe the same
 
-        if (strlen($groupId) xor strlen($userId)) {
-            if ($this->mrDomainDA->execute(
-                'DELETE FROM innowork_core_acls'
-                .' WHERE itemid='.$this->mItemId
-                .' AND itemtype='.$this->mrDomainDA->formatText($this->mItemType)
-                .' AND '. ($groupId ? 'groupid='.$groupId : 'userid='.$userId))
-            ) {
-                $result = true;
-            }
+            if (strlen($groupId) xor strlen($userId)) {
+                if ($this->domainDA->execute(
+                    'DELETE FROM innowork_core_acls'
+                    .' WHERE itemid='.$this->mItemId
+                    .' AND itemtype='.$this->domainDA->formatText($this->mItemType)
+                    .' AND '. ($groupId ? 'groupid='.$groupId : 'userid='.$userId))
+                ) {
+                    $result = true;
+        }
         }
 
         if ($result) {
@@ -456,23 +442,23 @@ class InnoworkAcl {
         }
 
         return $result;
-    }
+        }
 
     /*!
      @function RemoveAllPerms
 
      @abstract Removes all permissions.
      */
-    public function removeAllPermissions() {
-        $result = false;
+        public function removeAllPermissions() {
+            $result = false;
 
-        if ($this->mrDomainDA->execute(
-            'DELETE FROM innowork_core_acls'
-            .' WHERE itemid='.$this->mItemId
-            .' AND itemtype='.$this->mrDomainDA->formatText($this->mItemType)
-            .' AND groupid<>0 AND userid<>0')
-        ) {
-            $result = true;
+            if ($this->domainDA->execute(
+                'DELETE FROM innowork_core_acls'
+                .' WHERE itemid='.$this->mItemId
+                .' AND itemtype='.$this->domainDA->formatText($this->mItemType)
+                .' AND groupid<>0 AND userid<>0')
+            ) {
+                $result = true;
         }
 
         if ($result) {
@@ -480,7 +466,7 @@ class InnoworkAcl {
         }
 
         return $result;
-    }
+        }
 
     /*!
      @function Erase
@@ -489,71 +475,71 @@ class InnoworkAcl {
 
      @discussion It should be issued only when removing the associated item.
      */
-    public function erase() {
-        if ($this->mrDomainDA->execute(
-            'DELETE FROM innowork_core_acls'
-            .' WHERE itemid='.$this->mItemId
-            .' AND itemtype='.$this->mrDomainDA->formatText($this->mItemType))
-        ) {
-            // Clean the cache
-            $this->cleanCache();
-            return true;
+        public function erase() {
+            if ($this->domainDA->execute(
+                'DELETE FROM innowork_core_acls'
+                .' WHERE itemid='.$this->mItemId
+                .' AND itemtype='.$this->domainDA->formatText($this->mItemType))
+            ) {
+                // Clean the cache
+                $this->cleanCache();
+                return true;
         } else {
             return false;
         }
-    }
+        }
 
-    public function copyAcl($aclItemType, $aclItemId) {
-        $acl_query = $this->mrDomainDA->execute(
-            'SELECT groupid,userid,rights'
-            .' FROM innowork_core_acls'
-            .' WHERE itemtype='.$this->mrDomainDA->formatText($aclItemType)
-            .' AND itemid='.$this->mrDomainDA->formatText($aclItemId)
-        );
-        
-        if ($acl_query->getNumberRows()) {
-            $this->mrDomainDA->execute(
-                'DELETE FROM innowork_core_acls'
-                .' WHERE itemtype='.$this->mrDomainDA->formatText($this->mItemType)
-                .' AND itemid='.$this->mItemId
+        public function copyAcl($aclItemType, $aclItemId) {
+            $acl_query = $this->domainDA->execute(
+                'SELECT groupid,userid,rights'
+                .' FROM innowork_core_acls'
+                .' WHERE itemtype='.$this->domainDA->formatText($aclItemType)
+                .' AND itemid='.$this->domainDA->formatText($aclItemId)
             );
 
-            while (!$acl_query->eof) {
-                $this->mrDomainDA->execute(
-                    'INSERT INTO innowork_core_acls'
-                    .' VALUES ('.$this->mItemId
-                    .','.$this->mrDomainDA->formatText($this->mItemType)
-                    .','.$acl_query->getFields('groupid')
-                    .','.$acl_query->getFields('userid')
-                    .','.$acl_query->getFields('rights').')'
+            if ($acl_query->getNumberRows()) {
+                $this->domainDA->execute(
+                    'DELETE FROM innowork_core_acls'
+                    .' WHERE itemtype='.$this->domainDA->formatText($this->mItemType)
+                    .' AND itemid='.$this->mItemId
                 );
-                $acl_query->moveNext();
-            }
+
+                while (!$acl_query->eof) {
+                    $this->domainDA->execute(
+                        'INSERT INTO innowork_core_acls'
+                        .' VALUES ('.$this->mItemId
+                        .','.$this->domainDA->formatText($this->mItemType)
+                        .','.$acl_query->getFields('groupid')
+                        .','.$acl_query->getFields('userid')
+                        .','.$acl_query->getFields('rights').')'
+                    );
+                    $acl_query->moveNext();
+        }
         }
         $acl_query->free();
         // Flush item type cache
         $this->cleanCache();
         return true;
-    }
+        }
 
-    public function cleanCache() {
-        $cache_query = $this->mrRootDb->execute(
-            'SELECT itemid'
-            .' FROM cache_items'
-            .' WHERE application='.$this->mrRootDb->formatText('innowork-core')
-            .' AND itemid LIKE '.$this->mrRootDb->formatText('itemtypesearch-'.$this->mItemType.'%')
-        );
-
-        while (!$cache_query->eof) {
-            $cached_item = new \Innomatic\Datatransfer\Cache\CachedItem(
-                $this->mrRootDb,
-                'innowork-core',
-                $cache_query->getFields('itemid')
+        public function cleanCache() {
+            $cache_query = $this->rootDA->execute(
+                'SELECT itemid'
+                .' FROM cache_items'
+                .' WHERE application='.$this->rootDA->formatText('innowork-core')
+                .' AND itemid LIKE '.$this->rootDA->formatText('itemtypesearch-'.$this->mItemType.'%')
             );
-            $cached_item->destroy();
-            $cache_query->moveNext();
+
+            while (!$cache_query->eof) {
+                $cached_item = new \Innomatic\Datatransfer\Cache\CachedItem(
+                    $this->rootDA,
+                    'innowork-core',
+                    $cache_query->getFields('itemid')
+                );
+                $cached_item->destroy();
+                $cache_query->moveNext();
         }
         $cache_query->free();
         return true;
-    }
-}
+        }
+        }

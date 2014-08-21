@@ -74,9 +74,8 @@ class WuiInnoworkitemacl extends \Shared\Wui\WuiXml
         $locale = new \Innomatic\Locale\LocaleCatalog('innowork-core::misc', \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentUser()->getLanguage());
 
         // Core
-		require_once('innowork/core/InnoworkCore.php');
-        $tmp_innoworkcore = InnoworkCore::instance(
-        	'innoworkcore',
+        $tmp_innoworkcore = \Innowork\Core\InnoworkCore::instance(
+        	'\Innowork\Core\InnoworkCore',
         	\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getDataAccess(),
         	\Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->getDataAccess()
 		);

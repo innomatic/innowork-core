@@ -50,7 +50,7 @@ if ((isset(Wui::instance('wui')->parameters['wui']['wui']['evd']['aclitemtype'])
     if (isset(Wui::instance('wui')->parameters['wui']['wui']['evn'])) {
         switch (Wui::instance('wui')->parameters['wui']['wui']['evn']) {
             case 'innoworkacladd' :
-                $tmp_innoworkcore = InnoworkCore::instance('innoworkcore', \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getDataAccess(), \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->getDataAccess());
+                $tmp_innoworkcore = InnoworkCore::instance('\Innowork\Core\InnoworkCore', \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getDataAccess(), \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->getDataAccess());
                 $summaries = $tmp_innoworkcore->getSummaries();
                 $class_name = $summaries[Wui::instance('wui')->parameters['wui']['wui']['evd']['aclitemtype']]['classname'];
 				if (!class_exists($class_name)) {
@@ -85,7 +85,7 @@ if ((isset(Wui::instance('wui')->parameters['wui']['wui']['evd']['aclitemtype'])
                 break;
 
             case 'innoworkaclremove' :
-                $tmp_innoworkcore = InnoworkCore::instance('innoworkcore', \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getDataAccess(), \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->getDataAccess());
+                $tmp_innoworkcore = InnoworkCore::instance('\Innowork\Core\InnoworkCore', \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getDataAccess(), \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->getDataAccess());
                 $summaries = $tmp_innoworkcore->getSummaries();
                 $class_name = $summaries[Wui::instance('wui')->parameters['wui']['wui']['evd']['aclitemtype']]['classname'];
 				if (!class_exists($class_name)) {
@@ -113,7 +113,7 @@ if ((isset(Wui::instance('wui')->parameters['wui']['wui']['evd']['aclitemtype'])
                 break;
 
             case 'innoworkconvert' :
-                $tmp_innoworkcore = InnoworkCore::instance('innoworkcore', \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getDataAccess(), \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->getDataAccess());
+                $tmp_innoworkcore = InnoworkCore::instance('\Innowork\Core\InnoworkCore', \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getDataAccess(), \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->getDataAccess());
                 $summaries = $tmp_innoworkcore->getSummaries();
                 $class_name = $summaries[Wui::instance('wui')->parameters['wui']['wui']['evd']['aclitemtype']]['classname'];
 				if (!class_exists($class_name)) {

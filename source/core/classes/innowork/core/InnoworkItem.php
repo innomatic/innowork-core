@@ -404,8 +404,7 @@ abstract class InnoworkItem
         // Item ACL
         if (strlen($this->mParentType) and $this->mParentId > 0) {
             // Gets the ACL from the parent object
-            require_once('innowork/core/InnoworkCore.php');
-            $core = InnoworkCore::instance('innoworkcore', $this->mrRootDb, $this->mrDomainDA);
+            $core = InnoworkCore::instance('\Innowork\Core\InnoworkCore', $this->mrRootDb, $this->mrDomainDA);
             $summaries = $core->getSummaries();
             unset($core);
             $class_name = $summaries[$this->mParentType]['classname'];
@@ -511,8 +510,7 @@ abstract class InnoworkItem
                 }
             } else {
                 // This item has a parent item type
-                require_once('innowork/core/InnoworkCore.php');
-                $core = InnoworkCore::instance('innoworkcore', $this->mrRootDb, $this->mrDomainDA);
+                $core = InnoworkCore::instance('\Innowork\Core\InnoworkCore', $this->mrRootDb, $this->mrDomainDA);
                 $summaries = $core->getSummaries();
                 unset($core);
                 $class_name = $summaries[$this->mParentType]['classname'];
@@ -994,9 +992,8 @@ abstract class InnoworkItem
 
 
             if (strlen($this->mParentType) > 0 && strlen($this->mParentIdField) > 0) {
-                require_once('innowork/core/InnoworkCore.php');
                 $tmp_innoworkcore = InnoworkCore::instance(
-                    'innoworkcore',
+                    '\Innowork\Core\InnoworkCore',
                     $this->mrRootDb,
                     $this->mrDomainDA
                 );
@@ -1363,8 +1360,11 @@ abstract class InnoworkItem
     public function convertTo($type)
     {
         if ($this->mItemId and $this->mConvertible) {
-            require_once('innowork/core/InnoworkCore.php');
-            $tmp_innoworkcore = InnoworkCore::instance('innoworkcore', $this->mrRootDb, $this->mrDomainDA);
+            $tmp_innoworkcore = InnoworkCore::instance(
+                '\Innowork\Core\InnoworkCore',
+                $this->mrRootDb,
+                $this->mrDomainDA
+            );
             $summaries = $tmp_innoworkcore->getSummaries();
 
             $class_name = $summaries[$type]['classname'];
