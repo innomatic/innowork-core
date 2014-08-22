@@ -412,20 +412,20 @@ class InnoworkAcl {
     /*!
      @function RemovePermission
      */
-        public function removePermission($groupId = '', $userId = '') {
-            $result = false;
+    public function removePermission($groupId = '', $userId = '') {
+        $result = false;
 
-            // No need to check if ACL type is set to ACL, it is safe the same
+        // No need to check if ACL type is set to ACL, it is safe the same
 
-            if (strlen($groupId) xor strlen($userId)) {
-                if ($this->domainDA->execute(
-                    'DELETE FROM innowork_core_acls'
-                    .' WHERE itemid='.$this->mItemId
-                    .' AND itemtype='.$this->domainDA->formatText($this->mItemType)
-                    .' AND '. ($groupId ? 'groupid='.$groupId : 'userid='.$userId))
-                ) {
-                    $result = true;
-        }
+        if (strlen($groupId) xor strlen($userId)) {
+            if ($this->domainDA->execute(
+                'DELETE FROM innowork_core_acls'
+                .' WHERE itemid='.$this->mItemId
+                .' AND itemtype='.$this->domainDA->formatText($this->mItemType)
+                .' AND '. ($groupId ? 'groupid='.$groupId : 'userid='.$userId))
+            ) {
+                $result = true;
+            }
         }
 
         if ($result) {
@@ -433,7 +433,7 @@ class InnoworkAcl {
         }
 
         return $result;
-        }
+    }
 
     /*!
      @function RemoveAllPerms
@@ -475,9 +475,9 @@ class InnoworkAcl {
                 // Clean the cache
                 $this->cleanCache();
                 return true;
-        } else {
-            return false;
-        }
+            } else {
+                return false;
+            }
         }
 
         public function copyAcl($aclItemType, $aclItemId) {
@@ -505,12 +505,12 @@ class InnoworkAcl {
                         .','.$acl_query->getFields('rights').')'
                     );
                     $acl_query->moveNext();
-        }
-        }
-        $acl_query->free();
-        // Flush item type cache
-        $this->cleanCache();
-        return true;
+                }
+            }
+            $acl_query->free();
+            // Flush item type cache
+            $this->cleanCache();
+            return true;
         }
 
         public function cleanCache() {
@@ -529,8 +529,8 @@ class InnoworkAcl {
                 );
                 $cached_item->destroy();
                 $cache_query->moveNext();
+            }
+            $cache_query->free();
+            return true;
         }
-        $cache_query->free();
-        return true;
-        }
-        }
+}
