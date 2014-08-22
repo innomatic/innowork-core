@@ -55,13 +55,12 @@ class InnoworkAcl {
         $ownerid=0
     ) {
         $this->container = \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer');
-        $this->innoworkContainer = InnoworkCore::instance('\Innowork\Core\InnoworkCore', $this->rootDA, $this->domainDA);
-
         $this->mItemType = $itemType;
         $this->mItemId   = $itemId;
         $this->rootDA    = $rootDA;
         $this->domainDA  = $domainDA;
         $this->ownerid   = $ownerid;
+        $this->innoworkContainer = InnoworkCore::instance('\Innowork\Core\InnoworkCore', $this->rootDA, $this->domainDA);
     }
 
     public function getOwner() {
