@@ -71,9 +71,54 @@ class InnoworkItemTypeComponent extends ApplicationComponent
 				$params['adminevent'] = 'default';
 			}
 
-			$result = $this->rootda->Execute('INSERT INTO innowork_core_itemtypes VALUES ('.$this->rootda->getNextSequenceValue('innowork_core_itemtypes_id_seq').','.$this->rootda->formatText($this->name).','.$this->rootda->formatText($params['catalog']).','.$this->rootda->formatText($params['classfile']).','.$this->rootda->formatText($params['classname']).','.$this->rootda->formatText($params['icon']).','.$this->rootda->formatText($params['domainpanel']).','.$this->rootda->formatText($params['miniicon']).','.$this->rootda->formatText($params['summaryname']).','.$this->rootda->formatText($params['icontype']).','.$this->rootda->formatText($params['showmode']).','.$this->rootda->formatText($params['adminevent']).')');
+            if (!isset($params['catalog'])) {
+                $params['catalog'] = '';
+            }
+            if (!isset($params['classfile'])) {
+                $params['classfile'] = '';
+            }
+            if (!isset($params['classname'])) {
+                $params['classname'] = '';
+            }
+            if (!isset($params['icon'])) {
+                $params['icon'] = '';
+            }
+            if (!isset($params['domainpanel'])) {
+                $params['domainpanel'] = '';
+            }
+            if (!isset($params['miniicon'])) {
+                $params['miniicon'] = '';
+            }
+            if (!isset($params['summaryname'])) {
+                $params['summaryname'] = '';
+            }
+            if (!isset($params['icontype'])) {
+                $params['icontype'] = '';
+            }
+            if (!isset($params['showmode'])) {
+                $params['showmode'] = '';
+            }
+
+            $result = $this->rootda->execute(
+                'INSERT INTO innowork_core_itemtypes'
+                .' VALUES ('.$this->rootda->getNextSequenceValue('innowork_core_itemtypes_id_seq').
+                ','.$this->rootda->formatText($this->name).
+                ','.$this->rootda->formatText($params['catalog']).
+                ','.$this->rootda->formatText($params['classfile']).
+                ','.$this->rootda->formatText($params['classname']).
+                ','.$this->rootda->formatText($params['icon']).
+                ','.$this->rootda->formatText($params['domainpanel']).
+                ','.$this->rootda->formatText($params['miniicon']).
+                ','.$this->rootda->formatText($params['summaryname']).
+                ','.$this->rootda->formatText($params['icontype']).
+                ','.$this->rootda->formatText($params['showmode']).
+                ','.$this->rootda->formatText($params['adminevent']).')'
+            );
 		} else {
-			$this->mLog->logEvent('innoworkcore.innoworkitemtypeelement.innoworkitemtypeelement.doinstallaction', 'In application '.$this->appname.', element '.$this->name.': Empty innowork type name', Logger::ERROR);
+            $this->mLog->logEvent(
+                'innoworkcore.innoworkitemtypeelement.innoworkitemtypeelement.doinstallaction',
+                'In application '.$this->appname.', element '.$this->name.': Empty innowork type name', Logger::ERROR
+            );
 		}
 
 		return $result;
@@ -87,7 +132,9 @@ class InnoworkItemTypeComponent extends ApplicationComponent
 		$result = FALSE;
 
 		if (strlen($this->name)) {
-			$result = $this->rootda->Execute('DELETE FROM innowork_core_itemtypes WHERE itemtype='.$this->rootda->formatText($this->name));
+            $result = $this->rootda->execute(
+                'DELETE FROM innowork_core_itemtypes WHERE itemtype='.$this->rootda->formatText($this->name)
+            );
 		} else
 		$this->mLog->logEvent('innoworkcore.innoworkitemtypeelement.innoworkitemtypeelement.douninstallaction', 'In application '.$this->appname.', element '.$this->name.': Empty innowork type name', Logger::ERROR);
 
@@ -102,20 +149,48 @@ class InnoworkItemTypeComponent extends ApplicationComponent
 		$result = FALSE;
 
 		if (strlen($this->name)) {
-			if (!isset($params['adminevent']) or !strlen($params['adminevent']))
-			$params['adminevent'] = 'default';
+			if (!isset($params['adminevent']) or !strlen($params['adminevent'])) {
+                $params['adminevent'] = 'default';
+            }
+            if (!isset($params['catalog'])) {
+                $params['catalog'] = '';
+            }
+            if (!isset($params['classfile'])) {
+                $params['classfile'] = '';
+            }
+            if (!isset($params['classname'])) {
+                $params['classname'] = '';
+            }
+            if (!isset($params['icon'])) {
+                $params['icon'] = '';
+            }
+            if (!isset($params['domainpanel'])) {
+                $params['domainpanel'] = '';
+            }
+            if (!isset($params['miniicon'])) {
+                $params['miniicon'] = '';
+            }
+            if (!isset($params['summaryname'])) {
+                $params['summaryname'] = '';
+            }
+            if (!isset($params['icontype'])) {
+                $params['icontype'] = '';
+            }
+            if (!isset($params['showmode'])) {
+                $params['showmode'] = '';
+            }
 
-			$result = $this->rootda->Execute('UPDATE innowork_core_itemtypes SET catalog='.$this->rootda->formatText($params['catalog']).
-            	',classfile='.$this->rootda->formatText($params['classfile']).
-            	',icon='.$this->rootda->formatText($params['icon']).
-            	',icontype='.$this->rootda->formatText($params['icontype']).
-            	',miniicon='.$this->rootda->formatText($params['miniicon']).
-            	',classname='.$this->rootda->formatText($params['classname']).
-            	',domainpanel='.$this->rootda->formatText($params['domainpanel']).
-            	',showmode='.$this->rootda->formatText($params['showmode']).
-            	',adminevent='.$this->rootda->formatText($params['adminevent']).
-            	',summaryname='.$this->rootda->formatText($params['summaryname']).
-            	' WHERE itemtype='.$this->rootda->formatText($this->name));
+            $result = $this->rootda->Execute('UPDATE innowork_core_itemtypes SET catalog='.$this->rootda->formatText($params['catalog']).
+                ',classfile='.$this->rootda->formatText($params['classfile']).
+                ',icon='.$this->rootda->formatText($params['icon']).
+                ',icontype='.$this->rootda->formatText($params['icontype']).
+                ',miniicon='.$this->rootda->formatText($params['miniicon']).
+                ',classname='.$this->rootda->formatText($params['classname']).
+                ',domainpanel='.$this->rootda->formatText($params['domainpanel']).
+                ',showmode='.$this->rootda->formatText($params['showmode']).
+                ',adminevent='.$this->rootda->formatText($params['adminevent']).
+                ',summaryname='.$this->rootda->formatText($params['summaryname']).
+                ' WHERE itemtype='.$this->rootda->formatText($this->name));
 		} else
 		$this->mLog->logEvent('innoworkcore.innoworkitemtypeelement.innoworkitemtypeelement.doupdateaction', 'In application '.$this->appname.', element '.$this->name.': Empty innowork type name', Logger::ERROR);
 
@@ -144,9 +219,9 @@ class InnoworkItemTypeComponent extends ApplicationComponent
 			return false;
 		}
 
-		$this->domainda->Execute('DELETE FROM innowork_core_itemtypes_enabled WHERE itemtype='.$this->domainda->formatText($this->name));
-		$this->domainda->Execute('DELETE FROM innowork_core_acls WHERE itemtype='.$this->domainda->formatText($this->name));
-		$this->domainda->Execute('DELETE FROM innowork_core_itemslog WHERE itemtype='.$this->domainda->formatText($this->name));
+		$this->domainda->execute('DELETE FROM innowork_core_itemtypes_enabled WHERE itemtype='.$this->domainda->formatText($this->name));
+		$this->domainda->execute('DELETE FROM innowork_core_acls WHERE itemtype='.$this->domainda->formatText($this->name));
+		$this->domainda->execute('DELETE FROM innowork_core_itemslog WHERE itemtype='.$this->domainda->formatText($this->name));
 
 		return true;
 	}
