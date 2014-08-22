@@ -25,6 +25,7 @@
 
 class InnoworkAcl {
     protected $container;
+    protected $innoworkContainer;
     protected $rootDA;
     protected $domainDA;
     public $mItemType;
@@ -54,6 +55,7 @@ class InnoworkAcl {
         $ownerid=0
     ) {
         $this->container = \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer');
+        $this->innoworkContainer = InnoworkCore::instance('\Innowork\Core\InnoworkCore', $this->rootDA, $this->domainDA);
 
         $this->mItemType = $itemType;
         $this->mItemId   = $itemId;
@@ -67,13 +69,7 @@ class InnoworkAcl {
 
         if (!$this->ownerid) {
             if ($this->mItemType and $this->mItemId) {
-                $tmp_innoworkcore = InnoworkCore::instance(
-                    '\Innowork\Core\InnoworkCore',
-                    $this->rootDA,
-                    $this->domainDA
-                );
-
-                $summaries = $tmp_innoworkcore->getSummaries();
+                $summaries = $this->innoworkContainer->getSummaries();
 
                 $class_name = $summaries[$this->mItemType]['classname'];
                 // Checks if the class exists.
@@ -203,12 +199,7 @@ class InnoworkAcl {
         $result = false;
         $type = $this->getType();
 
-        $tmp_innoworkcore = InnoworkCore::instance(
-            '\Innowork\Core\InnoworkCore',
-            $this->rootDA,
-            $this->domainDA
-        );
-        $summaries = $tmp_innoworkcore->getSummaries();
+        $summaries = $this->innoworkContainer->getSummaries();
 
         switch ($type) {
         case InnoworkAcl::TYPE_PUBLIC :
