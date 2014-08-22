@@ -62,7 +62,7 @@ class InnoworkItemLog {
      * @return void
      */
     public function __construct($itemType, $itemId) {
-        $this->container = \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain();
+        $this->container = \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer');
         $this->itemType  = $itemType;
         $this->itemId    = $itemId;
     }
