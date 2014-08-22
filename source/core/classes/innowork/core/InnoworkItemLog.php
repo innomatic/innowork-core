@@ -106,7 +106,7 @@ class InnoworkItemLog {
      */
     public function getLog() {
         $result = array();
-        $dataAccess = $this->container->getDataAccess();
+        $dataAccess = $this->container->getCurrentDomain()->getDataAccess();
 
         $log_query = $dataAccess->execute(
             'SELECT username,eventtime'
