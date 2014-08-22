@@ -21,6 +21,9 @@ FIXES:
 - Fixed items search when involving keys of type userid, that were treated as
   strings with the LIKE operator. (Alex Pagnoni)
 
+CHANGES:
+- Performance improvements. (Alex Pagnoni)
+
 DEPRECATED:
 - Removed InnoworkItem::getSummary() since Innowork no more provides a
   dashboard view. (Alex Pagnoni)
