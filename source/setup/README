@@ -1,7 +1,8 @@
 General information
 -------------------
 
-Innowork Core is the technology underlying the Innowork application series.
+Innowork Core is the framework for building enterprise applications
+with the Innomatic Platform.
 
 
 
@@ -18,7 +19,7 @@ Serverside:
 	a working Innomatic platform installation.
 
 Clientside:
-	a web browser with HTML 4.0 and CSS support.
+	a web browser.
 
 
 
@@ -32,20 +33,17 @@ See the file named INSTALL.
 Additional Information
 ----------------------
 
-Innomatica home page:
-	http://www.innomatica.it
-
 Innomatic official home page:
-	http://www.innomatic.org
+	http://www.innomatic.io
 
 Innowork Core official home page:
-	http://www.innomatica.it
+	http://www.innomatic.io
 
 To submit a bug report:
-	send an email to bugs@innomatica.it
+	send an email to bugs@innomatic.io
 
 To submit a support request:
-	send an email to support@innomatica.it
+	send an email to support@innomatic.io
 
 
 
