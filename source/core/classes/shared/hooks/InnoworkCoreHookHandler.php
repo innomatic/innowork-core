@@ -14,7 +14,7 @@
  *
  * The Original Code is Innowork.
  *
- * The Initial Developer of the Original Code is Innoteam.
+ * The Initial Developer of the Original Code is Innomatic Company.
  * Portions created by the Initial Developer are Copyright (C) 2002-2009
  * the Initial Developer. All Rights Reserved.
  *
