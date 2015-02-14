@@ -4,7 +4,7 @@
 		<idname>innowork-core</idname>
 		<release>
 			<version>3.5.1</version>
-			<date>2014/07/25</date>
+			<date>2015/02/14</date>
 			<changesfile>CHANGES</changesfile>
 		</release>
 		<description>Innowork Engine</description>
@@ -23,7 +23,7 @@
 				<email>info@innomatic.io</email>
 				<web>http://www.innomatic.io/</web>
 			</author>
-			<copyright>Copyright (c) 2002-2014 Innomatic Company</copyright>
+			<copyright>Copyright (c) 2002-2015 Innomatic Company</copyright>
 			<license>MPL</license>
 			<licensefile>LICENSE</licensefile>
 		</legal>
