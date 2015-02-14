@@ -14,12 +14,12 @@
  *
  * The Original Code is Innowork.
  *
- * The Initial Developer of the Original Code is Innoteam.
+ * The Initial Developer of the Original Code is Innomatic Company.
  * Portions created by the Initial Developer are Copyright (C) 2002-2009
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
- *   Alex Pagnoni <alex.pagnoni@innoteam.it>
+ *   Alex Pagnoni <alex.pagnoni@innomatic.io>
  *
  * ***** END LICENSE BLOCK ***** */
 
@@ -29,13 +29,12 @@
 require_once('innomatic/wui/Wui.php');
 require_once('innomatic/wui/dispatch/WuiDispatcher.php');
 require_once('innomatic/locale/LocaleCatalog.php');
-require_once('innowork/core/InnoworkCore.php');
 require_once('innowork/core/clipping/InnoworkClipping.php');
 
-    global $gPage_status, $gLocale;
-    global $gLocale, $gPage_title, $gXml_def, $gPage_status, $gToolbars, $gInnowork_core, $customers;
+global $gPage_status, $gLocale;
+global $gLocale, $gPage_title, $gXml_def, $gPage_status, $gToolbars, $gInnowork_core, $customers;
     
-$gInnowork_core = InnoworkCore::instance('innoworkcore', \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getDataAccess(), \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->getDataAccess());
+$gInnowork_core = \Innowork\Core\InnoworkCore::instance('\Innowork\Core\InnoworkCore', \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getDataAccess(), \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->getDataAccess());
 $gLocale = new LocaleCatalog('innowork-core::clippings', \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentUser()->getLanguage());
 
 $gWui = Wui::instance('wui');

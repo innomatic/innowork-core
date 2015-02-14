@@ -3,8 +3,8 @@
 	<definition>
 		<idname>innowork-core</idname>
 		<release>
-			<version>3.5.0</version>
-			<date>2014/07/25</date>
+			<version>3.5.1</version>
+			<date>2015/02/14</date>
 			<changesfile>CHANGES</changesfile>
 		</release>
 		<description>Innowork Engine</description>
@@ -19,17 +19,17 @@
 		</options>
 		<legal>
 			<author>
-				<name>Innoteam Srl</name>
-				<email>info@innoteam.it</email>
+				<name>Innomatic Company</name>
+				<email>info@innomatic.io</email>
 				<web>http://www.innomatic.io/</web>
 			</author>
-			<copyright>Copyright (c) 2002-2014 Innoteam Srl</copyright>
+			<copyright>Copyright (c) 2002-2015 Innomatic Company</copyright>
 			<license>MPL</license>
 			<licensefile>LICENSE</licensefile>
 		</legal>
 		<support>
-			<supportemail>helpdesk@innomatic.io</supportemail>
-			<bugsemail>helpdesk@innomatic.io</bugsemail>
+			<supportemail>support@innomatic.io</supportemail>
+			<bugsemail>bugs@innomatic.io</bugsemail>
 			<maintainer>
 				<name>Alex Pagnoni</name>
 				<email>alex.pagnoni@innomatic.io</email>
@@ -97,6 +97,35 @@
             file="InnoworkSearchTraybarItem.php"
             class="\Shared\Traybar\InnoworkSearchTraybarItem" />
 
+        <hookevent name="innowork.item.create.startcall"
+            function="innowork.item.create" event="startcall" />
+
+        <hookevent name="innowork.item.create.endcall"
+            function="innowork.item.create" event="endcall" />
+
+        <hookevent name="innowork.item.edit.startcall"
+            function="innowork.item.edit" event="startcall" />
+
+        <hookevent name="innowork.item.edit.endcall"
+            function="innowork.item.edit" event="endcall" />
+
+        <hookevent name="innowork.item.remove.startcall"
+            function="innowork.item.remove" event="startcall" />
+
+        <hookevent name="innowork.item.remove.endcall"
+            function="innowork.item.remove" event="endcall" />
+
+        <hookevent name="innowork.item.trash.startcall"
+            function="innowork.item.trash" event="startcall" />
+
+        <hookevent name="innowork.item.trash.endcall"
+            function="innowork.item.trash" event="endcall" />
+
+        <hookevent name="innowork.item.restore.startcall"
+            function="innowork.item.restore" event="startcall" />
+
+        <hookevent name="innowork.item.restore.endcall"
+            function="innowork.item.restore" event="endcall" />
 
 		<!-- Preferences -->
 

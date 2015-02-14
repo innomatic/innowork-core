@@ -14,12 +14,12 @@
  *
  * The Original Code is Innowork.
  *
- * The Initial Developer of the Original Code is Innoteam.
+ * The Initial Developer of the Original Code is Innomatic Company.
  * Portions created by the Initial Developer are Copyright (C) 2002-2009
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
- *   Alex Pagnoni <alex.pagnoni@innoteam.it>
+ *   Alex Pagnoni <alex.pagnoni@innomatic.io>
  *
  * ***** END LICENSE BLOCK ***** */
 
@@ -161,8 +161,7 @@ class InnoworkClipping extends InnoworkItem {
         if ($this->mItemId) {
             $items_query = \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->getDataAccess()->execute('SELECT itemtype,itemid FROM innowork_core_clippings_items WHERE clippingid='.$this->mItemId.' ORDER BY itemtype,itemid');
             $result['founditems'] = 0;
-            require_once('innowork/core/InnoworkCore.php');
-            $innowork_core = InnoworkCore::instance('innoworkcore', \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getDataAccess(), \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->getDataAccess());
+            $innowork_core = \Innowork\Core\InnoworkCore::instance('\Innowork\Core\InnoworkCore', \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getDataAccess(), \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->getDataAccess());
             $summaries = $innowork_core->GetSummaries();
 
             while (!$items_query->eof) {

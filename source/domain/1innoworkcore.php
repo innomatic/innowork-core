@@ -14,12 +14,12 @@
  *
  * The Original Code is Innowork.
  *
- * The Initial Developer of the Original Code is Innoteam.
+ * The Initial Developer of the Original Code is Innomatic Company.
  * Portions created by the Initial Developer are Copyright (C) 2002-2009
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
- *   Alex Pagnoni <alex.pagnoni@innoteam.it>
+ *   Alex Pagnoni <alex.pagnoni@innomatic.io>
  *
  * ***** END LICENSE BLOCK ***** */
 
@@ -29,8 +29,7 @@ global $gPage_content, $innowork_core, $gLocale, $gWui, $gPage_status, $gPage_ti
 require_once('innomatic/locale/LocaleCatalog.php');
 $gLocale = new LocaleCatalog('innowork-core::core', \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentUser()->getLanguage());
 
-require_once('innowork/core/InnoworkCore.php');
-$innowork_core = InnoworkCore::instance('innoworkcore', \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getDataAccess(), \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->getDataAccess());
+$innowork_core = \Innowork\Core\InnoworkCore::instance('\Innowork\Core\InnoworkCore', \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getDataAccess(), \Innomatic\Core\InnomaticContainer::instance('\Innomatic\Core\InnomaticContainer')->getCurrentDomain()->getDataAccess());
 
 require_once('innomatic/wui/Wui.php');
 $gWui = Wui::instance('wui');
