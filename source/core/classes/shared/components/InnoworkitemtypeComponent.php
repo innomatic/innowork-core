@@ -106,9 +106,9 @@ class InnoworkItemTypeComponent extends ApplicationComponent
                 ','.$this->rootda->formatText($params['catalog']).
                 ','.$this->rootda->formatText($params['classfile']).
                 ','.$this->rootda->formatText($params['classname']).
-                ','.$this->rootda->formatText($params['icon']).
+                ','.$this->rootda->formatText(isset($params['icon']) ? $params['icon'] : '').
                 ','.$this->rootda->formatText($params['domainpanel']).
-                ','.$this->rootda->formatText($params['miniicon']).
+                ','.$this->rootda->formatText(isset($params['miniicon']) ? $params['miniicon'] : '').
                 ','.$this->rootda->formatText($params['summaryname']).
                 ','.$this->rootda->formatText($params['icontype']).
                 ','.$this->rootda->formatText($params['showmode']).
