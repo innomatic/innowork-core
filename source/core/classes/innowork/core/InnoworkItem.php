@@ -1540,7 +1540,7 @@ abstract class InnoworkItem
     /* }}} */
 
     public function getBaseFolder() {
-        return InnoworkJurisDossier::$this->mFsBasePath;
+        return $this->mFsBasePath;
     }
 
     public function checkBaseFolder() {
