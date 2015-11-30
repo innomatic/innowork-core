@@ -4,14 +4,14 @@
 
    Innowork-Core build file
 
-   Copyright (c) 2008-2013 Innomatic. All rights reserved.
+   Copyright (c) 2008-2015 Innoteam Srl. All rights reserved.
 
   =======================================================================
 -->
 <project name="Innowork Core" default="package">
 
 	<property name="name" value="innowork-core" />
-	<property name="version" value="3.5.1" />
+	<property name="version" value="3.5.2" />
 
     <!--
     Helper target that initializes the project and creates the base
