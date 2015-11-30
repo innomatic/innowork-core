@@ -144,6 +144,9 @@ function main_default($eventData) {
             case InnoworkAcl::TYPE_ACL :
                 $image = 'useradd';
                 break;
+
+            default:
+                $image = 'user';
         }
 
         $gXml_def.= '<button row="'.$row.'" col="0"><name>acl</name>

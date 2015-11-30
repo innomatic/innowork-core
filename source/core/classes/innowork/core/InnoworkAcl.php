@@ -70,6 +70,10 @@ class InnoworkAcl {
             if ($this->mItemType and $this->mItemId) {
                 $summaries = $this->innoworkContainer->getSummaries();
 
+                // Checks if the item type has been defined.
+                if (!isset($summaries[$this->mItemType])) {
+                    return false;
+                }
                 $class_name = $summaries[$this->mItemType]['classname'];
                 // Checks if the class exists.
                 if (!class_exists($class_name)) {

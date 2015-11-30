@@ -78,7 +78,7 @@ class InnoworkClipping extends InnoworkItem {
         return $result;
     }
 
-    protected function doEdit($params) {
+    protected function doEdit($params, $userId) {
         $result = false;
         if ($this->mItemId) {
             if (count($params)) {
@@ -113,7 +113,7 @@ class InnoworkClipping extends InnoworkItem {
         return $result;
     }
 
-    protected function doTrash() {
+    protected function doTrash($userId) {
         return true;
     }
 
