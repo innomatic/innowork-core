@@ -200,7 +200,7 @@ class InnoworkItemTypeComponent extends ApplicationComponent
 	/*!
 	 @function DoEnableDomainAction
 	 */
-	public function doEnableDomainAction($params)
+	public function doEnableDomainAction($domainid, $params)
 	{
 		if (!strlen($this->name)) {
 			$this->mLog->logEvent('innoworkcore.innoworkitemtypeelement.innoworkitemtypeelement.enable', 'In application '.$this->appname.', element '.$this->name.': Empty innowork type name', Logger::ERROR);
@@ -212,7 +212,7 @@ class InnoworkItemTypeComponent extends ApplicationComponent
 	/*!
 	 @function DoDisableDomainAction
 	 */
-	public function doDisableDomainAction($params)
+	public function doDisableDomainAction($domainid, $params)
 	{
 		if (!strlen($this->name)) {
 			$this->mLog->logEvent('innoworkcore.innoworkitemtypeelement.innoworkitemtypeelement.disable', 'In application '.$this->appname.', element '.$this->name.': Empty innowork type name', Logger::ERROR);
@@ -229,7 +229,7 @@ class InnoworkItemTypeComponent extends ApplicationComponent
 	/*!
 	 @function DoUpdateDomainAction
 	 */
-	public function doUpdateDomainAction($params)
+	public function doUpdateDomainAction($domainid, $params)
 	{
 		return TRUE;
 	}
