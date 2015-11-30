@@ -3,8 +3,8 @@
 	<definition>
 		<idname>innowork-core</idname>
 		<release>
-			<version>3.5.1</version>
-			<date>2015/02/14</date>
+			<version>3.5.2</version>
+			<date>2015/11/30</date>
 			<changesfile>CHANGES</changesfile>
 		</release>
 		<description>Innowork Engine</description>
@@ -19,11 +19,11 @@
 		</options>
 		<legal>
 			<author>
-				<name>Innomatic Company</name>
+				<name>Innoteam Srl</name>
 				<email>info@innomatic.io</email>
 				<web>http://www.innomatic.io/</web>
 			</author>
-			<copyright>Copyright (c) 2002-2015 Innomatic Company</copyright>
+			<copyright>Copyright (c) 2002-2015 Innoteam Srl</copyright>
 			<license>MPL</license>
 			<licensefile>LICENSE</licensefile>
 		</legal>

@@ -15,7 +15,7 @@
  *
  * The Original Code is Innowork.
  *
- * The Initial Developer of the Original Code is Innomatic Company.
+ * The Initial Developer of the Original Code is Innoteam Srl.
  * Portions created by the Initial Developer are Copyright (C) 2002-2014
  * the Initial Developer. All Rights Reserved.
  *
@@ -87,8 +87,8 @@ class WuiInnoworkitemacl extends \Shared\Wui\WuiXml
         $parentAcl = false;
 
         // Item object
-        $class_name = $summaries[$this->mItemType]['classname'];
-        if (class_exists($class_name)) {
+        if (isset($summaries[$this->mItemType]) and class_exists($summaries[$this->mItemType]['classname'])) {
+            $class_name = $summaries[$this->mItemType]['classname'];
         	$item_object = new $class_name(
         		$container->getDataAccess(),
 	        	$container->getCurrentDomain()->getDataAccess(),
@@ -119,17 +119,19 @@ class WuiInnoworkitemacl extends \Shared\Wui\WuiXml
             $this->mAclType = $tmp_acl_type;
         }
 
+        /*
         $acls_query = $container->getCurrentDomain()->getDataAccess()->execute(
         	'SELECT groupid, userid, rights '.
         	'FROM innowork_core_acls '.
         	'WHERE itemtype='.$container->getCurrentDomain()->getDataAccess()->formatText($acl->mItemType).
         	' '.'AND itemid='.$acl->mItemId
 		);
+        */
         $owner = '';
 
         // Log
 
-        if ($summaries[$this->mItemType]['loggable']) {
+        if (isset($summaries[$this->mItemType]['loggable']) and $summaries[$this->mItemType]['loggable']) {
         	require_once('innowork/core/InnoworkItemLog.php');
             $item_log = new InnoworkItemLog($this->mItemType, $this->mItemId);
         }

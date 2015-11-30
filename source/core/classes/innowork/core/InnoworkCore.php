@@ -14,7 +14,7 @@
  *
  * The Original Code is Innowork.
  *
- * The Initial Developer of the Original Code is Innomatic Company.
+ * The Initial Developer of the Original Code is Innoteam Srl.
  * Portions created by the Initial Developer are Copyright (C) 2002-2014
  * the Initial Developer. All Rights Reserved.
  *
@@ -197,6 +197,8 @@ class InnoworkCore extends Singleton {
      * @return void
      */
     public function getMainToolBar($type = 'app', $itemType = '', $itemId = '') {
+        $result = [];
+
         if (strlen($itemType) and strlen($itemId)) {
             $result['itemtools'] = array('relateditems' => array('label' => $this->mLocale->getStr('relateditems.button'), 'themeimage' => 'chart2', 'horiz' => 'true', 'action' => \Innomatic\Wui\Dispatch\WuiEventsCall::buildEventsCallString('1innoworkcore', array(array('view', 'relateditems', array('itemtype' => $itemType, 'itemid' => $itemId))))));
         }

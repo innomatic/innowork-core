@@ -14,7 +14,7 @@
  *
  * The Original Code is Innowork.
  *
- * The Initial Developer of the Original Code is Innomatic Company.
+ * The Initial Developer of the Original Code is Innoteam Srl.
  * Portions created by the Initial Developer are Copyright (C) 2002-2009
  * the Initial Developer. All Rights Reserved.
  *
@@ -78,7 +78,7 @@ class InnoworkClipping extends InnoworkItem {
         return $result;
     }
 
-    protected function doEdit($params) {
+    protected function doEdit($params, $userId) {
         $result = false;
         if ($this->mItemId) {
             if (count($params)) {
@@ -113,7 +113,7 @@ class InnoworkClipping extends InnoworkItem {
         return $result;
     }
 
-    protected function doTrash() {
+    protected function doTrash($userId) {
         return true;
     }
 

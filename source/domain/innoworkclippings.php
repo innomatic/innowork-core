@@ -14,7 +14,7 @@
  *
  * The Original Code is Innowork.
  *
- * The Initial Developer of the Original Code is Innomatic Company.
+ * The Initial Developer of the Original Code is Innoteam Srl.
  * Portions created by the Initial Developer are Copyright (C) 2002-2009
  * the Initial Developer. All Rights Reserved.
  *
@@ -144,6 +144,9 @@ function main_default($eventData) {
             case InnoworkAcl::TYPE_ACL :
                 $image = 'useradd';
                 break;
+
+            default:
+                $image = 'user';
         }
 
         $gXml_def.= '<button row="'.$row.'" col="0"><name>acl</name>

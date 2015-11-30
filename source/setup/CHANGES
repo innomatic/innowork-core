@@ -6,6 +6,15 @@
 
 
 
+3.5.2 - 2015/11/30
+------------------
+FIXES:
+- [INW-1] Fixed InnoworkItemTypeComponent methods not matching
+  ApplicationComponent class.
+- [INW-2] Fixed various PHP notices.
+
+
+
 3.5.1 - 2015/02/14
 ------------------
 NEW FEATURES:

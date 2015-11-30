@@ -14,7 +14,7 @@
  *
  * The Original Code is Innowork.
  *
- * The Initial Developer of the Original Code is Innomatic Company.
+ * The Initial Developer of the Original Code is Innoteam Srl.
  * Portions created by the Initial Developer are Copyright (C) 2002-2009
  * the Initial Developer. All Rights Reserved.
  *
@@ -106,9 +106,9 @@ class InnoworkItemTypeComponent extends ApplicationComponent
                 ','.$this->rootda->formatText($params['catalog']).
                 ','.$this->rootda->formatText($params['classfile']).
                 ','.$this->rootda->formatText($params['classname']).
-                ','.$this->rootda->formatText($params['icon']).
+                ','.$this->rootda->formatText(isset($params['icon']) ? $params['icon'] : '').
                 ','.$this->rootda->formatText($params['domainpanel']).
-                ','.$this->rootda->formatText($params['miniicon']).
+                ','.$this->rootda->formatText(isset($params['miniicon']) ? $params['miniicon'] : '').
                 ','.$this->rootda->formatText($params['summaryname']).
                 ','.$this->rootda->formatText($params['icontype']).
                 ','.$this->rootda->formatText($params['showmode']).
@@ -200,7 +200,7 @@ class InnoworkItemTypeComponent extends ApplicationComponent
 	/*!
 	 @function DoEnableDomainAction
 	 */
-	public function doEnableDomainAction($params)
+	public function doEnableDomainAction($domainid, $params)
 	{
 		if (!strlen($this->name)) {
 			$this->mLog->logEvent('innoworkcore.innoworkitemtypeelement.innoworkitemtypeelement.enable', 'In application '.$this->appname.', element '.$this->name.': Empty innowork type name', Logger::ERROR);
@@ -212,7 +212,7 @@ class InnoworkItemTypeComponent extends ApplicationComponent
 	/*!
 	 @function DoDisableDomainAction
 	 */
-	public function doDisableDomainAction($params)
+	public function doDisableDomainAction($domainid, $params)
 	{
 		if (!strlen($this->name)) {
 			$this->mLog->logEvent('innoworkcore.innoworkitemtypeelement.innoworkitemtypeelement.disable', 'In application '.$this->appname.', element '.$this->name.': Empty innowork type name', Logger::ERROR);
@@ -229,7 +229,7 @@ class InnoworkItemTypeComponent extends ApplicationComponent
 	/*!
 	 @function DoUpdateDomainAction
 	 */
-	public function doUpdateDomainAction($params)
+	public function doUpdateDomainAction($domainid, $params)
 	{
 		return TRUE;
 	}
