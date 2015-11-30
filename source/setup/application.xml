@@ -3,8 +3,8 @@
 	<definition>
 		<idname>innowork-core</idname>
 		<release>
-			<version>3.5.1</version>
-			<date>2015/02/14</date>
+			<version>3.5.2</version>
+			<date>2015/11/30</date>
 			<changesfile>CHANGES</changesfile>
 		</release>
 		<description>Innowork Engine</description>
