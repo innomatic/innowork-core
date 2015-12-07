@@ -12,6 +12,7 @@
     ],
     "require": {
         "php": ">=5.4.0",
-        "innomatic/innomatic-legacy-installer": "^1.0@alpha"
+        "innomatic/innomatic-legacy-installer": "^1.0@alpha",
+        "innomatic-libs/phplotlib": "^5.0"
     }
 }
