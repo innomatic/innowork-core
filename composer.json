@@ -1,0 +1,18 @@
+{
+    "name": "innomatic/innowork-core",
+    "description": "Innowork Core legacy",
+    "homepage": "http://www.innomatic.io",
+    "license": "MPL-1.1",
+    "type": "innomatic-legacy-application",
+    "authors": [
+        {
+            "name": "Innomatic Team",
+            "homepage": "http://www.innomatic.io"
+        }
+    ],
+    "require": {
+        "php": ">=5.4.0",
+        "innomatic/innomatic-legacy-installer": "^1.0@alpha",
+        "innomatic-libs/phplotlib": "^5.0"
+    }
+}
